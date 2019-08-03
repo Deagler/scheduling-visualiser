@@ -20,11 +20,12 @@ public class Main {
         HelpFormatter formatter = new HelpFormatter();
         CommandLine cmd = null;
 
+
         try {
             cmd = parser.parse(options, args);
         } catch (ParseException e) {
             System.out.println(e.getMessage());
-            formatter.printHelp("utility-name", options);
+            formatter.printHelp("InternSeason: Scheduler", options);
 
             System.exit(1);
         }

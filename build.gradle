@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group 'internseason'
@@ -10,6 +11,16 @@ mainClassName = 'internseason.scheduler.Main'
 
 repositories {
     mavenCentral()
+}
+
+sourceSets {
+    main {
+        java.srcDirs = ['src/main/java']
+    }
+
+    test {
+        java.srcDirs = ['src/test/java']
+    }
 }
 
 dependencies {
