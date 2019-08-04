@@ -2,9 +2,9 @@ package internseason.scheduler.model;
 
 public class Allocation {
     int startTime;
-    String processId;
+    int processId;
 
-    public Allocation(int startTime, String processId) {
+    public Allocation(int startTime, int processId) {
         this.startTime = startTime;
         this.processId = processId;
     }

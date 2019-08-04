@@ -13,5 +13,9 @@ public class Task {
             this.id = id;
             children = new HashMap<>();
         }
+
+        public int getCost() {
+            return cost;
+        }
 }
 
