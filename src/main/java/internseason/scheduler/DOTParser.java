@@ -79,7 +79,6 @@ public class DOTParser {
         }
 
         return tasks;
-
     }
 
     private List<Dependency> createDependencies(Map<String, Task> tasks) {
