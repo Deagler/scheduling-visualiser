@@ -27,6 +27,12 @@ public class Processor {
         this.time += task.getCost();
     }
 
+    public void addTaskWithDelay(Task task, int delay) {
+        taskList.add(task);
+        this.time += task.getCost();
+        this.time += delay;
+    }
+
     public Task getLastTask() {
         return taskList.get(taskList.size()-1);
     }
@@ -35,6 +41,7 @@ public class Processor {
         Task task = getLastTask();
         taskList.remove(taskList.size()-1);
         this.time -= task.getCost();
+        this.time -= task.getDelay();
     }
 
 

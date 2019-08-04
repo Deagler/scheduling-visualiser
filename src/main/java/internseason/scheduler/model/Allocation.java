@@ -2,10 +2,19 @@ package internseason.scheduler.model;
 
 public class Allocation {
     int startTime;
-    int processId;
+    Processor processor;
+    Task task;
 
-    public Allocation(int startTime, int processId) {
+    public Allocation(int startTime, Processor processor, Task task) {
         this.startTime = startTime;
-        this.processId = processId;
+        this.processor = processor;
+        this.task = task;
+    }
+
+    public Allocation(Processor processor, Task task) {
+        this.processor = processor;
+        this.task = task;
+        this.startTime = processor.getTime();
+        this.processor.setTime(this.processor.getTime() + task.getCost());
     }
 }
