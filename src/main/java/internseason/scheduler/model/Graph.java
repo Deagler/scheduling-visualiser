@@ -1,10 +1,13 @@
 package internseason.scheduler.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Graph {
-    List<Task> tasks;
+    private List<Task> tasks;
+    private List<List<String>> topologicalOrdering;
+
+
+    private LinkedList<Task> adj[];
 
     public Graph() {
         tasks = new ArrayList<Task>();
@@ -20,5 +23,38 @@ public class Graph {
 
     public Task get(int index) {
         return tasks.get(index);
+    }
+
+
+    public List<List<String>> getTopologicalOrdering(){
+        if (topologicalOrdering == null){
+            createTopologicalOrdering();
+        }
+        return topologicalOrdering;
+    }
+
+    private void createTopologicalOrdering() {
+        //need adjacency list representation of the graph
+        /*1. Store each vertex’s In-Degree in an array
+2. Initialize a queue with all in-degree zero vertices
+3. While there are vertices remaining in the queue:
+➭ Dequeue and output a vertex
+➭ Reduce In-Degree of all vertices adjacent to it by 1
+➭ Enqueue any of these vertices whose In-Degree became
+zero*/
+
+        int[] inDegrees = new int[tasks.size()];
+        inDegrees = getInDegrees();
+
+
+
+
+
+    }
+
+    private int[] getInDegrees() {
+
+
+
     }
 }
