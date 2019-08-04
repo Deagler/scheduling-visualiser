@@ -6,6 +6,7 @@ public class Graph {
     Map<String, Task> tasks;
     List<Dependency> dependencies;
     List<List<String>> topologicalOrdering;
+    private Map<String, List<String>> adjacencyList;
 
     public Graph() {
         tasks = new HashMap<String, Task>();
@@ -46,7 +47,7 @@ public class Graph {
 zero*/
 
         int[] inDegrees = new int[tasks.size()];
-        //inDegrees = getInDegrees();
+        inDegrees = getInDegrees();
 
 
 
@@ -54,7 +55,12 @@ zero*/
 
     }
 
-    private void getInDegrees() {
+    private int[] getInDegrees() {
+        int[] inDegrees = new int[tasks.size()];
+        for (List<String> value : adjacencyList.values()){
 
+        }
+
+        return inDegrees;
     }
 }
