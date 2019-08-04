@@ -1,12 +1,18 @@
 package internseason.scheduler.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Task {
+
         private Map<Task, Integer> children;
         private int cost;
         private int delay;
+        private List<Edge> incomingEdge;
+        private List<Edge> outgoingEdge;
+        private int cost;
         private String id;
 
         public Task(int cost, String id) {
@@ -14,6 +20,8 @@ public class Task {
             this.id = id;
             children = new HashMap<>();
             this.delay = 0;
+            incomingEdge = new ArrayList<>();
+            outgoingEdge = new ArrayList<>();
         }
 
         public Task(int cost, int delay, String id) {
@@ -21,6 +29,8 @@ public class Task {
             this.id = id;
             children = new HashMap<>();
             this.delay = delay;
+            incomingEdge = new ArrayList<>();
+            outgoingEdge = new ArrayList<>();
         }
 
         public int getCost() {
@@ -40,6 +50,9 @@ public class Task {
 
         public void setDelay(int delay) {
             this.delay = delay;
+
+        public String getId(){
+            return id;
         }
 }
 
