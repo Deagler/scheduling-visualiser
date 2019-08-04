@@ -52,7 +52,7 @@ public class Schedule {
         if (!processorMap.containsKey(processorId)) {
             processorMap.put(processorId, new Processor(processorId));
         }
-        task.setDelay(delay);
+        //task.setDelay(delay);
         Processor processor = processorMap.get(processorId);
         processor.addTaskWithDelay(task, delay);
 

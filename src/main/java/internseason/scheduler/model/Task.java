@@ -9,7 +9,7 @@ public class Task {
 
         private Map<Task, Integer> children;
         private int cost;
-        private int delay;
+        //private int delay;
         private List<Dependency> incomingEdge;
         private List<Dependency> outgoingEdge;
         private String id;
@@ -18,7 +18,7 @@ public class Task {
             this.cost = cost;
             this.id = id;
             children = new HashMap<>();
-            this.delay = 0;
+            //this.delay = 0;
             incomingEdge = new ArrayList<>();
             outgoingEdge = new ArrayList<>();
         }
@@ -27,7 +27,7 @@ public class Task {
             this.cost = cost;
             this.id = id;
             children = new HashMap<>();
-            this.delay = delay;
+            //this.delay = delay;
             incomingEdge = new ArrayList<>();
             outgoingEdge = new ArrayList<>();
         }
@@ -36,20 +36,20 @@ public class Task {
             return cost;
         }
 
-        public boolean hasDelay() {
-            if (delay > 0) {
-                return true;
-            }
-            return false;
-        }
+//        public boolean hasDelay() {
+//            if (delay > 0) {
+//                return true;
+//            }
+//            return false;
+//        }
 
-        public int getDelay() {
-            return delay;
-        }
-
-        public void setDelay(int delay) {
-            this.delay = delay;
-        }
+//        public int getDelay() {
+//            return delay;
+//        }
+//
+//        public void setDelay(int delay) {
+//            this.delay = delay;
+//        }
 
         public String getId(){
             return id;
