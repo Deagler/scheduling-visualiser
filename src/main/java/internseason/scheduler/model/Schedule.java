@@ -2,6 +2,6 @@ package internseason.scheduler.model;
 
 import java.util.Map;
 
-public class Scheduler {
+public class Schedule {
     Map<Task, Allocation> map;
 }
