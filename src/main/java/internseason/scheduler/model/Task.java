@@ -8,8 +8,8 @@ import java.util.Map;
 public class Task {
 
 
-        private List<Edge> incomingEdge;
-        private List<Edge> outgoingEdge;
+        private List<Dependency> incomingEdge;
+        private List<Dependency> outgoingEdge;
         private int cost;
         private String id;
 

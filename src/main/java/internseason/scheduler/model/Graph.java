@@ -1,17 +1,24 @@
 package internseason.scheduler.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Graph {
-    List<Task> tasks;
+    Map<String, Task> tasks;
+    List<Dependency> dependencies;
 
     public Graph() {
-        tasks = new ArrayList<Task>();
+        tasks = new HashMap<String, Task>();
     }
 
-    public Graph(List<Task> tasks) {
-        this.tasks = new ArrayList<Task>(tasks);
+    public void setTasks(Map<String,Task> tasks) {
+        this.tasks = tasks;
+    }
+
+    public void setDependencies(List<Dependency> dependencies) {
+        this.dependencies = dependencies;
     }
 
     public int size() {

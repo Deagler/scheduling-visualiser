@@ -1,39 +1,105 @@
 package internseason.scheduler;
 
 import com.paypal.digraph.parser.GraphEdge;
+import com.paypal.digraph.parser.GraphElement;
 import com.paypal.digraph.parser.GraphNode;
 import com.paypal.digraph.parser.GraphParser;
+import internseason.scheduler.model.Dependency;
+import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Task;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DOTParser {
+    private Map<String, GraphNode> nodes;
+    private Map<String, GraphEdge> edges;
+    private Graph graph;
+    private Map<String, List<String>> adjacencyList;
+
+    public DOTParser(String path) {
+        this.parse(path);
+    }
+
     public void parse(String path) {
         try {
             GraphParser parser = new GraphParser(new FileInputStream(path));
             Map<String, GraphNode> nodes= parser.getNodes();
             Map<String, GraphEdge> edges = parser.getEdges();
 
-            this.createTasks(nodes.values());
-
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    private List<Task> createTasks(Collection<GraphNode> nodes) {
-        List<Task> tasks = new ArrayList<>();
-        for(GraphNode node : nodes) {
-            Task task = new Task(Integer.parseInt(String.valueOf(node.getAttribute("Weight"))), node.getId());
-            tasks.add(task);
+    public Graph getGraph() {
+        if (this.graph == null) {
+            this.buildGraph();
+        }
+
+        return this.graph;
+    }
+
+    public Map<String, List<String>> getAdjacencyList() {
+        if (this.adjacencyList == null) {
+            this.createAdjacencyList();
+        }
+
+        return this.adjacencyList;
+    }
+
+    private void buildGraph() {
+        this.graph = new Graph();
+
+        HashMap<String, Task> tasks = this.createTasks();
+
+        graph.setTasks(this.createTasks());
+        graph.setDependencies(this.createDependencies(tasks));
+    }
+
+    public void createAdjacencyList() {
+        this.adjacencyList = new HashMap<>();
+        for (GraphEdge edge : this.edges.values()) {
+            String sourceId = edge.getNode1().getId();
+            String destId = edge.getNode2().getId();
+
+            List<String> list = adjacencyList.containsKey(sourceId) ? adjacencyList.get(sourceId) : new ArrayList<>();
+            list.add(destId);
+
+            adjacencyList.put(sourceId, list);
+        }
+    }
+
+    private HashMap<String, Task> createTasks() {
+        HashMap<String, Task> tasks = new HashMap<>();
+        for(GraphNode node : this.nodes.values()) {
+            Task task = new Task(getCostOfGraphElement(node), node.getId());
+            tasks.put(task.getId(), task);
         }
 
         return tasks;
+
+    }
+
+    private List<Dependency> createDependencies(Map<String, Task> tasks) {
+        List<Dependency> dependencies = new ArrayList<>();
+        for (GraphEdge edge : this.edges.values()) {
+            Dependency dependency = new Dependency(
+                    tasks.get(edge.getNode1().getId()),
+                    tasks.get(edge.getNode2().getId()),
+                    getCostOfGraphElement(edge)
+            );
+        }
+        return dependencies;
+    }
+
+    /**
+     * 'Weight' is stored as a String object in the GraphElement class. Need to cast to String then convert to integer.
+     * @param element
+     * @return
+     */
+    private int getCostOfGraphElement(GraphElement element) {
+        return Integer.parseInt(String.valueOf(element.getAttribute("Weight")));
     }
 }
