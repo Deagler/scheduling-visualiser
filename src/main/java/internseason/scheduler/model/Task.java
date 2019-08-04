@@ -10,9 +10,8 @@ public class Task {
         private Map<Task, Integer> children;
         private int cost;
         private int delay;
-        private List<Edge> incomingEdge;
-        private List<Edge> outgoingEdge;
-        private int cost;
+        private List<Dependency> incomingEdge;
+        private List<Dependency> outgoingEdge;
         private String id;
 
         public Task(int cost, String id) {
@@ -50,6 +49,7 @@ public class Task {
 
         public void setDelay(int delay) {
             this.delay = delay;
+        }
 
         public String getId(){
             return id;

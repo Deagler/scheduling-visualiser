@@ -1,6 +1,6 @@
 package internseason.scheduler.model;
 
-public class Dependencies {
+public class Dependency {
 
     private Task sourceTask;
 
@@ -8,7 +8,7 @@ public class Dependencies {
 
     private int dependencyCost;
 
-    public Dependencies(Task sourceTask, Task targetTask, int edgeCost){
+    public Dependency(Task sourceTask, Task targetTask, int edgeCost){
         this.sourceTask = sourceTask;
         this.targetTask = targetTask;
         this.dependencyCost = edgeCost;
