@@ -3,18 +3,19 @@ package internseason.scheduler.model;
 import java.util.*;
 
 public class Graph {
-    private List<Task> tasks;
-    private List<List<String>> topologicalOrdering;
-
-
-    private LinkedList<Task> adj[];
+    Map<String, Task> tasks;
+    List<Dependency> dependencies;
 
     public Graph() {
-        tasks = new ArrayList<Task>();
+        tasks = new HashMap<String, Task>();
     }
 
-    public Graph(List<Task> tasks) {
-        this.tasks = new ArrayList<Task>(tasks);
+    public void setTasks(Map<String,Task> tasks) {
+        this.tasks = tasks;
+    }
+
+    public void setDependencies(List<Dependency> dependencies) {
+        this.dependencies = dependencies;
     }
 
     public int size() {
