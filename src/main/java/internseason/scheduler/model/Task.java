@@ -23,5 +23,9 @@ public class Task {
         public int getCost() {
             return cost;
         }
+
+        public String getId(){
+            return id;
+        }
 }
 
