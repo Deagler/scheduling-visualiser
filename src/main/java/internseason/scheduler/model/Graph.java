@@ -5,6 +5,7 @@ import java.util.*;
 public class Graph {
     Map<String, Task> tasks;
     List<Dependency> dependencies;
+    List<List<String>> topologicalOrdering;
 
     public Graph() {
         tasks = new HashMap<String, Task>();
@@ -45,7 +46,7 @@ public class Graph {
 zero*/
 
         int[] inDegrees = new int[tasks.size()];
-        inDegrees = getInDegrees();
+        //inDegrees = getInDegrees();
 
 
 
@@ -53,9 +54,7 @@ zero*/
 
     }
 
-    private int[] getInDegrees() {
-
-
+    private void getInDegrees() {
 
     }
 }
