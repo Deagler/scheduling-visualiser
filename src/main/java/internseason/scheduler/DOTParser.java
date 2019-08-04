@@ -35,7 +35,7 @@ public class DOTParser {
 
     public Graph getGraph() {
         if (this.graph == null) {
-            this.buildGraph();
+            this.createGraph();
         }
 
         return this.graph;
@@ -49,7 +49,7 @@ public class DOTParser {
         return this.adjacencyList;
     }
 
-    private void buildGraph() {
+    private void createGraph() {
         this.graph = new Graph();
 
         HashMap<String, Task> tasks = this.createTasks();
