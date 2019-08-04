@@ -24,6 +24,10 @@ public class Task {
             return cost;
         }
 
+        public String getId(){
+            return id;
+        }
+
         @Override
         public String toString() {
             return "Task " + this.id + ", Cost: " + this.cost;
