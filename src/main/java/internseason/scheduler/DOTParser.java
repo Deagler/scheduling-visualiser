@@ -41,14 +41,6 @@ public class DOTParser {
         return this.graph;
     }
 
-    public Map<String, List<String>> getAdjacencyList() {
-        if (this.adjacencyList == null) {
-            this.createAdjacencyList();
-        }
-
-        return this.adjacencyList;
-    }
-
     private void createGraph() {
         this.graph = new Graph();
 
@@ -56,19 +48,6 @@ public class DOTParser {
 
         graph.setTasks(this.createTasks());
         graph.setDependencies(this.createDependencies(tasks));
-    }
-
-    public void createAdjacencyList() {
-        this.adjacencyList = new HashMap<>();
-        for (GraphEdge edge : this.edges.values()) {
-            String sourceId = edge.getNode1().getId();
-            String destId = edge.getNode2().getId();
-
-            List<String> list = adjacencyList.containsKey(sourceId) ? adjacencyList.get(sourceId) : new ArrayList<>();
-            list.add(destId);
-
-            adjacencyList.put(sourceId, list);
-        }
     }
 
     private HashMap<String, Task> createTasks() {
@@ -79,7 +58,6 @@ public class DOTParser {
         }
 
         return tasks;
-
     }
 
     private List<Dependency> createDependencies(Map<String, Task> tasks) {
