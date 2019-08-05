@@ -4,6 +4,7 @@ import com.paypal.digraph.parser.GraphEdge;
 import com.paypal.digraph.parser.GraphElement;
 import com.paypal.digraph.parser.GraphNode;
 import com.paypal.digraph.parser.GraphParser;
+import internseason.scheduler.exceptions.InputException;
 import internseason.scheduler.model.Dependency;
 import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Task;
@@ -16,7 +17,7 @@ public class DOTParser {
     private Map<String, GraphNode> nodes;
     private Map<String, GraphEdge> edges;
 
-    public Graph parse(String path) {
+    public Graph parse(String path) throws InputException {
         try {
             GraphParser parser = new GraphParser(new FileInputStream(path));
             this.nodes= parser.getNodes();
@@ -25,8 +26,7 @@ public class DOTParser {
             return this.createGraph();
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return null;
+            throw new InputException("Invalid input dot files");
         }
     }
 
@@ -54,11 +54,17 @@ public class DOTParser {
     private List<Dependency> createDependencies(Map<String, Task> tasks) {
         List<Dependency> dependencies = new ArrayList<>();
         for (GraphEdge edge : this.edges.values()) {
+            Task sourceTask = tasks.get(edge.getNode1().getId());
+            Task targetTask = tasks.get(edge.getNode2().getId());
+
             Dependency dependency = new Dependency(
-                    tasks.get(edge.getNode1().getId()),
-                    tasks.get(edge.getNode2().getId()),
+                    sourceTask,
+                    targetTask,
                     getCostOfGraphElement(edge)
             );
+
+            sourceTask.addOutgoing(dependency);
+            targetTask.addIncoming(dependency);
         }
         return dependencies;
     }

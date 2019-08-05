@@ -20,6 +20,14 @@ public class Task {
             outgoingEdge = new ArrayList<>();
         }
 
+        public void addIncoming(Dependency edge) {
+            this.incomingEdge.add(edge);
+        }
+
+        public void addOutgoing(Dependency edge) {
+            this.outgoingEdge.add(edge);
+        }
+
         public int getCost() {
             return cost;
         }

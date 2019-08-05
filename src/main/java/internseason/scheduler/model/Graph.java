@@ -26,8 +26,8 @@ public class Graph {
         return tasks.size();
     }
 
-    public Task getTask(int index) {
-        return tasks.get(index);
+    public Task getTask(String id) {
+        return tasks.get(id);
     }
 
     public Map<String, Task> getTasks() {
