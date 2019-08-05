@@ -21,4 +21,8 @@ public class Graph {
     public Task get(int index) {
         return tasks.get(index);
     }
+
+    public void setTasks(List<Task> list) {
+        tasks = list;
+    }
 }

@@ -23,14 +23,14 @@ public class Task {
             outgoingEdge = new ArrayList<>();
         }
 
-        public Task(int cost, int delay, String id) {
-            this.cost = cost;
-            this.id = id;
-            children = new HashMap<>();
-            //this.delay = delay;
-            incomingEdge = new ArrayList<>();
-            outgoingEdge = new ArrayList<>();
-        }
+//        public Task(int cost, int delay, String id) {
+//            this.cost = cost;
+//            this.id = id;
+//            children = new HashMap<>();
+//            //this.delay = delay;
+//            incomingEdge = new ArrayList<>();
+//            outgoingEdge = new ArrayList<>();
+//        }
 
         public int getCost() {
             return cost;

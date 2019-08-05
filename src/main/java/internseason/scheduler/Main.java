@@ -25,7 +25,7 @@ public class Main {
             cmd = parser.parse(options, args);
         } catch (ParseException e) {
             System.out.println(e.getMessage());
-            formatter.printHelp("InternSeason: Scheduler", options);
+            formatter.printHelp("InternSeason: scheduler", options);
 
             System.exit(1);
         }
