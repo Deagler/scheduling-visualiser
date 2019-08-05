@@ -21,7 +21,15 @@ public class DOTParser {
         this.parse(path);
     }
 
-    public void parse(String path) {
+    public Graph getGraph() {
+        if (this.graph == null) {
+            this.createGraph();
+        }
+
+        return this.graph;
+    }
+
+    private void parse(String path) {
         try {
             GraphParser parser = new GraphParser(new FileInputStream(path));
             Map<String, GraphNode> nodes= parser.getNodes();
@@ -30,14 +38,6 @@ public class DOTParser {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-    }
-
-    public Graph getGraph() {
-        if (this.graph == null) {
-            this.createGraph();
-        }
-
-        return this.graph;
     }
 
     private void createGraph() {
