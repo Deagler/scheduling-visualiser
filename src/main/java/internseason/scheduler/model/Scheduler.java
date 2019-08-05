@@ -24,10 +24,17 @@ public class Scheduler {
             for (int i = start; i< graph.size(); i++) {
                 //for every processor that can be scheduled
                 for (int j = 1; j<schedule.numProcessors(); j++) {
-                    //TODO figure out if there will be a delay
+
                     //can only add node if ALL its dependencies have been completed
                     if (schedule.getTasks().containsAll(graph.get(i).getDependencies())) {
-                        schedule.add(graph.get(i), j);
+
+                        //check if there will be a delay
+                        if (j == schedule.getLastProcessorId()) {
+                            schedule.add(graph.get(i), j);
+                        } else {
+                            schedule.addWithDelay(graph.get(i), j, schedule.getLastTask().getDelayTo(graph.get(i)));
+                        }
+
                         backtrack(scheduleList, schedule, graph, i+1);
                         schedule.removeLastTask(j);
                     }

@@ -20,6 +20,10 @@ public class Processor {
         //this.taskMap = new HashMap<Task, Integer>();
     }
 
+    public int getId() {
+        return processorId;
+    }
+
     public int getTime() {
         return time;
     }

@@ -1,9 +1,8 @@
 package internseason.scheduler.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javafx.util.Pair;
+
+import java.util.*;
 
 public class Schedule {
 
@@ -13,6 +12,7 @@ public class Schedule {
     private Map<Integer, Processor> processorMap;
     private int numOfProcessors;
     private int cost;
+    private Stack<Integer> processorOrder;
 
     public Schedule(int numOfProcessors) {
         //scheduleList = new ArrayList<>();
@@ -20,6 +20,7 @@ public class Schedule {
         processorMap = new HashMap<>();
         this.numOfProcessors = numOfProcessors;
         this.cost = 0;
+        this.processorOrder = new Stack<>();
     }
 
     public int numProcessors() {
@@ -45,6 +46,8 @@ public class Schedule {
         Processor processor = processorMap.get(processorId);
         processor.addTask(task);
 
+        processorOrder.push(processor.getId());
+
         recalculateCost(processor.getTime());
     }
 
@@ -56,6 +59,8 @@ public class Schedule {
         Processor processor = processorMap.get(processorId);
         processor.addTaskWithDelay(task, delay);
 
+        processorOrder.push(processor.getId());
+
         recalculateCost(processor.getTime());
     }
 
@@ -65,6 +70,8 @@ public class Schedule {
         //Task task = processor.getLastTask();
         //scheduleMap.remove(task);
         processor.removeLastTask();
+
+        processorOrder.pop();
 
         recalculateCost(processor.getTime());
     }
@@ -92,5 +99,13 @@ public class Schedule {
         }
 
         return result;
+    }
+
+    public int getLastProcessorId() {
+        return processorOrder.peek();
+    }
+
+    public Task getLastTask() {
+        return processorMap.get(processorOrder.peek()).getLastTask();
     }
 }

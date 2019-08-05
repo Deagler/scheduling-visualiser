@@ -58,5 +58,18 @@ public class Task {
         public List<Dependency> getDependencies() {
             return incomingEdge;
         }
+
+        public int getDelayTo(Task task) {
+            //check if task depends on this
+
+            for (Dependency dependency: outgoingEdge) {
+                if (dependency.getTargetTask().equals(task)) {
+                    return dependency.getEdgeCost();
+                }
+            }
+
+            //TODO throw exception
+            return 0;
+        }
 }
 
