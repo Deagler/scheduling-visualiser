@@ -82,7 +82,7 @@ public class Graph {
         //while there are vertices remaining in the queue
         while (!zeroDegrees.isEmpty()){
             //dequeue and output a vertex
-            String currentNode = String.valueOf(zeroDegrees.get());
+            String currentNode = String.valueOf(zeroDegrees.getFirst());
             topological.add(currentNode);
             visited[Integer.parseInt(currentNode)] = true;
             zeroDegrees.remove();
