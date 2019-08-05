@@ -54,5 +54,9 @@ public class Task {
         public String getId(){
             return id;
         }
+
+        public List<Dependency> getDependencies() {
+            return incomingEdge;
+        }
 }
 

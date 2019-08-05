@@ -82,4 +82,9 @@ public class Schedule {
 //    public void getTaskAt() {
 //
 //    }
+
+    //TODO get all tasks in all processors of this schedule
+    public List<Task> getTasks() {
+        return null;
+    }
 }

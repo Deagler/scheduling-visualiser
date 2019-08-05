@@ -25,9 +25,15 @@ public class Scheduler {
                 //for every processor that can be scheduled
                 for (int j = 1; j<schedule.numProcessors(); j++) {
                     //TODO figure out if there will be a delay
-                    schedule.add(graph.get(i), j);
-                    backtrack(scheduleList, schedule, graph, i+1);
-                    schedule.removeLastTask(j);
+                    //can only add node if ALL its dependencies have been completed
+                    if (schedule.getTasks().containsAll(graph.get(i).getDependencies())) {
+                        schedule.add(graph.get(i), j);
+                        backtrack(scheduleList, schedule, graph, i+1);
+                        schedule.removeLastTask(j);
+                    }
+//                    schedule.add(graph.get(i), j);
+//                    backtrack(scheduleList, schedule, graph, i+1);
+//                    schedule.removeLastTask(j);
                 }
             }
         }
