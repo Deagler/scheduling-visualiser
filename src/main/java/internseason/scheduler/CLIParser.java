@@ -69,8 +69,8 @@ public class CLIParser {
         return builder.build();
     }
 
-    public void printHelp() {
-        helpFormatter.printHelp("InternSeason: Scheduler", CLIOptions);
+    public void printHelp(String subtitle) {
+        helpFormatter.printHelp(subtitle, CLIOptions);
     }
 
     private void setupCLIOptions() {

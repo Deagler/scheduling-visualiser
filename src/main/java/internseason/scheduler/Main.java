@@ -14,7 +14,7 @@ public class Main {
             System.out.println(config.toString());
         } catch (CLIException e) {
             System.out.println("Error: "+e.getMessage());
-            parser.printHelp();
+            parser.printHelp("Scheduler");
         }
 
     }
