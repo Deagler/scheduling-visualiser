@@ -24,6 +24,7 @@ public class Scheduler {
             for (int i = start; i< graph.size(); i++) {
                 //for every processor that can be scheduled
                 for (int j = 1; j<schedule.numProcessors(); j++) {
+                    //TODO figure out if there will be a delay
                     schedule.add(graph.get(i), j);
                     backtrack(scheduleList, schedule, graph, i+1);
                     schedule.removeLastTask(j);
@@ -33,7 +34,19 @@ public class Scheduler {
     }
 
     public Schedule findBestSchedule() {
-        //TODO
-        return null;
+        //TODO throw exception
+        if (schedules.isEmpty()) {
+            return null;
+        }
+
+        Schedule bestSchedule = schedules.get(0);
+
+        for (int i=1; i<schedules.size(); i++) {
+            if (schedules.get(i).getCost() < bestSchedule.getCost()) {
+                bestSchedule = schedules.get(i);
+            }
+        }
+
+        return bestSchedule;
     }
 }

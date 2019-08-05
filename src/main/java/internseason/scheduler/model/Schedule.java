@@ -75,6 +75,10 @@ public class Schedule {
         }
     }
 
+    public int getCost() {
+        return cost;
+    }
+
 //    public void getTaskAt() {
 //
 //    }
