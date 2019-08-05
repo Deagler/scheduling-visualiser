@@ -26,10 +26,13 @@ public class Graph {
         return tasks.size();
     }
 
-    public Task get(int index) {
+    public Task getTask(int index) {
         return tasks.get(index);
     }
 
+    public Map<String, Task> getTasks() {
+        return this.tasks;
+    }
 
     public List<List<String>> getTopologicalOrdering(){
         if (topologicalOrdering == null){

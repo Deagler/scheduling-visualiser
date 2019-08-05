@@ -24,7 +24,7 @@ public class Scheduler {
             for (int i = start; i< graph.size(); i++) {
                 //for every processor that can be scheduled
                 for (int j = 1; j<schedule.numProcessors(); j++) {
-                    schedule.add(graph.get(i), j);
+                    schedule.add(graph.getTask(i), j);
                     backtrack(scheduleList, schedule, graph, i+1);
                     schedule.removeLastTask(j);
                 }

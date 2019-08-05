@@ -15,38 +15,30 @@ import java.util.*;
 public class DOTParser {
     private Map<String, GraphNode> nodes;
     private Map<String, GraphEdge> edges;
-    private Graph graph;
 
-    public DOTParser(String path) {
-        this.parse(path);
-    }
-
-    public Graph getGraph() {
-        if (this.graph == null) {
-            this.createGraph();
-        }
-
-        return this.graph;
-    }
-
-    private void parse(String path) {
+    public Graph parse(String path) {
         try {
             GraphParser parser = new GraphParser(new FileInputStream(path));
-            Map<String, GraphNode> nodes= parser.getNodes();
-            Map<String, GraphEdge> edges = parser.getEdges();
+            this.nodes= parser.getNodes();
+            this.edges = parser.getEdges();
+
+            return this.createGraph();
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            return null;
         }
     }
 
-    private void createGraph() {
-        this.graph = new Graph();
+    private Graph createGraph() {
+        Graph graph = new Graph();
 
         HashMap<String, Task> tasks = this.createTasks();
 
         graph.setTasks(this.createTasks());
         graph.setDependencies(this.createDependencies(tasks));
+
+        return graph;
     }
 
     private HashMap<String, Task> createTasks() {
