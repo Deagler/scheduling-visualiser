@@ -35,7 +35,7 @@ public class DOTParser {
 
         HashMap<String, Task> tasks = this.createTasks();
 
-        graph.setTasks(this.createTasks());
+        graph.setTasks(tasks);
         graph.setDependencies(this.createDependencies(tasks));
 
         return graph;
@@ -65,6 +65,8 @@ public class DOTParser {
 
             sourceTask.addOutgoing(dependency);
             targetTask.addIncoming(dependency);
+
+            dependencies.add(dependency);
         }
         return dependencies;
     }

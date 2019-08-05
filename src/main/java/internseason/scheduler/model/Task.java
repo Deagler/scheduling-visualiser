@@ -1,44 +1,48 @@
 package internseason.scheduler.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Task {
+    private List<Dependency> incomingEdges;
+    private List<Dependency> outgoingEdges;
+    private int cost;
+    private String id;
 
+    public Task(int cost, String id) {
+        this.cost = cost;
+        this.id = id;
+        incomingEdges = new ArrayList<>();
+        outgoingEdges = new ArrayList<>();
+    }
 
-        private List<Dependency> incomingEdge;
-        private List<Dependency> outgoingEdge;
-        private int cost;
-        private String id;
+    public int getCost() {
+        return cost;
+    }
 
-        public Task(int cost, String id) {
-            this.cost = cost;
-            this.id = id;
-            incomingEdge = new ArrayList<>();
-            outgoingEdge = new ArrayList<>();
+    public String getId(){
+        return id;
+    }
+
+    public int getNumDependencies() {
+        return this.incomingEdges.size();
+    }
+
+    public int getNumDependants() {
+        return this.outgoingEdges.size();
+    }
+
+    public void addIncoming(Dependency edge) {
+            this.incomingEdges.add(edge);
         }
 
-        public void addIncoming(Dependency edge) {
-            this.incomingEdge.add(edge);
-        }
+    public void addOutgoing(Dependency edge) {
+        this.outgoingEdges.add(edge);
+    }
 
-        public void addOutgoing(Dependency edge) {
-            this.outgoingEdge.add(edge);
-        }
-
-        public int getCost() {
-            return cost;
-        }
-
-        public String getId(){
-            return id;
-        }
-
-        @Override
-        public String toString() {
-            return "Task " + this.id + ", Cost: " + this.cost;
-        }
+    @Override
+    public String toString() {
+        return "Task " + this.id + ", Cost: " + this.cost;
+    }
 }
 
