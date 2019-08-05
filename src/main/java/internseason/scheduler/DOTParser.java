@@ -16,7 +16,6 @@ public class DOTParser {
     private Map<String, GraphNode> nodes;
     private Map<String, GraphEdge> edges;
     private Graph graph;
-    private Map<String, List<String>> adjacencyList;
 
     public DOTParser(String path) {
         this.parse(path);
