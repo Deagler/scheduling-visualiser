@@ -26,8 +26,8 @@ public class DotParserTest {
 
             assertEquals(8, graph.size());
 
-            for (String id : graph.getTasks().keySet()) {
-                assertEquals(id, graph.getTask(id).getId());
+            for (int i = 0; i < graph.size(); i++) {
+                assertEquals(String.valueOf(i), graph.getTask(String.valueOf(i)).getId());
             }
 
             for (String id : graph.getTasks().keySet()) {
