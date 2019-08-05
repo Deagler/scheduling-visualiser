@@ -54,7 +54,7 @@ public class Config {
 
     public void setNumberOfCores(int numberOfCores) throws CLIException {
         if (numberOfCores <= 0) {
-            throw new CLIException("Number of cores must be more than 0");
+            throw new CLIException("The number of cores must be a valid positive integer");
         }
         this.numberOfCores = numberOfCores;
     }

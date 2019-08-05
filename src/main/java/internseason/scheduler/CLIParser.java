@@ -22,7 +22,7 @@ public class CLIParser {
         CommandLine cmd = null;
 
         if(args.length < 2) {
-            throw new CLIException("INPUT.dot and P are required");
+            throw new CLIException("Must provide an input file and the number of processors.");
         }
 
 
@@ -32,7 +32,7 @@ public class CLIParser {
         try {
             numberOfProcessors = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            throw new CLIException((e.getMessage()));
+            throw new CLIException("Number of processors (P) must be an integer");
         }
 
         ConfigBuilder builder = new ConfigBuilder(inputFile, numberOfProcessors);
@@ -46,17 +46,12 @@ public class CLIParser {
         }
 
 
-        if(cmd.getArgList().size() != 0) {
-            throw new CLIException("Invalid Arguments");
-        }
-
-
         if(cmd.hasOption("p")) {
             try {
                 int numberOfCores = Integer.parseInt(cmd.getOptionValue("p"));
                 builder.setNumberOfCores(numberOfCores);
             } catch (NumberFormatException e) {
-                throw new CLIException("-p must be a valid integer");
+                throw new CLIException("The number of cores must be a valid positive integer");
             }
         }
 
@@ -76,11 +71,11 @@ public class CLIParser {
     private void setupCLIOptions() {
         Option numOfCores = Option.builder("p").argName("N").desc("use N cores for execution in parallel (default is sequential)").hasArg().build();
         Option visualisationEnabled = new Option("v", "visualise the search");
-        Option outputFile = Option.builder("o").argName("OUTPUT").desc("output file is named OUTPUT (default is INPUT−output.dot)").build();
+        Option outputFile = Option.builder("o").argName("OUTPUT").desc("output file is named OUTPUT (default is INPUT−output.dot)").hasArg().build();
 
         CLIOptions.addOption(numOfCores);
-        CLIOptions.addOption((visualisationEnabled));
-        CLIOptions.addOption((outputFile));
+        CLIOptions.addOption(visualisationEnabled);
+        CLIOptions.addOption(outputFile);
     }
 
 
