@@ -17,14 +17,12 @@ public class CLIParser {
         setupCLIOptions();
     }
 
-    public Config parse(String[] args) {
+    public Config parse(String[] args) throws CLIException {
 
         CommandLine cmd = null;
 
-
-
         if(args.length < 2) {
-            throw new IllegalArgumentException("INPUT.dot and P are required");
+            throw new CLIException("INPUT.dot and P are required");
         }
 
 
@@ -34,7 +32,7 @@ public class CLIParser {
         try {
             numberOfProcessors = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException((e.getMessage()));
+            throw new CLIException((e.getMessage()));
         }
 
         ConfigBuilder builder = new ConfigBuilder(inputFile, numberOfProcessors);
@@ -44,15 +42,13 @@ public class CLIParser {
         try {
             cmd = parser.parse(CLIOptions, argsToParse);
         } catch (ParseException e) {
-            throw new IllegalArgumentException("Malformed Arguments");
+            throw new CLIException("Malformed Arguments");
         }
-
 
 
         if(cmd.getArgList().size() != 0) {
-            throw new IllegalArgumentException("Invalid Arguments");
+            throw new CLIException("Invalid Arguments");
         }
-
 
 
         if(cmd.hasOption("p")) {
@@ -60,7 +56,7 @@ public class CLIParser {
                 int numberOfCores = Integer.parseInt(cmd.getOptionValue("p"));
                 builder.setNumberOfCores(numberOfCores);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("-p must be a valid integer");
+                throw new CLIException("-p must be a valid integer");
             }
         }
 

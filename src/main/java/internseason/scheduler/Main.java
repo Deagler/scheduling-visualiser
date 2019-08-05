@@ -12,7 +12,7 @@ public class Main {
         try {
             config = parser.parse(args);
             System.out.println(config.toString());
-        } catch (IllegalArgumentException e) {
+        } catch (CLIException e) {
             System.out.println("Error: "+e.getMessage());
             parser.printHelp();
         }

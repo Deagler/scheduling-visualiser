@@ -8,12 +8,12 @@ public class Config {
     private String outputFileName;
 
 
-    public Config(String inputDotFile, int numberOfProcessors, int numberOfCores,  boolean visualisationEnabled, String outputFileName) {
-        this.inputDotFile = inputDotFile;
-        this.numberOfProcessors = numberOfProcessors;
-        this.numberOfCores = numberOfCores;
-        this.visualisationEnabled = visualisationEnabled;
-        this.outputFileName = outputFileName;
+    public Config(String inputDotFile, int numberOfProcessors, int numberOfCores,  boolean visualisationEnabled, String outputFileName) throws CLIException {
+        setInputDotFile(inputDotFile);
+        setNumberOfProcessors(numberOfProcessors);
+        setNumberOfCores(numberOfCores);
+        setVisualisationEnabled(visualisationEnabled);
+        setOutputFileName(outputFileName);
     }
 
     public String getInputDotFile() {
@@ -32,11 +32,19 @@ public class Config {
         return outputFileName;
     }
 
-    public void setInputDotFile(String inputDotFile) {
+    public void setInputDotFile(String inputDotFile) throws CLIException {
+        if (!Config.isValidInputFile(inputDotFile)) {
+            throw new CLIException("Invalid Input File, Must be a .dot file");
+        }
+
         this.inputDotFile = inputDotFile;
     }
 
-    public void setNumberOfProcessors(int numberOfProcessors) {
+    public void setNumberOfProcessors(int numberOfProcessors) throws CLIException {
+        if(numberOfProcessors <= 0) {
+            throw new CLIException("Number of processors must be more than 0");
+        }
+
         this.numberOfProcessors = numberOfProcessors;
     }
 
@@ -44,7 +52,10 @@ public class Config {
         return numberOfCores;
     }
 
-    public void setNumberOfCores(int numberOfCores) {
+    public void setNumberOfCores(int numberOfCores) throws CLIException {
+        if (numberOfCores <= 0) {
+            throw new CLIException("Number of cores must be more than 0");
+        }
         this.numberOfCores = numberOfCores;
     }
 
@@ -65,5 +76,10 @@ public class Config {
                 ", visualisationEnabled=" + visualisationEnabled +
                 ", outputFileName='" + outputFileName + '\'' +
                 '}';
+    }
+
+
+    public static boolean isValidInputFile(String inputFile) {
+        return inputFile.endsWith(".dot");
     }
 }

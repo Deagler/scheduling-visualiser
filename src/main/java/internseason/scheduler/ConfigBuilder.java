@@ -3,10 +3,11 @@ package internseason.scheduler;
 public class ConfigBuilder {
     private Config config;
 
-    public ConfigBuilder(String inputDotFile, int numberOfProcessors) {
+    public ConfigBuilder(String inputDotFile, int numberOfProcessors) throws CLIException {
         config = this.getDefaultConfig(inputDotFile, numberOfProcessors);
-        String defaultOutputFileName = inputDotFile.replaceAll("\\.dot", "") + "-output.dot";
-        // TODO: ^ Make this better.
+        String inputFileWithoutExtension = inputDotFile.substring(0, inputDotFile.length() -4);
+        String defaultOutputFileName = inputFileWithoutExtension + "-output.dot";
+
         this.setOutputFileName(defaultOutputFileName);
 
     }
@@ -15,7 +16,7 @@ public class ConfigBuilder {
         config.setVisualisationEnabled(visualisationEnabled);
     }
 
-    public void setNumberOfCores(int numberOfCores) {
+    public void setNumberOfCores(int numberOfCores) throws CLIException {
        config.setNumberOfCores(numberOfCores);
     }
 
@@ -28,7 +29,7 @@ public class ConfigBuilder {
     }
 
 
-    private Config getDefaultConfig(String inputDotFile, int numberOfProcessors) {
+    private Config getDefaultConfig(String inputDotFile, int numberOfProcessors) throws CLIException {
         return new Config(inputDotFile, numberOfProcessors,1,  false, "INPUT-output.dot");
     }
 }
