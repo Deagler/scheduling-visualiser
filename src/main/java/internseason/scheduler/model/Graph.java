@@ -68,7 +68,9 @@ public class Graph {
         zero*/
 
         // Store the in degree of array
-        int[] inDegrees = getInDegrees();
+        Map<String,List<String>> adj = adjacencyList;
+        int[] inDegrees = getInDegrees(adj);
+        boolean[] visited = new boolean[adjacencyList.size()];
 
         // Initialize a queue with all in-degree zero vertices
         LinkedList<Integer> zeroDegrees = new LinkedList<>();
@@ -80,19 +82,26 @@ public class Graph {
         //while there are vertices remaining in the queue
         while (!zeroDegrees.isEmpty()){
             //dequeue and output a vertex
-            topological.add(String.valueOf(zeroDegrees.getFirst()));
+            String currentNode = String.valueOf(zeroDegrees.get());
+            topological.add(currentNode);
+            visited[Integer.parseInt(currentNode)] = true;
             zeroDegrees.remove();
-            //
-
-
-
-
+            //reduce in-degree of all vertices adjacent to it by 1
+            adjacencyList.remove(currentNode);
+            //enqueue any vertice whose in degree became zero
+            inDegrees = getInDegrees(adj);
+            for (int i=0;i<inDegrees.length;i++){
+                if (inDegrees[i] == 0 && !visited[i]){
+                    zeroDegrees.add(i);
+                }
+            }
         }
+
     }
 
-    private int[] getInDegrees() {
+    private int[] getInDegrees(Map<String,List<String>> adj) {
         int[] inDegrees = new int[tasks.size()];
-        for (List<String> value : adjacencyList.values()){
+        for (List<String> value : adj.values()){
             for (String s : value){
                 inDegrees[Integer.parseInt(s)]++;
             }
