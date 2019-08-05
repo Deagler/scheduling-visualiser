@@ -83,8 +83,14 @@ public class Schedule {
 //
 //    }
 
-    //TODO get all tasks in all processors of this schedule
+    //get all tasks in all processors of this schedule
     public List<Task> getTasks() {
-        return null;
+        ArrayList<Task> result = new ArrayList<>();
+
+        for (Processor processor: processorMap.values()) {
+            result.addAll(processor.getTasks());
+        }
+
+        return result;
     }
 }

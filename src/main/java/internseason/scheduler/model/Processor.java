@@ -53,5 +53,16 @@ public class Processor {
         //this.time -= task.getDelay();
     }
 
+    public List<Task> getTasks() {
+        ArrayList<Task> result = new ArrayList<>();
+
+        for (Pair<Task, Integer> pair: taskList) {
+            result.add(pair.getKey());
+        }
+
+        return result;
+
+    }
+
 
 }
