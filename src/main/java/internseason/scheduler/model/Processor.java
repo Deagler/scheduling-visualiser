@@ -68,5 +68,12 @@ public class Processor {
 
     }
 
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("p" + processorId + ": " + time);
+        return sb.toString();
+    }
+
 
 }

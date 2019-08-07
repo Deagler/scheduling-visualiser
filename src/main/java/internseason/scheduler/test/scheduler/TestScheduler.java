@@ -34,8 +34,17 @@ public class TestScheduler {
     @Test
     public void testNoDependenciesOneProcessor() {
         scheduler.createSchedules(graph, 1);
+        System.out.println(scheduler.findBestSchedule().toString());
         assertEquals(scheduler.findBestSchedule().getCost(), 10);
     }
+
+//    @Test
+//    public void testNoDependenciesTwoProcessors() {
+//        scheduler.createSchedules(graph, 2);
+//        //System.out.println(scheduler.findBestSchedule().getCost());
+//        System.out.println(scheduler.findBestSchedule().toString());
+//        assertEquals(scheduler.findBestSchedule().getCost(), 5);
+//    }
 
 
 }

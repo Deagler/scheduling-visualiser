@@ -18,25 +18,26 @@ public class Scheduler {
 
     public void backtrack(List<Schedule> scheduleList, Schedule schedule, Graph graph, int start) {
 
-        if (/*schedule.size() or */start == graph.size()) {
+        if (schedule.size() == graph.size()) {
             System.out.println("added");
+            System.out.println(schedule.toString());
             scheduleList.add(schedule);
         } else {
             for (int i = start; i< graph.size(); i++) {
-                System.out.println("i: " +i);
+                //System.out.println("i: " +i);
                 //for every processor that can be scheduled
                 for (int j = 0; j<schedule.numProcessors(); j++) {
-                    System.out.println("j: " + j);
+                    //System.out.println("j: " + j);
                     //can only add node if ALL its dependencies have been completed
                     if (schedule.getTasks().containsAll(graph.get(i).getDependencies())) {
-                        System.out.println("contains dependencies");
+                        //System.out.println("contains dependencies");
 
                         //check if there will be a delay
                         if (schedule.isEmpty() || j == schedule.getLastProcessorId()) {
-                            System.out.println("no delay");
+                            //System.out.println("no delay");
                             schedule.add(graph.get(i), j);
                         } else {
-                            System.out.println("delay");
+                            //System.out.println("delay");
                             schedule.addWithDelay(graph.get(i), j, schedule.getLastTask().getDelayTo(graph.get(i)));
                         }
 
@@ -64,6 +65,8 @@ public class Scheduler {
                 bestSchedule = schedules.get(i);
             }
         }
+
+        //System.out.println("bestschedule's cost: " + bestSchedule.toString());
 
         return bestSchedule;
     }

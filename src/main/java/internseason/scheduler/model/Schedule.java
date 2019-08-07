@@ -52,7 +52,7 @@ public class Schedule {
 
         processorOrder.push(processor.getId());
 
-        recalculateCost(processor.getTime());
+        checkIncreasedCost(processor.getTime());
     }
 
     public void addWithDelay(Task task, int processorId, int delay) {
@@ -65,7 +65,7 @@ public class Schedule {
 
         processorOrder.push(processor.getId());
 
-        recalculateCost(processor.getTime());
+        checkIncreasedCost(processor.getTime());
     }
 
     public void removeLastTask(int processorId) {
@@ -73,17 +73,42 @@ public class Schedule {
         Processor processor = processorMap.get(processorId);
         //Task task = processor.getLastTask();
         //scheduleMap.remove(task);
+
+        boolean costChanged = false;
+
+        if (processor.getTime() == this.cost) {
+            costChanged = true;
+        }
+
         processor.removeLastTask();
 
         processorOrder.pop();
 
-        recalculateCost(processor.getTime());
+        if (costChanged) {
+            //recalculateCost();
+        }
     }
 
-    public void recalculateCost(int cost) {
+    private void checkIncreasedCost(int cost) {
         if (cost > this.cost) {
             this.cost = cost;
         }
+    }
+
+//    public void checkDecreasedCost(int cost) {
+//        if (cost < this.cost) {
+//            this.cost = cost;
+//        }
+//    }
+
+    private void recalculateCost() {
+        int max = 0;
+        for (Processor p: processorMap.values()) {
+            if (p.getTime() > max) {
+                max = p.getTime();
+            }
+        }
+        this.cost = max;
     }
 
     public int getCost() {
@@ -111,5 +136,21 @@ public class Schedule {
 
     public Task getLastTask() {
         return processorMap.get(processorOrder.peek()).getLastTask();
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i=0; i<numOfProcessors; i++) {
+            sb.append(processorMap.get(i).toString());
+            System.out.println("HERE:" + processorMap.get(i).toString());
+//            sb.append("p");
+//            sb.append(i);
+//            sb.append(": cost: ");
+//            sb.append(processorMap.get(i).getTime());
+            sb.append("\n");
+        }
+
+        return sb.toString();
     }
 }
