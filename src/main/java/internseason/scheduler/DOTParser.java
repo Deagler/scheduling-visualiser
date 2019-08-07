@@ -62,9 +62,9 @@ public class DOTParser {
                     targetTask,
                     getCostOfGraphElement(edge)
             );
-
             sourceTask.addOutgoing(dependency);
             targetTask.addIncoming(dependency);
+            dependencies.add(dependency);
         }
         return dependencies;
     }
