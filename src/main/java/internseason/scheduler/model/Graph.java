@@ -55,16 +55,10 @@ public class Graph {
 
             adjacencyList.put(sourceId, list);
         }
-        for (Map.Entry<String, List<String>> entry : adjacencyList.entrySet()) {
-            System.out.print(entry.getKey()+ "|");
-            System.out.println(entry.getValue());
-            // ...
-        }
         return adjacencyList;
     }
 
     private void createTopologicalOrdering() {
-
         // Store the in degree of array
         adjacencyList = getAdjacencyList();
         int[] inDegrees = getInDegrees(adjacencyList);
@@ -78,39 +72,22 @@ public class Graph {
                 zeroDegrees.add(i);
             }
         }
-
         //while there are vertices remaining in the queue
         while (!zeroDegrees.isEmpty()){
             //dequeue and output a vertex
             String currentNode = String.valueOf(zeroDegrees.getFirst());
             topologicalOrdering.add(currentNode);
             visited[Integer.parseInt(currentNode)] = true;
-            for (boolean b : visited){
-                System.out.print(b+ " ");
-            }
-            for (Integer i : zeroDegrees){
-                System.out.println("Queue is:" + i);
-            }
-            System.out.println();
             zeroDegrees.remove();
             //reduce in-degree of all vertices adjacent to it by 1
             adjacencyList.remove(currentNode);
             //enqueue any vertice whose in degree became zero
-            for (Map.Entry<String, List<String>> entry : adjacencyList.entrySet()) {
-                System.out.print(entry.getKey()+ "|");
-                System.out.println(entry.getValue());
-                // ...
-            }
             inDegrees = getInDegrees(adjacencyList);
             for (int i=0;i<inDegrees.length;i++){
                 if (inDegrees[i] == 0 && !visited[i] && !zeroDegrees.contains(i)){
                     zeroDegrees.add(i);
                 }
             }
-        }
-        System.out.println("Top is");
-        for (String s : topologicalOrdering){
-            System.out.print(s);
         }
     }
 
