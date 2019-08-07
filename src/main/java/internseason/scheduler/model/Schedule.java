@@ -28,9 +28,13 @@ public class Schedule {
     }
 
     public int size() {
-        return processorMap.size();
+        return processorOrder.size();
         //return scheduleMap.size();
         //return scheduleList.size();
+    }
+
+    public boolean isEmpty() {
+        return processorOrder.isEmpty();
     }
 
     public void add(Task task, int processorId) {

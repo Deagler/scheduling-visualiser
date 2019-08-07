@@ -19,19 +19,24 @@ public class Scheduler {
     public void backtrack(List<Schedule> scheduleList, Schedule schedule, Graph graph, int start) {
 
         if (/*schedule.size() or */start == graph.size()) {
+            System.out.println("added");
             scheduleList.add(schedule);
         } else {
             for (int i = start; i< graph.size(); i++) {
+                System.out.println("i: " +i);
                 //for every processor that can be scheduled
-                for (int j = 1; j<schedule.numProcessors(); j++) {
-
+                for (int j = 0; j<schedule.numProcessors(); j++) {
+                    System.out.println("j: " + j);
                     //can only add node if ALL its dependencies have been completed
                     if (schedule.getTasks().containsAll(graph.get(i).getDependencies())) {
+                        System.out.println("contains dependencies");
 
                         //check if there will be a delay
-                        if (j == schedule.getLastProcessorId()) {
+                        if (schedule.isEmpty() || j == schedule.getLastProcessorId()) {
+                            System.out.println("no delay");
                             schedule.add(graph.get(i), j);
                         } else {
+                            System.out.println("delay");
                             schedule.addWithDelay(graph.get(i), j, schedule.getLastTask().getDelayTo(graph.get(i)));
                         }
 

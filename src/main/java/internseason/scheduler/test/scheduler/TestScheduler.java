@@ -37,4 +37,5 @@ public class TestScheduler {
         assertEquals(scheduler.findBestSchedule().getCost(), 10);
     }
 
+
 }
