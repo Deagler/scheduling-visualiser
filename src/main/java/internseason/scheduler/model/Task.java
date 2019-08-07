@@ -7,7 +7,6 @@ import java.util.Map;
 
 public class Task {
 
-        private Map<Task, Integer> children;
         private int cost;
         //private int delay;
         private List<Dependency> incomingEdge;
@@ -17,20 +16,18 @@ public class Task {
         public Task(int cost, String id) {
             this.cost = cost;
             this.id = id;
-            children = new HashMap<>();
             //this.delay = 0;
             incomingEdge = new ArrayList<>();
             outgoingEdge = new ArrayList<>();
         }
 
-//        public Task(int cost, int delay, String id) {
-//            this.cost = cost;
-//            this.id = id;
-//            children = new HashMap<>();
-//            //this.delay = delay;
-//            incomingEdge = new ArrayList<>();
-//            outgoingEdge = new ArrayList<>();
-//        }
+        public void addIncoming(Dependency edge) {
+            this.incomingEdge.add(edge);
+        }
+
+        public void addOutgoing(Dependency edge) {
+            this.outgoingEdge.add(edge);
+        }
 
         public int getCost() {
             return cost;
@@ -62,14 +59,19 @@ public class Task {
         public int getDelayTo(Task task) {
             //check if task depends on this
 
-            for (Dependency dependency: outgoingEdge) {
+            for (Dependency dependency : outgoingEdge) {
                 if (dependency.getTargetTask().equals(task)) {
-                    return dependency.getEdgeCost();
+                    return dependency.getDependencyCost();
                 }
             }
 
             //TODO throw exception
             return 0;
+        }
+
+        @Override
+        public String toString() {
+            return "Task " + this.id + ", Cost: " + this.cost;
         }
 }
 

@@ -29,16 +29,16 @@ public class Scheduler {
                 for (int j = 0; j<schedule.numProcessors(); j++) {
                     //System.out.println("j: " + j);
                     //can only add node if ALL its dependencies have been completed
-                    if (schedule.getTasks().containsAll(graph.get(i).getDependencies())) {
+                    if (schedule.getTasks().containsAll(graph.getTask(String.valueOf(i)).getDependencies())) {
                         //System.out.println("contains dependencies");
 
                         //check if there will be a delay
                         if (schedule.isEmpty() || j == schedule.getLastProcessorId()) {
                             //System.out.println("no delay");
-                            schedule.add(graph.get(i), j);
+                            schedule.add(graph.getTask(String.valueOf(i)), j);
                         } else {
                             //System.out.println("delay");
-                            schedule.addWithDelay(graph.get(i), j, schedule.getLastTask().getDelayTo(graph.get(i)));
+                            schedule.addWithDelay(graph.getTask(String.valueOf(i)), j, schedule.getLastTask().getDelayTo(graph.getTask(String.valueOf(i))));
                         }
 
                         backtrack(scheduleList, schedule, graph, i+1);
@@ -47,6 +47,12 @@ public class Scheduler {
 //                    schedule.add(graph.get(i), j);
 //                    backtrack(scheduleList, schedule, graph, i+1);
 //                    schedule.removeLastTask(j);
+
+//                for (int j = 1; j<schedule.numProcessors(); j++) {
+//                    schedule.add(graph.getTask(String.valueOf(i)), j);
+//                    backtrack(scheduleList, schedule, graph, i+1);
+//                    schedule.removeLastTask(j);
+
                 }
             }
         }

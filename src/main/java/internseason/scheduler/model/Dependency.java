@@ -14,7 +14,7 @@ public class Dependency {
         this.dependencyCost = edgeCost;
     }
 
-    public int getEdgeCost(){
+    public int getDependencyCost(){
         return dependencyCost;
     }
 
