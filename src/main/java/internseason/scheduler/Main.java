@@ -1,11 +1,10 @@
 package internseason.scheduler;
-
 import org.apache.commons.cli.*;
 
 public class Main {
 
     public static void main(String[] args) {
-
+      
         CLIParser parser = new CLIParser();
         Config config;
 
