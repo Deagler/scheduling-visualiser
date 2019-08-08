@@ -15,7 +15,7 @@ public abstract class BaseAlgorithm {
         this.graph = graphObj;
     }
 
-    abstract Schedule execute();
+    public abstract Schedule execute();
 
     public int getNumberOfProcessors() {
         return numberOfProcessors;

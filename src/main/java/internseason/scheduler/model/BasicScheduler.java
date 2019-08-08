@@ -6,14 +6,16 @@ public class BasicScheduler {
     public Schedule produceSchedule(Graph graph, int numOfProcessors) {
 
         Schedule schedule = new Schedule(numOfProcessors);
-        List<String> topological = graph.getTopologicalOrdering();
+        List<List<String>> topological = graph.getTopologicalOrdering();
 
-        for (String taskId : topological) {
-            Task task = graph.getTask(taskId);
-            try {
-                schedule.add(task, 0);
-            } catch (Exception e) {
-                e.printStackTrace();
+        for (List<String> layer : topological) {
+            for (String taskId : layer) {
+                Task task = graph.getTask(taskId);
+                try {
+                    schedule.add(task, 0);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 

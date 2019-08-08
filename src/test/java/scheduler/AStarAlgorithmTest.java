@@ -1,6 +1,7 @@
 package scheduler;
 
 import internseason.scheduler.DOTParser;
+import internseason.scheduler.algorithm.AStarAlgorithm;
 import internseason.scheduler.exceptions.InputException;
 import internseason.scheduler.model.*;
 import org.junit.Before;
@@ -9,22 +10,21 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.List;
 
-public class BasicSchedulerTest {
+public class AStarAlgorithmTest {
     private Graph graph;
-    private BasicScheduler scheduler;
     private DOTParser parser;
     @Before
     public void setup() {
-        scheduler = new BasicScheduler();
         this.parser = new DOTParser();
     }
 
     @Test
-    public void testBasicSchedule() {
+    public void testAStarSchedule() {
         try {
-            Graph graph = this.parser.parse("src/test/resources/Nodes_8_Random.dot");
-            Schedule schedule = this.scheduler.produceSchedule(graph, 1);
-
+            Graph graph = this.parser.parse("src/test/resources/Test_Diamond.dot");
+            AStarAlgorithm algorithm = new AStarAlgorithm(graph,2);
+            Schedule schedule = algorithm.execute();
+            System.out.println(schedule);
         } catch (InputException e) {
             e.printStackTrace();
         }

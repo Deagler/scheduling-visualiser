@@ -1,6 +1,8 @@
 package internseason.scheduler.model;
 
-public class Dependency {
+import java.io.Serializable;
+
+public class Dependency implements Serializable {
 
     private Task sourceTask;
 

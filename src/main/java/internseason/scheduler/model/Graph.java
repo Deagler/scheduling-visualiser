@@ -37,6 +37,8 @@ public class Graph {
         if (topologicalOrdering == null){
             createTopologicalOrdering();
         }
+
+        System.out.println(topologicalOrdering);
         return topologicalOrdering;
     }
 

@@ -1,5 +1,7 @@
 package internseason.scheduler.model;
 
+import org.apache.commons.lang3.SerializationUtils;
+
 import java.util.*;
 
 public class Schedule {
@@ -7,8 +9,8 @@ public class Schedule {
     //List<Allocation> scheduleList;
     //Map<Task, Processor> scheduleMap;
     //Map<Processor, List<Task>> scheduleMap;
-    private Map<Integer, Processor> processorMap;
-    private Map<Task, Integer> taskMap; // map from task to process id
+    private HashMap<Integer, Processor> processorMap;
+    private HashMap<String, Integer> taskMap; // map from task to process id
     private int numOfProcessors;
     private int cost;
     private Stack<Integer> processorOrder;
@@ -33,10 +35,11 @@ public class Schedule {
     }
 
     public Schedule(Schedule schedule) {
-        this.processorMap = (HashMap<Integer, Processor>)schedule.processorMap.clone();
+        this.processorMap = SerializationUtils.clone(schedule.processorMap);
+        this.processorOrder = SerializationUtils.clone(schedule.processorOrder);
         this.numOfProcessors = schedule.numOfProcessors;
         this.cost = schedule.cost;
-        this.processorOrder = (Stack<Integer>)schedule.processorOrder.clone();
+        this.taskMap = SerializationUtils.clone(schedule.taskMap);
     }
 
     public int numProcessors() {
@@ -51,7 +54,7 @@ public class Schedule {
         return processorOrder.isEmpty();
     }
 
-    public void add(Task task, int processorId) throws Exception {
+    public void add(Task task, int processorId) {
         //map.put(task, new Allocation(, process));
         //scheduleMap.put(task, processorMap.getOrDefault(processorId, new Processor(processorId)));
         //processorMap.put(processorId, scheduleMap.get(task));
@@ -65,7 +68,7 @@ public class Schedule {
         //processor.addTask(task);
         processor.addTaskAt(task, findNextAvailableTimeInProcessor(task, processorId));
 
-        this.taskMap.put(task, processorId);
+        this.taskMap.put(task.getId(), processorId);
 
         processorOrder.push(processor.getId());
 
@@ -99,7 +102,9 @@ public class Schedule {
         int result = processorMap.get(processorId).getCost();
 
         for (Task parent: parentTasks) {
-            int sourceProcess = this.taskMap.get(parent);
+
+
+            Integer sourceProcess = this.taskMap.get(parent.getId());
 
             if (sourceProcess == processorId) {
                 continue;
@@ -115,6 +120,10 @@ public class Schedule {
         }
 
         return result;
+    }
+
+    public boolean isTaskAssigned(Task task) {
+        return this.taskMap.containsKey(task.getId());
     }
 
     private void checkIncreasedCost(int cost) {
