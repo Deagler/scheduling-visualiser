@@ -53,13 +53,14 @@ public class Schedule {
         checkIncreasedCost(processor.getCost());
     }
 
-    public void addWithDelay(Task task, int processorId, int delay) {
+    public void addWithDelay(Task task, int processorId, int delay) throws Exception {
         if (!processorMap.containsKey(processorId)) {
             processorMap.put(processorId, new Processor(processorId));
         }
         //task.setDelay(delay);
         Processor processor = processorMap.get(processorId);
-        processor.addTaskWithDelay(task, delay);
+        //processor.addTaskWithDelay(task, delay);
+        processor.addTaskAt(task, processor.getCost() + delay);
 
         processorOrder.push(processor.getId());
 
