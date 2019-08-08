@@ -3,7 +3,7 @@ package internseason.scheduler.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Scheduler {
+public class BacktrackScheduler {
 
     List<Schedule> schedules = new ArrayList<Schedule>();
 
@@ -38,7 +38,7 @@ public class Scheduler {
                             schedule.add(graph.getTask(String.valueOf(i)), j);
                         } else {
                             //System.out.println("delay");
-                            schedule.addWithDelay(graph.getTask(String.valueOf(i)), j, schedule.getLastTask().getDelayTo(graph.getTask(String.valueOf(i))));
+                            //schedule.addWithDelay(graph.getTask(String.valueOf(i)), j, schedule.getLastTask().getDelayTo(graph.getTask(String.valueOf(i))));
                         }
 
                         backtrack(scheduleList, schedule, graph, i+1);

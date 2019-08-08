@@ -1,21 +1,18 @@
 package scheduler;
 
+import internseason.scheduler.model.BacktrackScheduler;
 import internseason.scheduler.model.Graph;
-import internseason.scheduler.model.Scheduler;
 import internseason.scheduler.model.Task;
 import org.junit.Before;
-import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 
 
-public class SchedulerTest {
+public class BacktrackSchedulerTest {
     private Graph graph;
-    private Scheduler scheduler;
+    private BacktrackScheduler scheduler;
     private Task task1;
     private Task task2;
     private Task task3;
@@ -24,7 +21,7 @@ public class SchedulerTest {
     @Before
     public void setup() {
         graph = new Graph();
-        scheduler = new Scheduler();
+        scheduler = new BacktrackScheduler();
         task1 = new Task(1, "test1");
         task2 = new Task(2, "test2");
         task3 = new Task(3, "test3");
