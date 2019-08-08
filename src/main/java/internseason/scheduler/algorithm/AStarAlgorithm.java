@@ -18,6 +18,22 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
     @Override
     Schedule execute(List<Task> tasks) {
+
+        int totalTasks = tasks.size();
+        Schedule initialSchedule = new Schedule(getNumberOfProcessors());
+        scheduleQueue.add(initialSchedule);
+
+        while (!scheduleQueue.isEmpty()) {
+            Schedule head = scheduleQueue.poll();
+
+            if (head.getNumberOfTasks() == totalTasks) {
+                return head;
+            }
+
+
+
+        }
+
         return null;
     }
 
@@ -33,6 +49,8 @@ public class AStarAlgorithm extends BaseAlgorithm {
             } else {
                 if (o1.getNumberOfTasks() > o2.getNumberOfTasks()) {
                     return -1;
+                } else if (o1.getNumberOfTasks() == o2.getNumberOfTasks()){
+                    return 0;
                 } else {
                     return 1;
                 }

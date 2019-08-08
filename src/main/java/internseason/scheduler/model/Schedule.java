@@ -4,17 +4,13 @@ import java.util.*;
 
 public class Schedule {
 
-    //List<Allocation> scheduleList;
-    //Map<Task, Processor> scheduleMap;
-    //Map<Processor, List<Task>> scheduleMap;
+
     private Map<Integer, Processor> processorMap;
     private int numOfProcessors;
     private int cost;
     private Stack<Integer> processorOrder;
 
     public Schedule(int numOfProcessors) {
-        //scheduleList = new ArrayList<>();
-        //scheduleMap = new HashMap<>();
         processorMap = new HashMap<>();
         this.numOfProcessors = numOfProcessors;
         this.cost = 0;
@@ -27,8 +23,6 @@ public class Schedule {
 
     public int size() {
         return processorOrder.size();
-        //return scheduleMap.size();
-        //return scheduleList.size();
     }
 
     public boolean isEmpty() {
@@ -67,9 +61,9 @@ public class Schedule {
         checkIncreasedCost(processor.getCost());
     }
 
-    public void removeLastTask(int processorId) {
+    public void removeLastTask() {
         //clear up space on processor
-        Processor processor = processorMap.get(processorId);
+        Processor processor = processorMap.get(processorOrder.peek());
         //Task task = processor.getLastTask();
         //scheduleMap.remove(task);
 
