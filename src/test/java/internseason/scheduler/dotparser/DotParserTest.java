@@ -3,10 +3,13 @@ package internseason.scheduler.dotparser;
 import internseason.scheduler.DOTParser;
 import internseason.scheduler.exceptions.InputException;
 import internseason.scheduler.model.Graph;
+import internseason.scheduler.model.Task;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -43,28 +46,37 @@ public class DotParserTest {
     }
 
     @Test
-    public void testInvalidParse() {
+    public void testGetParents() {
         try {
-            Graph graph = this.parser.parse("src/test/sources/invalid.dot");
-            fail();
+            Graph graph = (this.parser.parse("src/test/resources/Nodes_8_Random.dot"));
+            Map<String, Task> tasks = graph.getTasks();
+            Map<String, Integer> parentCountMap = this.getNode8ParentCountMap();
+
+            for (Task task : tasks.values()) {
+                List<Task> parents = task.getParentTasks();
+                assertEquals(Integer.valueOf(parentCountMap.get(task.getId())), Integer.valueOf(parents.size()));
+            }
+
         } catch (InputException e) {
-            assertEquals("Invalid input dot files", e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    public HashMap<String, Integer> buildNode8DependencyCountMap() {
-        HashMap<String, Integer> map = new HashMap<String, Integer>() {{
-            put("0", 0);
-            put("1", 1);
-            put("2", 1);
-            put("3", 1);
-            put("4", 3);
-            put("5", 2);
-            put("6", 3);
-            put("7", 5);
-        }};
+    public Map<String, Integer> getNode8ParentCountMap() {
+        Map<String, Integer> parentCountMap = new HashMap<String, Integer>() {
+            {
+                put("0", 0);
+                put("1", 1);
+                put("2", 1);
+                put("3", 1);
+                put("4", 3);
+                put("5", 2);
+                put("6", 3);
+                put("7", 5);
 
-        return map;
+            }
+        };
+        return parentCountMap;
     }
 
 }
