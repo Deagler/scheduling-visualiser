@@ -6,11 +6,11 @@ public class Graph {
     Map<String, Task> tasks;
     List<Dependency> dependencies;
     Map<String, List<String>> adjacencyList;
+    List<String> topological;
 
 
     public Graph() {
         tasks = new HashMap<String, Task>();
-        this.createTopologicalOrdering();
     }
 
     public void setTasks(Map<String,Task> tasks) {
@@ -34,6 +34,10 @@ public class Graph {
     }
 
     public List<String> getTopologicalOrdering(){
+        if (this.topological == null) {
+            createTopologicalOrdering();
+        }
+
         return this.topological;
     }
 
@@ -60,7 +64,7 @@ public class Graph {
         adjacencyList = getAdjacencyList();
         int[] inDegrees = getInDegrees(adjacencyList);
         boolean[] visited = new boolean[tasks.size()];
-        topologicalOrdering = new ArrayList<>();
+        topological = new ArrayList<>();
 
         // Initialize a queue with all in-degree zero vertices
         LinkedList<Integer> zeroDegrees = new LinkedList<>();
@@ -73,7 +77,7 @@ public class Graph {
         while (!zeroDegrees.isEmpty()){
             //dequeue and output a vertex
             String currentNode = String.valueOf(zeroDegrees.getFirst());
-            topologicalOrdering.add(currentNode);
+            topological.add(currentNode);
             visited[Integer.parseInt(currentNode)] = true;
             zeroDegrees.remove();
             //reduce in-degree of all vertices adjacent to it by 1

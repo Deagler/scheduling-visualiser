@@ -4,6 +4,7 @@ import internseason.scheduler.model.BacktrackScheduler;
 import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Task;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.util.HashMap;
 

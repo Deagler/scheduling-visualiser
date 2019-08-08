@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class BasicSchedulerTest {
     private Graph graph;

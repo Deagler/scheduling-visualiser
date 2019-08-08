@@ -20,7 +20,7 @@ public class BacktrackScheduler {
 
         if (schedule.size() == graph.size()) {
             System.out.println("added");
-            System.out.println(schedule.toString());
+            //System.out.println(schedule.toString());
             scheduleList.add(schedule);
         } else {
             for (int i = start; i< graph.size(); i++) {
@@ -29,13 +29,17 @@ public class BacktrackScheduler {
                 for (int j = 0; j<schedule.numProcessors(); j++) {
                     //System.out.println("j: " + j);
                     //can only add node if ALL its dependencies have been completed
-                    if (schedule.getTasks().containsAll(graph.getTask(String.valueOf(i)).getDependencies())) {
+                    if (schedule.getTasks().containsAll(graph.getTask(String.valueOf(i)).getIncomingEdges())) {
                         //System.out.println("contains dependencies");
 
                         //check if there will be a delay
                         if (schedule.isEmpty() || j == schedule.getLastProcessorId()) {
                             //System.out.println("no delay");
-                            schedule.add(graph.getTask(String.valueOf(i)), j);
+                            try {
+                                schedule.add(graph.getTask(String.valueOf(i)), j);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         } else {
                             //System.out.println("delay");
                             //schedule.addWithDelay(graph.getTask(String.valueOf(i)), j, schedule.getLastTask().getDelayTo(graph.getTask(String.valueOf(i))));

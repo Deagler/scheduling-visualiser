@@ -8,6 +8,7 @@ public class Schedule {
     //Map<Task, Processor> scheduleMap;
     //Map<Processor, List<Task>> scheduleMap;
     private Map<Integer, Processor> processorMap;
+    private Map<Task, Integer> taskMap; // map from task to process id
     private int numOfProcessors;
     private int cost;
     private Stack<Integer> processorOrder;
@@ -15,10 +16,20 @@ public class Schedule {
     public Schedule(int numOfProcessors) {
         //scheduleList = new ArrayList<>();
         //scheduleMap = new HashMap<>();
-        processorMap = new HashMap<>();
         this.numOfProcessors = numOfProcessors;
         this.cost = 0;
         this.processorOrder = new Stack<>();
+        this.taskMap = new HashMap<>();
+
+        this.initializeProcessMap(numOfProcessors);
+    }
+
+    public void initializeProcessMap(int numberOfProcesses) {
+        this.processorMap = new HashMap<>();
+
+        for (int i = 0; i < numberOfProcesses; i++) {
+            this.processorMap.put(i, new Processor(i));
+        }
     }
 
     public int numProcessors() {
@@ -35,7 +46,7 @@ public class Schedule {
         return processorOrder.isEmpty();
     }
 
-    public void add(Task task, int processorId) {
+    public void add(Task task, int processorId) throws Exception {
         //map.put(task, new Allocation(, process));
         //scheduleMap.put(task, processorMap.getOrDefault(processorId, new Processor(processorId)));
         //processorMap.put(processorId, scheduleMap.get(task));
@@ -46,21 +57,10 @@ public class Schedule {
         }
         //processorMap.get(processorId).addTask(task);
         Processor processor = processorMap.get(processorId);
-        processor.addTask(task);
+        //processor.addTask(task);
+        processor.addTaskAt(task, findNextAvailableTimeInProcessor(task, processorId));
 
-        processorOrder.push(processor.getId());
-
-        checkIncreasedCost(processor.getCost());
-    }
-
-    public void addWithDelay(Task task, int processorId, int delay) throws Exception {
-        if (!processorMap.containsKey(processorId)) {
-            processorMap.put(processorId, new Processor(processorId));
-        }
-        //task.setDelay(delay);
-        Processor processor = processorMap.get(processorId);
-        //processor.addTaskWithDelay(task, delay);
-        processor.addTaskAt(task, processor.getCost() + delay);
+        this.taskMap.put(task, processorId);
 
         processorOrder.push(processor.getId());
 
@@ -86,6 +86,30 @@ public class Schedule {
         if (costChanged) {
             //recalculateCost();
         }
+    }
+
+    private int findNextAvailableTimeInProcessor(Task task, int processorId) {
+        List<Task> parentTasks = task.getParentTasks();
+
+        int result = processorMap.get(processorId).getCost();
+
+        for (Task parent: parentTasks) {
+            int sourceProcess = this.taskMap.get(parent);
+
+            if (sourceProcess == processorId) {
+                continue;
+            }
+
+            Processor process = this.processorMap.get(sourceProcess);
+            int parentFinishTime = process.getTaskStartTime(parent) + parent.getCost();
+            int communicationCost = parent.getCostToChild(task);
+
+            int newScheduleTime = parentFinishTime + communicationCost;
+
+            result = Math.max(result, newScheduleTime);
+        }
+
+        return result;
     }
 
     private void checkIncreasedCost(int cost) {
@@ -114,10 +138,6 @@ public class Schedule {
         return cost;
     }
 
-//    public void getTaskAt() {
-//
-//    }
-
     //get all tasks in all processors of this schedule
     public List<Task> getTasks() {
         ArrayList<Task> result = new ArrayList<>();
@@ -141,14 +161,13 @@ public class Schedule {
         StringBuilder sb = new StringBuilder();
 
         for (int i=0; i<numOfProcessors; i++) {
-            sb.append(processorMap.get(i).toString());
-            System.out.println("HERE:" + processorMap.get(i).toString());
-//            sb.append("p");
-//            sb.append(i);
-//            sb.append(": cost: ");
-//            sb.append(processorMap.get(i).getCost());
-            sb.append("\n");
+            //sb.append("p" + processorMap.get(i));
+            sb.append("Processor " + i + "\n");
+            sb.append(processorMap.get(i));
+            sb.append("Cost of Processor " + i + ": " + processorMap.get(i).getCost() + "\n");
         }
+
+        sb.append("Total schedule cost is: " + this.cost);
 
         return sb.toString();
     }
