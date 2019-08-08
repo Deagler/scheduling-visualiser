@@ -6,12 +6,12 @@ public class Graph {
     Map<String, Task> tasks;
     List<Dependency> dependencies;
     Map<String, List<String>> adjacencyList;
-    List<List<String>> topologicalOrdering;
 
     List<String> topological;
 
     public Graph() {
         tasks = new HashMap<String, Task>();
+        this.createTopologicalOrdering();
     }
 
     public void setTasks(Map<String,Task> tasks) {
@@ -34,11 +34,8 @@ public class Graph {
         return this.tasks;
     }
 
-    public List<List<String>> getTopologicalOrdering(){
-        if (topologicalOrdering == null){
-            createTopologicalOrdering();
-        }
-        return topologicalOrdering;
+    public List<String> getTopologicalOrdering(){
+        return this.topological;
     }
 
     private Map<String, List<String>> getAdjacencyList() {
