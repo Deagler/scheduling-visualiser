@@ -10,7 +10,9 @@ import java.util.Map;
 public class Processor {
     private int time;
     private int processorId;
-    private List<Pair<Task, Integer>> taskList;
+
+    private List<Pair<Task, Integer>> taskList; //task - delay on the task
+    private Map<Task, Integer> taskMap; //task - time at which task is scheduled
     //private Map<Task, Integer> taskMap;
 
     public Processor(int processorId) {
@@ -35,12 +37,14 @@ public class Processor {
     public void addTask(Task task) {
         //taskMap.put(task, 0);
         taskList.add(new Pair(task, 0));
+        taskMap.put(task, this.time);
         this.time += task.getCost();
     }
 
     public void addTaskWithDelay(Task task, int delay) {
         //taskMap.put(task, delay);
         taskList.add(new Pair(task, delay));
+        taskMap.put(task, this.time + delay);
         this.time += task.getCost();
         this.time += delay;
     }
@@ -53,6 +57,7 @@ public class Processor {
         Task task = getLastTask();
         this.time -= taskList.get(taskList.size() -1).getValue();
         this.time -= task.getCost();
+        taskMap.remove(task);
         taskList.remove(taskList.size()-1);
         //this.time -= task.getDelay();
     }
@@ -60,8 +65,11 @@ public class Processor {
     public List<Task> getTasks() {
         ArrayList<Task> result = new ArrayList<>();
 
-        for (Pair<Task, Integer> pair: taskList) {
-            result.add(pair.getKey());
+//        for (Pair<Task, Integer> pair: taskList) {
+//            result.add(pair.getKey());
+//        }
+        for (Task t: taskMap.keySet()) {
+            result.add(t);
         }
 
         return result;
@@ -71,7 +79,11 @@ public class Processor {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("p" + processorId + ": " + time);
+        for (Task t: taskMap.keySet()) {
+            sb.append("p" + t.getId() + " scheduled on: " + taskMap.get(t) + "\n");
+        }
+
+        //sb.append("p" + processorId + ": " + time);
         return sb.toString();
     }
 
