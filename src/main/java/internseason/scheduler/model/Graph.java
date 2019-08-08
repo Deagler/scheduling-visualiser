@@ -6,7 +6,7 @@ public class Graph {
     Map<String, Task> tasks;
     List<Dependency> dependencies;
     Map<String, List<String>> adjacencyList;
-    List<String> topologicalOrdering;
+    List<List<String>> topologicalOrdering;
 
 
     public Graph() {
@@ -33,7 +33,7 @@ public class Graph {
         return this.tasks;
     }
 
-    public List<String> getTopologicalOrdering(){
+    public List<List<String>> getTopologicalOrdering(){
         if (topologicalOrdering == null){
             createTopologicalOrdering();
         }
@@ -62,7 +62,8 @@ public class Graph {
         // Store the in degree of array
         adjacencyList = getAdjacencyList();
         int[] inDegrees = getInDegrees(adjacencyList);
-        boolean[] visited = new boolean[tasks.size()];
+
+        Set<Integer> visitedSet = new HashSet<>();
         topologicalOrdering = new ArrayList<>();
 
         // Initialize a queue with all in-degree zero vertices
@@ -72,23 +73,33 @@ public class Graph {
                 zeroDegrees.add(i);
             }
         }
+        List<List<String>> layers = new ArrayList<>();
         //while there are vertices remaining in the queue
         while (!zeroDegrees.isEmpty()){
-            //dequeue and output a vertex
-            String currentNode = String.valueOf(zeroDegrees.getFirst());
-            topologicalOrdering.add(currentNode);
-            visited[Integer.parseInt(currentNode)] = true;
-            zeroDegrees.remove();
-            //reduce in-degree of all vertices adjacent to it by 1
-            adjacencyList.remove(currentNode);
+
+
+            visitedSet.addAll(zeroDegrees);
+
+            List<String> layer  = new ArrayList<>();
+            for (Integer vertex : zeroDegrees) {
+                adjacencyList.remove(String.valueOf(vertex));
+                layer.add(String.valueOf(vertex));
+            }
+            layers.add(layer);
+
+            zeroDegrees.clear();
+
+
             //enqueue any vertice whose in degree became zero
             inDegrees = getInDegrees(adjacencyList);
             for (int i=0;i<inDegrees.length;i++){
-                if (inDegrees[i] == 0 && !visited[i] && !zeroDegrees.contains(i)){
+                if (inDegrees[i] == 0 && !visitedSet.contains(i) && !zeroDegrees.contains(i)){
                     zeroDegrees.add(i);
                 }
             }
         }
+
+        topologicalOrdering = layers;
     }
 
     private int[] getInDegrees(Map<String,List<String>> adj) {

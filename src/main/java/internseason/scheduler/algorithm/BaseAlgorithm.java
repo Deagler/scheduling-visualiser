@@ -1,5 +1,6 @@
 package internseason.scheduler.algorithm;
 
+import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Schedule;
 import internseason.scheduler.model.Task;
 
@@ -7,12 +8,14 @@ import java.util.List;
 
 public abstract class BaseAlgorithm {
     protected int numberOfProcessors;
+    protected Graph graph;
 
-    public BaseAlgorithm(int numberOfProcessors) {
+    public BaseAlgorithm(Graph graphObj, int numberOfProcessors) {
         this.numberOfProcessors = numberOfProcessors;
+        this.graph = graphObj;
     }
 
-    abstract Schedule execute(List<Task> tasks);
+    abstract Schedule execute();
 
     public int getNumberOfProcessors() {
         return numberOfProcessors;
@@ -21,4 +24,6 @@ public abstract class BaseAlgorithm {
     public void setNumberOfProcessors(int numberOfProcessors) {
         this.numberOfProcessors = numberOfProcessors;
     }
+
+
 }

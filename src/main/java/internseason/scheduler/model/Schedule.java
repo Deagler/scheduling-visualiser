@@ -5,7 +5,7 @@ import java.util.*;
 public class Schedule {
 
 
-    private Map<Integer, Processor> processorMap;
+    private HashMap<Integer, Processor> processorMap;
     private int numOfProcessors;
     private int cost;
     private Stack<Integer> processorOrder;
@@ -15,6 +15,13 @@ public class Schedule {
         this.numOfProcessors = numOfProcessors;
         this.cost = 0;
         this.processorOrder = new Stack<>();
+    }
+
+    public Schedule(Schedule schedule) {
+        this.processorMap = (HashMap<Integer, Processor>)schedule.processorMap.clone();
+        this.numOfProcessors = schedule.numOfProcessors;
+        this.cost = schedule.cost;
+        this.processorOrder = (Stack<Integer>)schedule.processorOrder.clone();
     }
 
     public int numProcessors() {
@@ -80,6 +87,10 @@ public class Schedule {
         if (costChanged) {
             //recalculateCost();
         }
+    }
+
+    public boolean isTaskAssigned(String taskId) {
+        return true;
     }
 
     private void checkIncreasedCost(int cost) {
@@ -150,4 +161,6 @@ public class Schedule {
 
         return sb.toString();
     }
+
+
 }
