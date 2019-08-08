@@ -31,9 +31,7 @@ public class TopSortTest {
     }
 
     @Test
-    public void testNineSeriesParallelGraphOrder(){
-        testTopologicalOrder("src/test/resources/Nodes_9_SeriesParallel.dot");
-    }
+    public void testNineSeriesParallelGraphOrder(){ testTopologicalOrder("src/test/resources/Nodes_9_SeriesParallel.dot"); }
 
     @Test
     public void testTenRandomGraphOrder(){
