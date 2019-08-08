@@ -1,31 +1,29 @@
 package internseason.scheduler.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Task {
 
 
-        private List<Dependency> incomingEdge;
-        private List<Dependency> outgoingEdge;
+        private List<Dependency> incomingEdges;
+        private List<Dependency> outgoingEdges;
         private int cost;
         private String id;
 
         public Task(int cost, String id) {
             this.cost = cost;
             this.id = id;
-            incomingEdge = new ArrayList<>();
-            outgoingEdge = new ArrayList<>();
+            incomingEdges = new ArrayList<>();
+            outgoingEdges = new ArrayList<>();
         }
 
         public void addIncoming(Dependency edge) {
-            this.incomingEdge.add(edge);
+            this.incomingEdges.add(edge);
         }
 
         public void addOutgoing(Dependency edge) {
-            this.outgoingEdge.add(edge);
+            this.outgoingEdges.add(edge);
         }
 
         public int getCost() {
@@ -34,6 +32,14 @@ public class Task {
 
         public String getId(){
             return id;
+        }
+
+        public List<Dependency> getOutgoingEdges(){
+            return outgoingEdges;
+        }
+
+        public List<Dependency> getIncomingEdges(){
+            return incomingEdges;
         }
 
         @Override

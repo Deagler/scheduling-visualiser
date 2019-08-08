@@ -1,4 +1,4 @@
-package dotparser;
+package internseason.scheduler.dotparser;
 
 import internseason.scheduler.DOTParser;
 import internseason.scheduler.exceptions.InputException;
