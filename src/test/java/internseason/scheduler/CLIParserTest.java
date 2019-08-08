@@ -1,6 +1,8 @@
 package internseason.scheduler;
 
 
+import internseason.scheduler.exceptions.InputException;
+import internseason.scheduler.model.Graph;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -229,6 +231,5 @@ public class CLIParserTest {
         assertEquals(true, config.isVisualisationEnabled());
         assertEquals("output.dot", config.getOutputFileName());
     }
-
 
 }

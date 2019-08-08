@@ -25,4 +25,9 @@ public class Dependency {
     public Task getTargetTask(){
         return targetTask;
     }
+
+    @Override
+    public String toString(){
+        return "Source:" + sourceTask.toString() + " Target:"+targetTask.toString()+" Weight:"+dependencyCost;
+    }
 }
