@@ -129,6 +129,10 @@ public class Schedule {
         return result;
     }
 
+    public int getNumberOfTasks() {
+        return this.getTasks().size();
+    }
+
     public int getLastProcessorId() {
         return processorOrder.peek();
     }
