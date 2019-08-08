@@ -40,9 +40,17 @@ public class Task {
         this.outgoingEdges.add(edge);
     }
 
-    @Override
-    public String toString() {
-        return "Task " + this.id + ", Cost: " + this.cost;
-    }
+        public List<Dependency> getOutgoingEdges(){
+            return outgoingEdges;
+        }
+
+        public List<Dependency> getIncomingEdges(){
+            return incomingEdges;
+        }
+
+        @Override
+        public String toString() {
+            return "Task " + this.id + ", Cost: " + this.cost;
+        }
 }
 
