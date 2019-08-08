@@ -4,7 +4,7 @@ digraph "Random_Nodes_10_Density_1.90_CCR_10.00_WeightType_Random" {
 		"No of edges"=19,
 		"No of nodes"=10,
 		"Node concurrency"=-1,
-		"Total sequential time"=63
+		"Total sequential cost"=63
 	];
 	0	 [Weight=6];
 	3	 [Weight=10];

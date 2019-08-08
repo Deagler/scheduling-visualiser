@@ -1,7 +1,5 @@
 package internseason.scheduler.model;
 
-import javafx.util.Pair;
-
 import java.util.*;
 
 public class Schedule {
@@ -52,7 +50,7 @@ public class Schedule {
 
         processorOrder.push(processor.getId());
 
-        checkIncreasedCost(processor.getTime());
+        checkIncreasedCost(processor.getCost());
     }
 
     public void addWithDelay(Task task, int processorId, int delay) {
@@ -65,7 +63,7 @@ public class Schedule {
 
         processorOrder.push(processor.getId());
 
-        checkIncreasedCost(processor.getTime());
+        checkIncreasedCost(processor.getCost());
     }
 
     public void removeLastTask(int processorId) {
@@ -76,7 +74,7 @@ public class Schedule {
 
         boolean costChanged = false;
 
-        if (processor.getTime() == this.cost) {
+        if (processor.getCost() == this.cost) {
             costChanged = true;
         }
 
@@ -104,8 +102,8 @@ public class Schedule {
     private void recalculateCost() {
         int max = 0;
         for (Processor p: processorMap.values()) {
-            if (p.getTime() > max) {
-                max = p.getTime();
+            if (p.getCost() > max) {
+                max = p.getCost();
             }
         }
         this.cost = max;
@@ -147,7 +145,7 @@ public class Schedule {
 //            sb.append("p");
 //            sb.append(i);
 //            sb.append(": cost: ");
-//            sb.append(processorMap.get(i).getTime());
+//            sb.append(processorMap.get(i).getCost());
             sb.append("\n");
         }
 
