@@ -7,7 +7,10 @@ import internseason.scheduler.model.Task;
 import java.util.*;
 
 
-
+/**
+ * Temporary Data-structure to store a schedule and the given topological layer the algorithm should attempt to generate
+ * new schedules from.
+ */
 class ScheduleInfo {
     public Schedule schedule;
     public Integer layer;
@@ -25,10 +28,16 @@ class ScheduleInfo {
     }
 }
 
-
+/**
+ * PoC AStar Algorithm that uses Topological layering and
+ * a heuristic that factors in the cost of the schedule and number of tasks.
+ *
+ * Possible Schedules are generated layer-by-layer as to avoid generating schedules that have dependency violations.
+ */
 public class AStarAlgorithm extends BaseAlgorithm {
     Queue<ScheduleInfo> scheduleQueue;
     List<List<Task>> topologicalTasks;
+
 
     public AStarAlgorithm(Graph graphObj, int numberOfProcessors) {
         super(graphObj, numberOfProcessors);
@@ -42,35 +51,41 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
     }
 
-
+    /**
+     * Basic Implementation of the AStar Algorithm without duplicate detection or any pruning.
+     * Reference: https://researchspace.auckland.ac.nz/handle/2292/30213
+     * @return An optimal schedule
+     */
     @Override
     public Schedule execute() {
 
         int totalTasks = graph.getTasks().size();
         Schedule initialSchedule = new Schedule(getNumberOfProcessors());
 
-        scheduleQueue.add(new ScheduleInfo(initialSchedule, 0));
+        scheduleQueue.add(new ScheduleInfo(initialSchedule, 0)); // Add the empty schedule to the queue.
 
 
         while (!scheduleQueue.isEmpty()) {
             ScheduleInfo head = scheduleQueue.poll();
 
+            // Return the optimal schedule (First complete schedule, orchestrated by AStar Heuristic)
             if (head.schedule.getNumberOfTasks() == totalTasks) {
                 return head.schedule;
             }
 
 
+            // Extending the polled schedule to generate all possible "next" states.
             List<ScheduleInfo> combinations = generateAllCombinations(head, topologicalTasks.get(head.layer));
 
-            if (combinations == null) {
 
+            if (combinations == null) { // Move to next topological layer if no possible schedules on current layer.
                 head.layer = head.layer +1;
                 combinations = generateAllCombinations(head, topologicalTasks.get(head.layer));
             }
 
             scheduleQueue.addAll(combinations);
 
-            System.out.println(scheduleQueue);
+
         }
 
         return null;
@@ -85,6 +100,13 @@ public class AStarAlgorithm extends BaseAlgorithm {
         return out;
     }
 
+    /**
+     * Generates all possible schedules if a node from the current topological layering
+     * has not been assigned in the schedule.
+     * @param scheduleinfo
+     * @param currentLayer
+     * @return
+     */
     private List<ScheduleInfo> generateAllCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer) {
         Schedule schedule = scheduleinfo.schedule;
 
@@ -116,7 +138,10 @@ public class AStarAlgorithm extends BaseAlgorithm {
         return out;
     }
 
-
+    /**
+     * Heuristic that orders schedules in ascending order of cost. (Lowest cost first)
+     * If costs are equal then the schedule with a higher number of tasks assigned comes first.
+     */
     private class AStarHeuristic implements Comparator<ScheduleInfo> {
 
         @Override

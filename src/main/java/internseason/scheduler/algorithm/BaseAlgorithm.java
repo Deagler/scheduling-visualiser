@@ -6,6 +6,10 @@ import internseason.scheduler.model.Task;
 
 import java.util.List;
 
+
+/**
+ * Base Interface for ALgorithms
+ */
 public abstract class BaseAlgorithm {
     protected int numberOfProcessors;
     protected Graph graph;
