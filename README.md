@@ -15,9 +15,9 @@
 
 
 ## Team 
- - **Team Lead:** James Zhang | JamesUoA
- - **SCRUM Master:** Andrew Hu | andrewh318
- - **Project Manager:** Casey Wong | cwon880
- - **Developer:** Sukhans Asrani | Deagler
- - **Intern:** William Shin | william-shin-387
+ - **Team Lead:** James Zhang | JamesUoA | 678381072
+ - **SCRUM Master:** Andrew Hu | andrewh318 | 227662102
+ - **Project Manager:** Casey Wong | cwon880 | 574483277
+ - **Developer:** Sukhans Asrani | Deagler | 391398918
+ - **Intern:** William Shin | william-shin-387 | 884819645
 
