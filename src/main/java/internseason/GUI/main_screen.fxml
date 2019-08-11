@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <top>
+      <VBox prefHeight="101.0" prefWidth="1280.0" style="-fx-background-color: #FFFF;" BorderPane.alignment="CENTER">
+         <children>
+            <Label prefHeight="41.0" prefWidth="689.0" text="Scheduling Algorithm" textFill="#2cf4ff">
+               <VBox.margin>
+                  <Insets left="20.0" top="20.0" />
+               </VBox.margin>
+               <font>
+                  <Font name="Roboto" size="40.0" />
+               </font>
+            </Label>
+         </children></VBox>
+   </top>
+   <center>
+      <VBox prefHeight="729.0" prefWidth="1280.0" style="-fx-background-color: #FFFF;" BorderPane.alignment="CENTER">
+         <children>
+            <GridPane alignment="TOP_CENTER" maxHeight="371.0" prefHeight="165.0" prefWidth="1280.0" style="-fx-background-color: #FFFF;">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="320.0" minWidth="10.0" prefWidth="320.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="320.0" minWidth="10.0" prefWidth="320.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <AnchorPane prefHeight="228.0" prefWidth="356.0" style="-fx-background-color: #FFFF; -fx-border-color: #777777;">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
+                     </GridPane.margin>
+                     <children>
+                        <Label alignment="CENTER" layoutX="109.0" layoutY="35.0" prefHeight="25.0" prefWidth="74.0" text="A*">
+                           <font>
+                              <Font name="Monotxt_IV50" size="56.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="TOP_LEFT" layoutX="14.0" layoutY="14.0" prefHeight="12.0" prefWidth="195.0" text="Algorithm:">
+                           <font>
+                              <Font name="Monotxt_IV50" size="17.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane prefHeight="228.0" prefWidth="356.0" style="-fx-background-color: #FFFF; -fx-border-color: #777777;" GridPane.columnIndex="1">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
+                     </GridPane.margin>
+                  </AnchorPane>
+                  <AnchorPane prefHeight="228.0" prefWidth="356.0" style="-fx-background-color: #FFFF; -fx-border-color: #777777;" GridPane.columnIndex="2">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
+                     </GridPane.margin>
+                  </AnchorPane>
+                  <AnchorPane prefHeight="228.0" prefWidth="356.0" style="-fx-background-color: #FFFF; -fx-border-color: #777777;" GridPane.columnIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
+                     </GridPane.margin>
+                  </AnchorPane>
+               </children>
+               <padding>
+                  <Insets left="10.0" right="10.0" />
+               </padding>
+            </GridPane>
+            <HBox prefHeight="562.0" prefWidth="1280.0">
+               <children>
+                  <GridPane prefHeight="534.0" prefWidth="1280.0" style="-fx-background-color: #FFFF;">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <AnchorPane prefHeight="228.0" prefWidth="356.0" style="-fx-background-color: #FFFF; -fx-border-color: #777777;" GridPane.columnIndex="1">
+                           <GridPane.margin>
+                              <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
+                           </GridPane.margin>
+                           <children>
+                              <ImageView fitHeight="249.0" fitWidth="455.0" layoutX="2.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@vis.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane prefHeight="228.0" prefWidth="356.0" style="-fx-background-color: #FFFF; -fx-border-color: #777777;" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets bottom="10.0" left="5.0" right="5.0" top="5.0" />
+                           </GridPane.margin>
+                           <children>
+                              <ImageView fitHeight="179.0" fitWidth="436.0" layoutX="8.0" layoutY="56.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@YXCbN.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane prefHeight="228.0" prefWidth="356.0" style="-fx-background-color: #FFFF; -fx-border-color: #777777;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets bottom="10.0" left="5.0" right="5.0" top="5.0" />
+                           </GridPane.margin>
+                           <children>
+                              <ImageView fitHeight="239.0" fitWidth="434.0" layoutX="24.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@line-graph.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </AnchorPane>
+                        <VBox prefHeight="200.0" prefWidth="100.0" />
+                        <Pane fx:id="pane_basic" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: #777777;">
+                           <GridPane.margin>
+                              <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
+                           </GridPane.margin>
+                        </Pane>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" />
+                     </padding>
+                  </GridPane>
+                  <VBox prefHeight="528.0" prefWidth="632.0" style="-fx-background-color: #FFFF;">
+                     <children>
+                        <AnchorPane prefHeight="630.0" prefWidth="311.0" style="-fx-border-color: #777777;">
+                           <VBox.margin>
+                              <Insets bottom="5.0" right="5.0" top="10.0" />
+                           </VBox.margin>
+                           <children>
+                              <Label layoutX="13.0" layoutY="61.0" prefHeight="25.0" prefWidth="102.0" text="Runtime:" />
+                              <Label alignment="CENTER_RIGHT" layoutX="206.0" layoutY="61.0" prefHeight="25.0" prefWidth="97.0" text="5:30:123 (s)" />
+                              <Label alignment="CENTER" layoutX="58.0" layoutY="14.0" prefHeight="25.0" prefWidth="205.0" text="Runtime Statistics">
+                                 <font>
+                                    <Font size="26.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="13.0" layoutY="127.0" prefHeight="25.0" prefWidth="155.0" text="Available Processors:" />
+                              <Label alignment="CENTER_RIGHT" layoutX="206.0" layoutY="127.0" prefHeight="25.0" prefWidth="102.0" text="4" />
+                              <Label layoutX="13.0" layoutY="83.0" prefHeight="25.0" prefWidth="139.0" text="Cores for Execution:" />
+                              <Label alignment="CENTER_RIGHT" layoutX="206.0" layoutY="83.0" prefHeight="25.0" prefWidth="97.0" text="1" />
+                              <Label layoutX="13.0" layoutY="144.0" prefHeight="25.0" prefWidth="155.0" text="Max Memory:" />
+                              <Label alignment="CENTER_RIGHT" layoutX="206.0" layoutY="144.0" prefHeight="25.0" prefWidth="102.0" text="1908 MB" />
+                              <Label layoutX="13.0" layoutY="161.0" prefHeight="25.0" prefWidth="155.0" text="Used Memory:" />
+                              <Label alignment="CENTER_RIGHT" layoutX="206.0" layoutY="161.0" prefHeight="25.0" prefWidth="102.0" text="666 MB" />
+                              <Label layoutX="13.0" layoutY="177.0" prefHeight="25.0" prefWidth="155.0" text="Free Memory:" />
+                              <Label alignment="CENTER_RIGHT" layoutX="206.0" layoutY="177.0" prefHeight="25.0" prefWidth="102.0" text="1242 MB" />
+                              <Label layoutX="13.0" layoutY="217.0" prefHeight="25.0" prefWidth="155.0" text="Schedules Explored" />
+                              <Label alignment="CENTER_RIGHT" layoutX="206.0" layoutY="217.0" prefHeight="25.0" prefWidth="102.0" text="33 M" />
+                              <Label layoutX="13.0" layoutY="232.0" prefHeight="25.0" prefWidth="155.0" text="Schedules in Queue" />
+                              <Label alignment="CENTER_RIGHT" layoutX="206.0" layoutY="232.0" prefHeight="25.0" prefWidth="102.0" text="330 K" />
+                              <Label layoutX="12.0" layoutY="247.0" prefHeight="25.0" prefWidth="155.0" text="Schedules in Array" />
+                              <Label alignment="CENTER_RIGHT" layoutX="205.0" layoutY="247.0" prefHeight="25.0" prefWidth="102.0" text="12 K" />
+                           </children>
+                           <padding>
+                              <Insets left="10.0" right="10.0" />
+                           </padding>
+                        </AnchorPane>
+                     </children>
+                     <HBox.margin>
+                        <Insets bottom="10.0" right="10.0" />
+                     </HBox.margin>
+                     <padding>
+                        <Insets bottom="5.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
