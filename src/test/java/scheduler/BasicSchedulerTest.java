@@ -3,11 +3,9 @@ package scheduler;
 import internseason.scheduler.DOTParser;
 import internseason.scheduler.exceptions.InputException;
 import internseason.scheduler.model.*;
+import internseason.scheduler.model.schedulers.BasicScheduler;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
