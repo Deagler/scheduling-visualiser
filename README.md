@@ -7,11 +7,24 @@
 
 ##### Building
 `gradlew build`
+
 ##### Run Tests
 `gradlew test`
-##### Run Scheduler
-`gradlew run --args='INPUT.dot P [OPTION]'`
 
+##### Run Scheduler
+`gradlew run --args='INPUT.dot P [OPTIONS]'`
+
+#### Packaging Jar
+`gradlew shadowJar`
+
+#### Usage
+```
+usage: scheduler-basic-T10 INPUT.dot <NumberOfProcessors>
+ -o <OUTPUT>   output file is named OUTPUT (default is INPUT-output.dot)
+ -p <N>        use N cores for execution in parallel (default is
+               sequential) <currently disabled>
+ -v            visualise the search <currently disabled>
+```
 
 
 ## Team 

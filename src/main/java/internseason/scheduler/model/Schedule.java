@@ -54,7 +54,7 @@ public class Schedule {
         return processorOrder.isEmpty();
     }
 
-    public void add(Task task, int processorId) throws Exception {
+    public void add(Task task, int processorId) {
         //map.put(task, new Allocation(, process));
         //scheduleMap.put(task, processorMap.getOrDefault(processorId, new Processor(processorId)));
         //processorMap.put(processorId, scheduleMap.get(task));
