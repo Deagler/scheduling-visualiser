@@ -4,7 +4,7 @@ import org.apache.commons.cli.*;
 public class Main {
 
     public static void main(String[] args) {
-      
+
         CLIParser parser = new CLIParser();
         Config config;
 
@@ -13,7 +13,7 @@ public class Main {
             System.out.println(config.toString());
         } catch (CLIException e) {
             System.out.println("Error: "+e.getMessage());
-            parser.printHelp("Scheduler");
+            parser.printHelp("BacktrackScheduler");
         }
 
     }

@@ -2,6 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
+      <module name="internseason-schedulingproblem_main" target="1.8" />
       <module name="schedulingproblem_main" target="1.8" />
       <module name="schedulingproblem_test" target="1.8" />
     </bytecodeTargetLevel>
