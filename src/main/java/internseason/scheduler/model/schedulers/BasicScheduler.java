@@ -15,7 +15,7 @@ public class BasicScheduler {
         basicAlgorithm = new BasicAlgorithm(graph, numOfProcessors);
     }
 
-    public Schedule produceScheduler() {
+    public Schedule produceSchedule() {
         return basicAlgorithm.execute();
     }
 }
