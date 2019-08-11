@@ -1,5 +1,7 @@
 package internseason.scheduler.model;
 
+import org.apache.commons.lang3.SerializationUtils;
+
 import java.util.*;
 
 public class Schedule {
@@ -7,8 +9,8 @@ public class Schedule {
     //List<Allocation> scheduleList;
     //Map<Task, Processor> scheduleMap;
     //Map<Processor, List<Task>> scheduleMap;
-    private Map<Integer, Processor> processorMap;
-    private Map<Task, Integer> taskMap; // map from task to process id
+    private HashMap<Integer, Processor> processorMap; // process id to process
+    private HashMap<String, Integer> taskMap; // map from task to process id
     private int numOfProcessors;
     private int cost;
     private Stack<Integer> processorOrder;
@@ -32,21 +34,27 @@ public class Schedule {
         }
     }
 
+    public Schedule(Schedule schedule) {
+        this.processorMap = SerializationUtils.clone(schedule.processorMap);
+        this.processorOrder = SerializationUtils.clone(schedule.processorOrder);
+        this.numOfProcessors = schedule.numOfProcessors;
+        this.cost = schedule.cost;
+        this.taskMap = SerializationUtils.clone(schedule.taskMap);
+    }
+
     public int numProcessors() {
         return numOfProcessors;
     }
 
     public int size() {
         return processorOrder.size();
-        //return scheduleMap.size();
-        //return scheduleList.size();
     }
 
     public boolean isEmpty() {
         return processorOrder.isEmpty();
     }
 
-    public void add(Task task, int processorId) throws Exception {
+    public void add(Task task, int processorId) {
         //map.put(task, new Allocation(, process));
         //scheduleMap.put(task, processorMap.getOrDefault(processorId, new Processor(processorId)));
         //processorMap.put(processorId, scheduleMap.get(task));
@@ -60,16 +68,16 @@ public class Schedule {
         //processor.addTask(task);
         processor.addTaskAt(task, findNextAvailableTimeInProcessor(task, processorId));
 
-        this.taskMap.put(task, processorId);
+        this.taskMap.put(task.getId(), processorId);
 
         processorOrder.push(processor.getId());
 
         checkIncreasedCost(processor.getCost());
     }
 
-    public void removeLastTask(int processorId) {
+    public void removeLastTask() {
         //clear up space on processor
-        Processor processor = processorMap.get(processorId);
+        Processor processor = processorMap.get(processorOrder.peek());
         //Task task = processor.getLastTask();
         //scheduleMap.remove(task);
 
@@ -94,7 +102,9 @@ public class Schedule {
         int result = processorMap.get(processorId).getCost();
 
         for (Task parent: parentTasks) {
-            int sourceProcess = this.taskMap.get(parent);
+
+
+            Integer sourceProcess = this.taskMap.get(parent.getId());
 
             if (sourceProcess == processorId) {
                 continue;
@@ -110,6 +120,10 @@ public class Schedule {
         }
 
         return result;
+    }
+
+    public boolean isTaskAssigned(Task task) {
+        return this.taskMap.containsKey(task.getId());
     }
 
     private void checkIncreasedCost(int cost) {
@@ -140,7 +154,7 @@ public class Schedule {
 
     //get all tasks in all processors of this schedule
     public List<Task> getTasks() {
-        ArrayList<Task> result = new ArrayList<>();
+        List<Task> result = new ArrayList<>();
 
         for (Processor processor: processorMap.values()) {
             result.addAll(processor.getTasks());
@@ -149,8 +163,23 @@ public class Schedule {
         return result;
     }
 
+    public int getNumberOfTasks() {
+        return this.getTasks().size();
+    }
+
+    public int getTaskStartTime(Task task) {
+        int processId = taskMap.get(task.getId());
+        Processor processor = processorMap.get(processId);
+        return processor.getTaskStartTime(task);
+    }
+
+
     public int getLastProcessorId() {
         return processorOrder.peek();
+    }
+
+    public int getProcessorIdForTask(Task task) {
+        return this.taskMap.get(task.getId());
     }
 
     public Task getLastTask() {
@@ -171,4 +200,6 @@ public class Schedule {
 
         return sb.toString();
     }
+
+
 }
