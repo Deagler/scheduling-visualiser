@@ -51,21 +51,6 @@ public class Task implements Serializable {
         return cost;
     }
 
-//        public boolean hasDelay() {
-//            if (delay > 0) {
-//                return true;
-//            }
-//            return false;
-//        }
-
-//        public int getDelay() {
-//            return delay;
-//        }
-//
-//        public void setDelay(int delay) {
-//            this.delay = delay;
-//        }
-
     public String getId(){
         return id;
     }

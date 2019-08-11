@@ -6,21 +6,14 @@ import java.util.*;
 
 public class Schedule {
 
-    //List<Allocation> scheduleList;
-    //Map<Task, Processor> scheduleMap;
-    //Map<Processor, List<Task>> scheduleMap;
-    private HashMap<Integer, Processor> processorMap;
+    private HashMap<Integer, Processor> processorMap; //map from processId to processor
     private HashMap<String, Integer> taskMap; // map from task to process id
     private int numOfProcessors;
     private int cost;
-    private Stack<Integer> processorOrder;
 
     public Schedule(int numOfProcessors) {
-        //scheduleList = new ArrayList<>();
-        //scheduleMap = new HashMap<>();
         this.numOfProcessors = numOfProcessors;
         this.cost = 0;
-        this.processorOrder = new Stack<>();
         this.taskMap = new HashMap<>();
 
         this.initializeProcessMap(numOfProcessors);
@@ -36,7 +29,6 @@ public class Schedule {
 
     public Schedule(Schedule schedule) {
         this.processorMap = SerializationUtils.clone(schedule.processorMap);
-        this.processorOrder = SerializationUtils.clone(schedule.processorOrder);
         this.numOfProcessors = schedule.numOfProcessors;
         this.cost = schedule.cost;
         this.taskMap = SerializationUtils.clone(schedule.taskMap);
@@ -46,55 +38,21 @@ public class Schedule {
         return numOfProcessors;
     }
 
-    public int size() {
-        return processorOrder.size();
-    }
-
-    public boolean isEmpty() {
-        return processorOrder.isEmpty();
-    }
-
     public void add(Task task, int processorId) {
-        //map.put(task, new Allocation(, process));
-        //scheduleMap.put(task, processorMap.getOrDefault(processorId, new Processor(processorId)));
-        //processorMap.put(processorId, scheduleMap.get(task));
-        //Allocation allocation = new Allocation(processorMap.getOrDefault(processorId, new Processor(processorId)), task);
-        //scheduleList.add(allocation);
+
         if (!processorMap.containsKey(processorId)) {
             processorMap.put(processorId, new Processor(processorId));
         }
-        //processorMap.get(processorId).addTask(task);
+
         Processor processor = processorMap.get(processorId);
-        //processor.addTask(task);
+
         processor.addTaskAt(task, findNextAvailableTimeInProcessor(task, processorId));
 
         this.taskMap.put(task.getId(), processorId);
 
-        processorOrder.push(processor.getId());
-
         checkIncreasedCost(processor.getCost());
     }
 
-    public void removeLastTask() {
-        //clear up space on processor
-        Processor processor = processorMap.get(processorOrder.peek());
-        //Task task = processor.getLastTask();
-        //scheduleMap.remove(task);
-
-        boolean costChanged = false;
-
-        if (processor.getCost() == this.cost) {
-            costChanged = true;
-        }
-
-        processor.removeLastTask();
-
-        processorOrder.pop();
-
-        if (costChanged) {
-            //recalculateCost();
-        }
-    }
 
     private int findNextAvailableTimeInProcessor(Task task, int processorId) {
         List<Task> parentTasks = task.getParentTasks();
@@ -167,13 +125,7 @@ public class Schedule {
         return this.getTasks().size();
     }
 
-    public int getLastProcessorId() {
-        return processorOrder.peek();
-    }
 
-    public Task getLastTask() {
-        return processorMap.get(processorOrder.peek()).getLastTask();
-    }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
