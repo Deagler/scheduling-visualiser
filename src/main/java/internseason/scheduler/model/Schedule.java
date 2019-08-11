@@ -10,12 +10,10 @@ public class Schedule {
     private HashMap<String, Integer> taskMap; // map from task to process id
     private int numOfProcessors;
     private int cost;
-    private Stack<Integer> processorOrder;
 
     public Schedule(int numOfProcessors) {
         this.numOfProcessors = numOfProcessors;
         this.cost = 0;
-        this.processorOrder = new Stack<>();
         this.taskMap = new HashMap<>();
 
         this.initializeProcessMap(numOfProcessors);
@@ -31,7 +29,6 @@ public class Schedule {
 
     public Schedule(Schedule schedule) {
         this.processorMap = SerializationUtils.clone(schedule.processorMap);
-        this.processorOrder = SerializationUtils.clone(schedule.processorOrder);
         this.numOfProcessors = schedule.numOfProcessors;
         this.cost = schedule.cost;
         this.taskMap = SerializationUtils.clone(schedule.taskMap);
@@ -39,14 +36,6 @@ public class Schedule {
 
     public int numProcessors() {
         return numOfProcessors;
-    }
-
-    public int size() {
-        return processorOrder.size();
-    }
-
-    public boolean isEmpty() {
-        return processorOrder.isEmpty();
     }
 
     public void add(Task task, int processorId) {
@@ -60,8 +49,6 @@ public class Schedule {
         processor.addTaskAt(task, findNextAvailableTimeInProcessor(task, processorId));
 
         this.taskMap.put(task.getId(), processorId);
-
-        processorOrder.push(processor.getId());
 
         checkIncreasedCost(processor.getCost());
     }
@@ -138,9 +125,6 @@ public class Schedule {
         return this.getTasks().size();
     }
 
-    public int getLastProcessorId() {
-        return processorOrder.peek();
-    }
 
 
     public String toString() {
