@@ -9,7 +9,7 @@ public class Schedule {
     //List<Allocation> scheduleList;
     //Map<Task, Processor> scheduleMap;
     //Map<Processor, List<Task>> scheduleMap;
-    private HashMap<Integer, Processor> processorMap;
+    private HashMap<Integer, Processor> processorMap; // process id to process
     private HashMap<String, Integer> taskMap; // map from task to process id
     private int numOfProcessors;
     private int cost;
@@ -154,7 +154,7 @@ public class Schedule {
 
     //get all tasks in all processors of this schedule
     public List<Task> getTasks() {
-        ArrayList<Task> result = new ArrayList<>();
+        List<Task> result = new ArrayList<>();
 
         for (Processor processor: processorMap.values()) {
             result.addAll(processor.getTasks());
@@ -167,8 +167,19 @@ public class Schedule {
         return this.getTasks().size();
     }
 
+    public int getTaskStartTime(Task task) {
+        int processId = taskMap.get(task.getId());
+        Processor processor = processorMap.get(processId);
+        return processor.getTaskStartTime(task);
+    }
+
+
     public int getLastProcessorId() {
         return processorOrder.peek();
+    }
+
+    public int getProcessorIdForTask(Task task) {
+        return this.taskMap.get(task.getId());
     }
 
     public Task getLastTask() {
