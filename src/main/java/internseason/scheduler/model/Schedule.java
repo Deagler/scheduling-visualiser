@@ -90,12 +90,6 @@ public class Schedule {
         }
     }
 
-//    public void checkDecreasedCost(int cost) {
-//        if (cost < this.cost) {
-//            this.cost = cost;
-//        }
-//    }
-
     private void recalculateCost() {
         int max = 0;
         for (Processor p: processorMap.values()) {
@@ -112,7 +106,7 @@ public class Schedule {
 
     //get all tasks in all processors of this schedule
     public List<Task> getTasks() {
-        ArrayList<Task> result = new ArrayList<>();
+        List<Task> result = new ArrayList<>();
 
         for (Processor processor: processorMap.values()) {
             result.addAll(processor.getTasks());
@@ -125,6 +119,11 @@ public class Schedule {
         return this.getTasks().size();
     }
 
+    public int getTaskStartTime(Task task) {
+        int processId = taskMap.get(task.getId());
+        Processor processor = processorMap.get(processId);
+        return processor.getTaskStartTime(task);
+    }
 
 
     public String toString() {

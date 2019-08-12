@@ -71,7 +71,7 @@ public class CLIParser {
     private void setupCLIOptions() {
         Option numOfCores = Option.builder("p").argName("N").desc("use N cores for execution in parallel (default is sequential)").hasArg().build();
         Option visualisationEnabled = new Option("v", "visualise the search");
-        Option outputFile = Option.builder("o").argName("OUTPUT").desc("output file is named OUTPUT (default is INPUT−output.dot)").hasArg().build();
+        Option outputFile = Option.builder("o").argName("OUTPUT").desc("output file (default is INPUT-output.dot)").hasArg().build();
 
         CLIOptions.addOption(numOfCores);
         CLIOptions.addOption(visualisationEnabled);
