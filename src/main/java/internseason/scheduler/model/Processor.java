@@ -13,14 +13,12 @@ public class Processor implements Serializable {
     private int cost;
     private int processorId;
 
-    private ArrayList<Pair<Task, Integer>> taskDelay; //task - delay on the task
     private ArrayList<Pair<Task, Integer>> tasks; // task along with when its scheduled
     private HashMap<String, Integer> taskMap; // map from task to time scheduled
 
     public Processor(int processorId) {
         this.cost = 0;
         this.processorId = processorId;
-        this.taskDelay = new ArrayList<>();
         this.taskMap = new HashMap<>();
         this.tasks = new ArrayList<>();
     }
@@ -38,8 +36,6 @@ public class Processor implements Serializable {
     }
 
     public void addTask(Task task) {
-        //taskMap.put(task, 0);
-        taskDelay.add(new Pair(task, 0));
         taskMap.put(task.getId(), this.cost);
         tasks.add(new Pair(task, this.cost));
         this.cost += task.getCost();
@@ -47,18 +43,6 @@ public class Processor implements Serializable {
 
     public int getTaskStartTime(Task task) {
         return this.taskMap.get(task.getId());
-    }
-
-    public Task getLastTask() {
-        return taskDelay.get(taskDelay.size()-1).getKey();
-    }
-
-    public void removeLastTask() {
-        Task task = getLastTask();
-        this.cost -= taskDelay.get(taskDelay.size() -1).getValue();
-        this.cost -= task.getCost();
-        taskMap.remove(task);
-        taskDelay.remove(taskDelay.size()-1);
     }
 
     public List<Task> getTasks() {
@@ -77,7 +61,6 @@ public class Processor implements Serializable {
             throw new IllegalArgumentException("Illegal time");
         }
 
-        this.taskDelay.add(new Pair(task, time-this.cost));
         this.taskMap.put(task.getId(), time);
         this.tasks.add(new Pair(task, time));
 
