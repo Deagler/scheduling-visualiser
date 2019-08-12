@@ -125,6 +125,9 @@ public class Schedule {
         return processor.getTaskStartTime(task);
     }
 
+    public int getProcessorIdForTask(Task task) {
+        return this.taskMap.get(task.getId());
+    }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
