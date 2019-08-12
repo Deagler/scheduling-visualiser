@@ -13,14 +13,14 @@ public class Processor implements Serializable {
     private int cost;
     private int processorId;
 
-    private ArrayList<Pair<Task, Integer>> tasks; // task along with when its scheduled
-    private HashMap<String, Integer> taskMap; // map from task to time scheduled
+    private ArrayList<Pair<Task, Integer>> taskScheduleList; // task along with when its scheduled
+    private HashMap<String, Integer> taskIdScheduleMap; // map from task to time scheduled
 
     public Processor(int processorId) {
         this.cost = 0;
         this.processorId = processorId;
-        this.taskMap = new HashMap<>();
-        this.tasks = new ArrayList<>();
+        this.taskIdScheduleMap = new HashMap<>();
+        this.taskScheduleList = new ArrayList<>();
     }
 
     public int getId() {
@@ -36,18 +36,18 @@ public class Processor implements Serializable {
     }
 
     public void addTask(Task task) {
-        taskMap.put(task.getId(), this.cost);
-        tasks.add(new Pair(task, this.cost));
+        taskIdScheduleMap.put(task.getId(), this.cost);
+        taskScheduleList.add(new Pair(task, this.cost));
         this.cost += task.getCost();
     }
 
     public int getTaskStartTime(Task task) {
-        return this.taskMap.get(task.getId());
+        return this.taskIdScheduleMap.get(task.getId());
     }
 
     public List<Task> getTasks() {
         ArrayList<Task> result = new ArrayList<>();
-        for (Pair<Task, Integer> pair: tasks) {
+        for (Pair<Task, Integer> pair: taskScheduleList) {
             result.add(pair.getKey());
         }
 
@@ -61,8 +61,8 @@ public class Processor implements Serializable {
             throw new IllegalArgumentException("Illegal time");
         }
 
-        this.taskMap.put(task.getId(), time);
-        this.tasks.add(new Pair(task, time));
+        this.taskIdScheduleMap.put(task.getId(), time);
+        this.taskScheduleList.add(new Pair(task, time));
 
         this.cost = time + task.getCost();
 
@@ -71,7 +71,7 @@ public class Processor implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (Pair<Task, Integer> t: this.tasks) {
+        for (Pair<Task, Integer> t: this.taskScheduleList) {
             sb.append("t" + t.getKey().getId() + " scheduled at: " + t.getValue() + "\n");
         }
         return sb.toString();

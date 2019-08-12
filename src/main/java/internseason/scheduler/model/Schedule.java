@@ -6,32 +6,32 @@ import java.util.*;
 
 public class Schedule {
 
-    private HashMap<Integer, Processor> processorMap; //map from processId to processor
-    private HashMap<String, Integer> taskMap; // map from task to process id
+    private HashMap<Integer, Processor> processorIdMap; //map from processId to processor
+    private HashMap<String, Integer> taskIdProcessorMap; // map from task to process id
     private int numOfProcessors;
     private int cost;
 
     public Schedule(int numOfProcessors) {
         this.numOfProcessors = numOfProcessors;
         this.cost = 0;
-        this.taskMap = new HashMap<>();
+        this.taskIdProcessorMap = new HashMap<>();
 
         this.initializeProcessMap(numOfProcessors);
     }
 
     public void initializeProcessMap(int numberOfProcesses) {
-        this.processorMap = new HashMap<>();
+        this.processorIdMap = new HashMap<>();
 
         for (int i = 0; i < numberOfProcesses; i++) {
-            this.processorMap.put(i, new Processor(i));
+            this.processorIdMap.put(i, new Processor(i));
         }
     }
 
     public Schedule(Schedule schedule) {
-        this.processorMap = SerializationUtils.clone(schedule.processorMap);
+        this.processorIdMap = SerializationUtils.clone(schedule.processorIdMap);
         this.numOfProcessors = schedule.numOfProcessors;
         this.cost = schedule.cost;
-        this.taskMap = SerializationUtils.clone(schedule.taskMap);
+        this.taskIdProcessorMap = SerializationUtils.clone(schedule.taskIdProcessorMap);
     }
 
     public int numProcessors() {
@@ -40,15 +40,15 @@ public class Schedule {
 
     public void add(Task task, int processorId) {
 
-        if (!processorMap.containsKey(processorId)) {
-            processorMap.put(processorId, new Processor(processorId));
+        if (!processorIdMap.containsKey(processorId)) {
+            processorIdMap.put(processorId, new Processor(processorId));
         }
 
-        Processor processor = processorMap.get(processorId);
+        Processor processor = processorIdMap.get(processorId);
 
         processor.addTaskAt(task, findNextAvailableTimeInProcessor(task, processorId));
 
-        this.taskMap.put(task.getId(), processorId);
+        this.taskIdProcessorMap.put(task.getId(), processorId);
 
         checkIncreasedCost(processor.getCost());
     }
@@ -57,18 +57,18 @@ public class Schedule {
     private int findNextAvailableTimeInProcessor(Task task, int processorId) {
         List<Task> parentTasks = task.getParentTasks();
 
-        int result = processorMap.get(processorId).getCost();
+        int result = processorIdMap.get(processorId).getCost();
 
         for (Task parent: parentTasks) {
 
 
-            Integer sourceProcess = this.taskMap.get(parent.getId());
+            Integer sourceProcess = this.taskIdProcessorMap.get(parent.getId());
 
             if (sourceProcess == processorId) {
                 continue;
             }
 
-            Processor process = this.processorMap.get(sourceProcess);
+            Processor process = this.processorIdMap.get(sourceProcess);
             int parentFinishTime = process.getTaskStartTime(parent) + parent.getCost();
             int communicationCost = parent.getCostToChild(task);
 
@@ -81,7 +81,7 @@ public class Schedule {
     }
 
     public boolean isTaskAssigned(Task task) {
-        return this.taskMap.containsKey(task.getId());
+        return this.taskIdProcessorMap.containsKey(task.getId());
     }
 
     private void checkIncreasedCost(int cost) {
@@ -92,7 +92,7 @@ public class Schedule {
 
     private void recalculateCost() {
         int max = 0;
-        for (Processor p: processorMap.values()) {
+        for (Processor p: processorIdMap.values()) {
             if (p.getCost() > max) {
                 max = p.getCost();
             }
@@ -108,7 +108,7 @@ public class Schedule {
     public List<Task> getTasks() {
         List<Task> result = new ArrayList<>();
 
-        for (Processor processor: processorMap.values()) {
+        for (Processor processor: processorIdMap.values()) {
             result.addAll(processor.getTasks());
         }
 
@@ -120,23 +120,23 @@ public class Schedule {
     }
 
     public int getTaskStartTime(Task task) {
-        int processId = taskMap.get(task.getId());
-        Processor processor = processorMap.get(processId);
+        int processId = taskIdProcessorMap.get(task.getId());
+        Processor processor = processorIdMap.get(processId);
         return processor.getTaskStartTime(task);
     }
 
     public int getProcessorIdForTask(Task task) {
-        return this.taskMap.get(task.getId());
+        return this.taskIdProcessorMap.get(task.getId());
     }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
         for (int i=0; i<numOfProcessors; i++) {
-            //sb.append("p" + processorMap.get(i));
+            //sb.append("p" + processorIdMap.get(i));
             sb.append("Processor " + i + "\n");
-            sb.append(processorMap.get(i));
-            sb.append("Cost of Processor " + i + ": " + processorMap.get(i).getCost() + "\n");
+            sb.append(processorIdMap.get(i));
+            sb.append("Cost of Processor " + i + ": " + processorIdMap.get(i).getCost() + "\n");
         }
 
         sb.append("Total schedule cost is: " + this.cost);
