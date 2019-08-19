@@ -33,7 +33,11 @@ public class DotParserTest {
                 assertEquals(String.valueOf(i), graph.getTask(String.valueOf(i)).getId());
             }
 
-
+            for (String id : graph.getTasks().keySet()) {
+//                HashMap<String, Integer> dependencyCount = buildNode8DependencyCountMap();
+                // explicit type due to weird ambiguous assert method call due to autoboxing
+//                assertEquals(Integer.valueOf(dependencyCount.get(id)), Integer.valueOf(graph.getTask(id).getNumDependencies()));
+            }
 
         } catch (InputException e) {
             e.printStackTrace();

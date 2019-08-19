@@ -2,25 +2,25 @@ package internseason.scheduler.model;
 
 import javafx.util.Pair;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-public class Processor {
+public class Processor implements Serializable {
     private int cost;
     private int processorId;
 
-    private List<Pair<Task, Integer>> taskDelay; //task - delay on the task
-    private List<Pair<Task, Integer>> tasks; // task along with when its scheduled
-    private Map<Task, Integer> taskMap; // map from task to time scheduled
+    private ArrayList<Pair<Task, Integer>> taskScheduleList; // task along with when its scheduled
+    private HashMap<String, Integer> taskIdScheduleMap; // map from task to time scheduled
 
     public Processor(int processorId) {
         this.cost = 0;
         this.processorId = processorId;
-        this.taskDelay = new ArrayList<>();
-        this.taskMap = new HashMap<>();
-        this.tasks = new ArrayList<>();
+        this.taskIdScheduleMap = new HashMap<>();
+        this.taskScheduleList = new ArrayList<>();
     }
 
     public int getId() {
@@ -36,33 +36,19 @@ public class Processor {
     }
 
     public void addTask(Task task) {
-        //taskMap.put(task, 0);
-        taskDelay.add(new Pair(task, 0));
-        taskMap.put(task, this.cost);
-        tasks.add(new Pair(task, this.cost));
+        taskIdScheduleMap.put(task.getId(), this.cost);
+        taskScheduleList.add(new Pair(task, this.cost));
         this.cost += task.getCost();
     }
 
     public int getTaskStartTime(Task task) {
-        return this.taskMap.get(task);
-    }
-
-    public Task getLastTask() {
-        return taskDelay.get(taskDelay.size()-1).getKey();
-    }
-
-    public void removeLastTask() {
-        Task task = getLastTask();
-        this.cost -= taskDelay.get(taskDelay.size() -1).getValue();
-        this.cost -= task.getCost();
-        taskMap.remove(task);
-        taskDelay.remove(taskDelay.size()-1);
+        return this.taskIdScheduleMap.get(task.getId());
     }
 
     public List<Task> getTasks() {
         ArrayList<Task> result = new ArrayList<>();
-        for (Task t: taskMap.keySet()) {
-            result.add(t);
+        for (Pair<Task, Integer> pair: taskScheduleList) {
+            result.add(pair.getKey());
         }
 
         return result;
@@ -70,14 +56,13 @@ public class Processor {
     }
 
     //ToDo: make exception class
-    public void addTaskAt(Task task,int time) throws Exception {
+    public void addTaskAt(Task task,int time) {
         if (time < this.cost){
-            throw new Exception();
+            throw new IllegalArgumentException("Illegal time");
         }
 
-        this.taskDelay.add(new Pair(task, time-this.cost));
-        this.taskMap.put(task, time);
-        this.tasks.add(new Pair(task, time));
+        this.taskIdScheduleMap.put(task.getId(), time);
+        this.taskScheduleList.add(new Pair(task, time));
 
         this.cost = time + task.getCost();
 
@@ -86,11 +71,10 @@ public class Processor {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (Pair<Task, Integer> t: this.tasks) {
+        for (Pair<Task, Integer> t: this.taskScheduleList) {
             sb.append("t" + t.getKey().getId() + " scheduled at: " + t.getValue() + "\n");
         }
         return sb.toString();
     }
-
 
 }
