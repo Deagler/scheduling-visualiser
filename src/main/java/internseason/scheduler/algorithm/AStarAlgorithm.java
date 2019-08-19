@@ -66,10 +66,9 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
         Set<Integer> visited = new HashSet<>();
         visited.add(initialSchedule.hashCode());
-    int counter = 0;
+        int counter = 0;
         while (!scheduleQueue.isEmpty()) {
             ScheduleInfo head = scheduleQueue.poll();
-
             // Return the optimal schedule (First complete schedule, orchestrated by AStar Heuristic)
             if (head.schedule.getNumberOfTasks() == totalTasks) {
                 System.out.println(counter);
@@ -78,18 +77,18 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
 
             // Extending the polled schedule to generate all possible "next" states.
-            List<ScheduleInfo> combinations = generateAllCombinations(head, topologicalTasks.get(head.layer));
+            List<ScheduleInfo> combinations = generateCombinations(head, topologicalTasks.get(head.layer));
 
 
             if (combinations == null) { // Move to next topological layer if no possible schedules on current layer.
                 head.layer = head.layer +1;
-                combinations = generateAllCombinations(head, topologicalTasks.get(head.layer));
+                combinations = generateCombinations(head, topologicalTasks.get(head.layer));
+//                scheduleQueue.clear();
             }
 
             for (ScheduleInfo possibleCombination : combinations) {
 
                 if (visited.contains(possibleCombination.schedule.hashCode())) {
-                    System.out.println(counter);
                     continue;
                 }
                 scheduleQueue.add(possibleCombination);
@@ -97,7 +96,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
             }
 
 
-             counter++;
+            counter++;
         }
 
         return null;
@@ -119,6 +118,20 @@ public class AStarAlgorithm extends BaseAlgorithm {
      * @param currentLayer
      * @return
      */
+    private List<ScheduleInfo> generateCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer) {
+
+//        if (tasksMatchFTOConditions(currentLayer)) {
+//
+//        } else {
+            return generateAllCombinations(scheduleinfo, currentLayer);
+//        }
+
+    }
+
+//    private List<ScheduleInfo> generateFTOCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer) {
+//
+//    }
+
     private List<ScheduleInfo> generateAllCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer) {
         Schedule schedule = scheduleinfo.schedule;
 
