@@ -1,4 +1,4 @@
-package internseason.GUI;
+package internseason.gui;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -12,13 +12,12 @@ import org.graphstream.ui.javafx.FxGraphRenderer;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class Controller  implements Initializable {
+public class MainScreen implements Initializable {
     private SingleGraph input_graph;
     private  SingleGraph schedule_graph;
 
 
-    @FXML
-    private Pane pane_basic;
+    @FXML private Pane pane_basic;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
