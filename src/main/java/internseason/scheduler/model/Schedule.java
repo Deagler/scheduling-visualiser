@@ -1,6 +1,7 @@
 package internseason.scheduler.model;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.*;
 
@@ -144,5 +145,10 @@ public class Schedule {
         return sb.toString();
     }
 
-
+    @Override
+    public int hashCode() {
+        HashCodeBuilder builder = new HashCodeBuilder();
+        builder.append(processorIdMap);
+        return builder.hashCode();
+    }
 }

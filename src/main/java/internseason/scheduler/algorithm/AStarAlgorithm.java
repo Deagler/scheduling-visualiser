@@ -64,6 +64,8 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
         scheduleQueue.add(new ScheduleInfo(initialSchedule, 0)); // Add the empty schedule to the queue.
 
+        Set<Schedule> visited = new HashSet<>();
+        visited.add(initialSchedule);
 
         while (!scheduleQueue.isEmpty()) {
             ScheduleInfo head = scheduleQueue.poll();
@@ -83,7 +85,15 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 combinations = generateAllCombinations(head, topologicalTasks.get(head.layer));
             }
 
-            scheduleQueue.addAll(combinations);
+            for (ScheduleInfo possibleCombination : combinations) {
+                if (visited.contains(possibleCombination.schedule)) {
+                    continue;
+                }
+
+                scheduleQueue.add(possibleCombination);
+                visited.add(possibleCombination.schedule);
+            }
+
 
 
         }

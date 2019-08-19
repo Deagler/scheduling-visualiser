@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class ScheduleTest {
 
@@ -151,5 +152,32 @@ public class ScheduleTest {
                 "Total schedule cost is: 9", schedule.toString());
         //System.out.println(schedule.toString());
     }
+
+    @Test
+    public void testHashCodeEquivalence() {
+        Schedule one = new Schedule(2);
+        one.add(new Task(10,"1"), 1);
+        one.add(new Task(10,"2"), 1);
+
+        Schedule two = new Schedule(2);
+        two.add(new Task(10,"1"), 1);
+        two.add(new Task(10,"2"), 1);
+
+        assertEquals(one.hashCode(), two.hashCode());
+    }
+
+    @Test
+    public void testHashCodeInequivalence() {
+        Schedule one = new Schedule(2);
+        one.add(new Task(10,"1"), 1);
+        one.add(new Task(10,"2"), 1);
+
+        Schedule two = new Schedule(2);
+        two.add(new Task(10,"1"), 1);
+        two.add(new Task(10,"3"), 1);
+
+        assertNotEquals(one.hashCode(), two.hashCode());
+    }
+
 
 }

@@ -1,5 +1,7 @@
 package internseason.scheduler.model;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,5 +81,12 @@ public class Task implements Serializable {
     @Override
     public String toString() {
         return "Task " + this.id + ", Cost: " + this.cost;
+    }
+
+    @Override
+    public int hashCode() {
+        HashCodeBuilder builder = new HashCodeBuilder();
+        builder.append(getId());
+        return builder.hashCode();
     }
 }

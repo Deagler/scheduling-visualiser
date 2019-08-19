@@ -1,6 +1,7 @@
 package internseason.scheduler.model;
 
 import javafx.util.Pair;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -77,4 +78,10 @@ public class Processor implements Serializable {
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        HashCodeBuilder builder = new HashCodeBuilder();
+        builder.append(this.taskScheduleList);
+        return builder.hashCode();
+    }
 }
