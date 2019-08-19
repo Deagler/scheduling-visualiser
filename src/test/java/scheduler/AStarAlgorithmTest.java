@@ -23,7 +23,7 @@ public class AStarAlgorithmTest {
     @Test
     public void testAStarSchedule() {
         try {
-            Graph graph = this.parser.parse("src/test/resources/Test_Diamond.dot");
+            Graph graph = this.parser.parse("src/test/resources/Nodes_11_OutTree.dot");
             AStarAlgorithm algorithm = new AStarAlgorithm(graph,2);
             Schedule schedule = algorithm.execute();
             //System.out.println(schedule);

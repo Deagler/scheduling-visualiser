@@ -81,7 +81,7 @@ public class Processor implements Serializable {
     @Override
     public int hashCode() {
         HashCodeBuilder builder = new HashCodeBuilder();
-        builder.append(this.taskScheduleList);
+        builder.append(taskIdScheduleMap.hashCode());
         return builder.hashCode();
     }
 }

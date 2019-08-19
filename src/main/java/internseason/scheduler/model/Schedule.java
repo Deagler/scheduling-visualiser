@@ -148,7 +148,11 @@ public class Schedule {
     @Override
     public int hashCode() {
         HashCodeBuilder builder = new HashCodeBuilder();
-        builder.append(processorIdMap);
+
+        for (Processor process : processorIdMap.values()) {
+            builder.append(process.hashCode());
+        }
+
         return builder.hashCode();
     }
 }

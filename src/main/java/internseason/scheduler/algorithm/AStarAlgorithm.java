@@ -64,14 +64,15 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
         scheduleQueue.add(new ScheduleInfo(initialSchedule, 0)); // Add the empty schedule to the queue.
 
-        Set<Schedule> visited = new HashSet<>();
-        visited.add(initialSchedule);
-
+        Set<Integer> visited = new HashSet<>();
+        visited.add(initialSchedule.hashCode());
+    int counter = 0;
         while (!scheduleQueue.isEmpty()) {
             ScheduleInfo head = scheduleQueue.poll();
 
             // Return the optimal schedule (First complete schedule, orchestrated by AStar Heuristic)
             if (head.schedule.getNumberOfTasks() == totalTasks) {
+                System.out.println(counter);
                 return head.schedule;
             }
 
@@ -86,16 +87,17 @@ public class AStarAlgorithm extends BaseAlgorithm {
             }
 
             for (ScheduleInfo possibleCombination : combinations) {
-                if (visited.contains(possibleCombination.schedule)) {
+
+                if (visited.contains(possibleCombination.schedule.hashCode())) {
+                    System.out.println(counter);
                     continue;
                 }
-
                 scheduleQueue.add(possibleCombination);
-                visited.add(possibleCombination.schedule);
+                visited.add(possibleCombination.schedule.hashCode());
             }
 
 
-
+             counter++;
         }
 
         return null;
