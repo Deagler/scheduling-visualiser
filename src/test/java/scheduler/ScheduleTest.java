@@ -180,4 +180,19 @@ public class ScheduleTest {
     }
 
 
+    @Test
+    public void testProcessNormalisationHashCode() {
+        Schedule one = new Schedule(2);
+        one.add(new Task(10,"1"), 1);
+        one.add(new Task(10,"2"), 1);
+
+        Schedule two = new Schedule(2);
+        two.add(new Task(10,"1"), 0);
+        two.add(new Task(10,"2"), 0);
+
+        assertEquals(one.hashCode(), two.hashCode());
+    }
+
+
+
 }

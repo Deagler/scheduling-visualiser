@@ -23,10 +23,10 @@ public class AStarAlgorithmTest {
     @Test
     public void testAStarSchedule() {
         try {
-            Graph graph = this.parser.parse("src/test/resources/Nodes_11_OutTree.dot");
+            Graph graph = this.parser.parse("src/test/resources/Nodes_7_OutTree.dot");
             AStarAlgorithm algorithm = new AStarAlgorithm(graph,2);
             Schedule schedule = algorithm.execute();
-            //System.out.println(schedule);
+            System.out.println(schedule);
             assertEquals("Processor 0\n" +
                     "t1 scheduled at: 4\n" +
                     "t3 scheduled at: 6\n" +

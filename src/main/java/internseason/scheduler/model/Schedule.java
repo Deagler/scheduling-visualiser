@@ -149,10 +149,14 @@ public class Schedule {
     public int hashCode() {
         HashCodeBuilder builder = new HashCodeBuilder();
 
+        List<Integer> hashCodes = new ArrayList<>();
+
         for (Processor process : processorIdMap.values()) {
-            builder.append(process.hashCode());
+             hashCodes.add(process.hashCode());
         }
 
+        Collections.sort(hashCodes);
+        builder.append(hashCodes);
         return builder.hashCode();
     }
 }
