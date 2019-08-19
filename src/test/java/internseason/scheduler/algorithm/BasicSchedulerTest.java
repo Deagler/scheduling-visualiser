@@ -1,9 +1,8 @@
-package scheduler;
+package internseason.scheduler.algorithm;
 
-import internseason.scheduler.DOTParser;
+import internseason.scheduler.input.DOTParser;
 import internseason.scheduler.exceptions.InputException;
 import internseason.scheduler.model.*;
-import internseason.scheduler.model.schedulers.BasicScheduler;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,7 +10,6 @@ import static org.junit.Assert.assertEquals;
 
 public class BasicSchedulerTest {
     private Graph graph;
-    private BasicScheduler scheduler;
     private DOTParser parser;
     @Before
     public void setup() {
@@ -22,8 +20,8 @@ public class BasicSchedulerTest {
     public void testBasicScheduleOneProcessor() {
         try {
             Graph graph = this.parser.parse("src/test/resources/Nodes_8_Random.dot");
-            this.scheduler = new BasicScheduler(graph, 1);
-            Schedule schedule = this.scheduler.produceSchedule();
+            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BASIC_ALGORITHM, 0);
+            Schedule schedule = algorithm.execute(graph, 1);
             assertEquals("Processor 0\n" +
                     "t0 scheduled at: 0\n" +
                     "t1 scheduled at: 35\n" +
@@ -44,8 +42,8 @@ public class BasicSchedulerTest {
     public void testBasicScheduleTwoProcessor() {
         try {
             Graph graph = this.parser.parse("src/test/resources/Nodes_8_Random.dot");
-            this.scheduler = new BasicScheduler(graph, 1);
-            Schedule schedule = this.scheduler.produceSchedule();
+            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BASIC_ALGORITHM, 0);
+            Schedule schedule = algorithm.execute(graph, 2);
             assertEquals("Processor 0\n" +
                     "t0 scheduled at: 0\n" +
                     "t1 scheduled at: 35\n" +
@@ -56,6 +54,8 @@ public class BasicSchedulerTest {
                     "t6 scheduled at: 775\n" +
                     "t7 scheduled at: 916\n" +
                     "Cost of Processor 0: 969\n" +
+                    "Processor 1\n" +
+                    "Cost of Processor 1: 0\n" +
                     "Total schedule cost is: 969", schedule.toString());
         } catch (InputException e) {
             e.printStackTrace();
