@@ -40,6 +40,8 @@ public class Schedule {
         this.numOfProcessors = schedule.numOfProcessors;
         this.cost = schedule.cost;
         this.taskIdProcessorMap = SerializationUtils.clone(schedule.taskIdProcessorMap);
+        this.maxBottomLevel = schedule.maxBottomLevel;
+        this.idleTime = schedule.idleTime;
     }
 
     public int numProcessors() {

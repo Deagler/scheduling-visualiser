@@ -37,6 +37,7 @@ class ScheduleInfo {
  */
 public class AStarAlgorithm extends BaseAlgorithm {
     Queue<ScheduleInfo> scheduleQueue;
+    int totalTaskTime;
 
     /**
      * Tepmorary constructor to test factory pattern
@@ -56,6 +57,10 @@ public class AStarAlgorithm extends BaseAlgorithm {
     @Override
     public Schedule execute(Graph graph, int numberOfProcessors) {
         int totalTasks = graph.getTasks().size();
+        totalTaskTime = 0;
+        for (Task task: graph.getTasks().values()){
+            totalTaskTime +=task.getCost();
+        }
         List<List<Task>> topologicalTasks = graph.getTopologicalOrdering();
 
         Schedule initialSchedule = new Schedule(numberOfProcessors);
@@ -126,13 +131,8 @@ public class AStarAlgorithm extends BaseAlgorithm {
     }
 
     private int calculateIdleHeuristic(Schedule schedule) {
-        int totalTaskTime = 0;
-        for (Task task : schedule.getTasks()) {
-            totalTaskTime += task.getCost();
-        }
 
-        return ((totalTaskTime + schedule.getIdleTime()) / schedule.getNumOfProcessors());
-
+        return (totalTaskTime + schedule.getIdleTime()-1) / schedule.getNumOfProcessors();
     }
 
     private Integer calculateCost(Schedule schedule) {
