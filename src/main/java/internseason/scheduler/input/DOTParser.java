@@ -1,4 +1,4 @@
-package internseason.scheduler;
+package internseason.scheduler.input;
 
 import com.paypal.digraph.parser.GraphEdge;
 import com.paypal.digraph.parser.GraphElement;

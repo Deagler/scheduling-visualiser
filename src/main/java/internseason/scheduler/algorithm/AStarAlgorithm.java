@@ -8,7 +8,7 @@ import java.util.*;
 
 
 /**
- * Temporary Data-structure to store a schedule and the given topological layer the algorithm should attempt to generate
+ * Temporary Data-structure to store a schedule and the given topological layer the internseason.scheduler.algorithm should attempt to generate
  * new schedules from.
  */
 class ScheduleInfo {
@@ -36,20 +36,16 @@ class ScheduleInfo {
  */
 public class AStarAlgorithm extends BaseAlgorithm {
     Queue<ScheduleInfo> scheduleQueue;
-    List<List<Task>> topologicalTasks;
 
-
-    public AStarAlgorithm(Graph graphObj, int numberOfProcessors) {
-        super(graphObj, numberOfProcessors);
+    /**
+     * Tepmorary constructor to test factory pattern
+     * @return
+     */
+    public AStarAlgorithm() {
+        super();
         scheduleQueue = new PriorityQueue<>(new AStarHeuristic());
-        topologicalTasks = new ArrayList<>();
-
-
-        for (List<String> idLayer : graph.getTopologicalOrdering()) {
-            topologicalTasks.add(getTasksFromIds(idLayer));
-        }
-
     }
+
 
     /**
      * Basic Implementation of the AStar Algorithm without duplicate detection or any pruning.
@@ -57,10 +53,11 @@ public class AStarAlgorithm extends BaseAlgorithm {
      * @return An optimal schedule
      */
     @Override
-    public Schedule execute() {
-
+    public Schedule execute(Graph graph, int numberOfProcessors) {
         int totalTasks = graph.getTasks().size();
-        Schedule initialSchedule = new Schedule(getNumberOfProcessors());
+        List<List<Task>> topologicalTasks = graph.getTopologicalOrdering();
+
+        Schedule initialSchedule = new Schedule(numberOfProcessors);
 
         scheduleQueue.add(new ScheduleInfo(initialSchedule, 0)); // Add the empty schedule to the queue.
 
@@ -100,15 +97,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
         }
 
         return null;
-    }
-
-    private List<Task> getTasksFromIds(List<String> taskIds) {
-        List<Task> out = new ArrayList<>();
-        for (String taskId : taskIds) {
-            out.add(graph.getTask(taskId));
-        }
-
-        return out;
     }
 
     /**
@@ -188,5 +176,10 @@ public class AStarAlgorithm extends BaseAlgorithm {
             }
         }
 
+    }
+
+    @Override
+    public String toString() {
+        return "A Star Algorithm";
     }
 }
