@@ -77,6 +77,8 @@ public class Task implements Serializable {
         return this.childrenTasks;
     }
 
+    public List<String> getChildrenList() { return new ArrayList<>(this.childrenTasks); }
+
     public int getDelayTo(Task task) {
         //check if task depends on this
 

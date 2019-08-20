@@ -25,7 +25,8 @@ class ScheduleInfo {
     }
 
     //finishing time of parent task + edge cost from parent to task
-    private int calculateDRT(Task task) {
+    //input task should have a maximum of 1 parent
+    public int calculateDRT(Task task) {
         //if no parent return 0
         if (task.getNumberOfParents() == 0) {
             return 0;
@@ -46,26 +47,6 @@ class ScheduleInfo {
         return -1;
     }
 
-
-    private List<Task> sortDRTTasks(List<Task> tasks) {
-        Collections.sort(tasks, new Comparator<Task>() {
-
-            @Override
-            public int compare(Task t1, Task t2) {
-                if (calculateDRT(t1) < calculateDRT(t2)) {
-                    return -1;
-                }
-
-                if (calculateDRT(t1)> calculateDRT(t2)) {
-                    return 1;
-                }
-
-                //tie
-                return 0;
-            }
-        });
-        return tasks;
-    }
 
     @Override
     public String toString() {
@@ -268,6 +249,47 @@ public class AStarAlgorithm extends BaseAlgorithm {
         }
 
         return out;
+    }
+
+    private List<Task> sortDRTTasks(List<Task> tasks, ScheduleInfo scheduleInfo) {
+        Collections.sort(tasks, new Comparator<Task>() {
+
+            @Override
+            public int compare(Task t1, Task t2) {
+                if (scheduleInfo.calculateDRT(t1) < scheduleInfo.calculateDRT(t2)) {
+                    return -1;
+                }
+
+                if (scheduleInfo.calculateDRT(t1)> scheduleInfo.calculateDRT(t2)) {
+                    return 1;
+                }
+
+                //tie
+                //sort by DESCENDING outgoing edge cost
+                if (t1.getNumberOfChildren() == 0) {
+                    return 1;
+                }
+
+                if (t2.getNumberOfChildren() == 0) {
+                    return -1;
+                }
+
+                int t1costToChildTask = t1.getCostToChild(graph.getTask(t1.getChildrenList().get(0)));
+                int t2costToChildTask = t2.getCostToChild(graph.getTask(t2.getChildrenList().get(0)));
+
+                if (t1costToChildTask > t2costToChildTask) {
+                    return -1;
+                }
+
+                if (t1costToChildTask < t2costToChildTask) {
+                    return 1;
+                }
+                return 0;
+
+
+            }
+        });
+        return tasks;
     }
 
 
