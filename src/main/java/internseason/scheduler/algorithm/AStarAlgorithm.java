@@ -83,7 +83,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
             if (combinations == null) { // Move to next topological layer if no possible schedules on current layer.
                 head.layer = head.layer +1;
                 combinations = generateCombinations(head, topologicalTasks.get(head.layer));
-//                scheduleQueue.clear();
+                //scheduleQueue.clear();
             }
 
             for (ScheduleInfo possibleCombination : combinations) {
