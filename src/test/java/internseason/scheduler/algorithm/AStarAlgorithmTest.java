@@ -48,7 +48,7 @@ public class AStarAlgorithmTest {
             AStarAlgorithm algorithm = new AStarAlgorithm();
             Schedule schedule = algorithm.execute(graph,2);
             System.out.println(schedule);
-            assertEquals(schedule.getCost(), 22);
+            assertEquals(schedule.getCost(), 28);
         } catch (InputException e) {
             e.printStackTrace();
         }
