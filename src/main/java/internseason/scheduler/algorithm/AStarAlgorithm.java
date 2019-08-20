@@ -20,7 +20,26 @@ class ScheduleInfo {
     public ScheduleInfo(Schedule schedule, Integer layer, List<String> freeList) {
         this.schedule = schedule;
         this.layer = layer;
-        this.freeList = freeList
+        this.freeList = freeList;
+    }
+
+    private List<Task> sortDRTTasks(List<Task> tasks) {
+        return Collections.sort(tasks, new Comparator<Task>() {
+
+            @Override
+            public int compare(Task t1, Task t2) {
+                if (schedule.calculateDRT(t1) < schedule.calculateDRT(t2)) {
+                    return -1;
+                }
+
+                if (schedule.calculateDRT(t1)> schedule.calculateDRT(t2)) {
+                    return 1;
+                }
+
+                //tie
+                return 0;
+            }
+        })
     }
 
     @Override
@@ -225,6 +244,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
         return out;
     }
+
 
 
 
