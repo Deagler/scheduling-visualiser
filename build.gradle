@@ -10,7 +10,7 @@ group 'internseason'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
-mainClassName = 'internseason.scheduler.Main'
+mainClassName = 'internseason.internseason.scheduler.algorithm.Main'
 
 repositories {
     mavenCentral()

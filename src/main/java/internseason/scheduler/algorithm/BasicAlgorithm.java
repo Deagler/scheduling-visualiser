@@ -8,20 +8,13 @@ import java.util.List;
 
 public class BasicAlgorithm extends BaseAlgorithm {
 
-
-    public BasicAlgorithm(Graph graphObj, int numOfProcessors) {
-        super(graphObj, numOfProcessors);
-    }
-
     @Override
-    public Schedule execute() {
+    public Schedule execute(Graph graph, int numberOfProcessors) {
         Schedule schedule = new Schedule(numberOfProcessors);
-        List<List<String>> topological = graph.getTopologicalOrdering();
+        List<List<Task>> topological = graph.getTopologicalOrdering();
 
-        for (List<String> layer : topological) {
-            for (String taskId : layer) {
-                Task task = graph.getTask(taskId);
-
+        for (List<Task> layer : topological) {
+            for (Task task : layer) {
                 try {
                     schedule.add(task, 0);
                 } catch (Exception e) {
@@ -31,5 +24,10 @@ public class BasicAlgorithm extends BaseAlgorithm {
         }
 
         return schedule;
+    }
+
+    @Override
+    public String toString() {
+        return "Basic Algorithm";
     }
 }

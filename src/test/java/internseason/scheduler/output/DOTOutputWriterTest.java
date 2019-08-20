@@ -3,7 +3,7 @@ package internseason.scheduler.output;
 import com.paypal.digraph.parser.GraphEdge;
 import com.paypal.digraph.parser.GraphNode;
 import com.paypal.digraph.parser.GraphParser;
-import internseason.scheduler.DOTParser;
+import internseason.scheduler.input.DOTParser;
 import internseason.scheduler.exceptions.InputException;
 import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Schedule;
@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
