@@ -65,7 +65,9 @@ public class AStarAlgorithm extends BaseAlgorithm {
         visited.add(initialSchedule.hashCode());
         int counter = 0;
         while (!scheduleQueue.isEmpty()) {
-            ScheduleInfo head = scheduleQueue.poll();
+            //ScheduleInfo head = scheduleQueue.poll();
+            ScheduleInfo head = scheduleQueue.peek();
+            scheduleQueue.remove();
             // Return the optimal schedule (First complete schedule, orchestrated by AStar Heuristic)
             if (head.schedule.getNumberOfTasks() == totalTasks) {
                 System.out.println(counter);
@@ -120,7 +122,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
 //
 //    }
 
-    private List<ScheduleInfo> generateAllCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer, int numberOfProcessors  ) {
+    private List<ScheduleInfo> generateAllCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer, int numberOfProcessors) {
         Schedule schedule = scheduleinfo.schedule;
 
         currentLayer = new ArrayList<>(currentLayer);
