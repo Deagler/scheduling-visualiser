@@ -48,7 +48,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
 
     /**
-     * Basic Implementation of the AStar Algorithm without duplicate detection or any pruning.
+     * Basic Implementation of the AStar Algorithm with duplicate detection and process normalisation.
      * Reference: https://researchspace.auckland.ac.nz/handle/2292/30213
      * @return An optimal schedule
      */
@@ -74,12 +74,12 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
 
             // Extending the polled schedule to generate all possible "next" states.
-            List<ScheduleInfo> combinations = generateCombinations(head, topologicalTasks.get(head.layer));
+            List<ScheduleInfo> combinations = generateCombinations(head, topologicalTasks.get(head.layer), numberOfProcessors);
 
 
             if (combinations == null) { // Move to next topological layer if no possible schedules on current layer.
                 head.layer = head.layer +1;
-                combinations = generateCombinations(head, topologicalTasks.get(head.layer));
+                combinations = generateCombinations(head, topologicalTasks.get(head.layer), numberOfProcessors);
                 //scheduleQueue.clear();
             }
 
@@ -106,12 +106,12 @@ public class AStarAlgorithm extends BaseAlgorithm {
      * @param currentLayer
      * @return
      */
-    private List<ScheduleInfo> generateCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer) {
+    private List<ScheduleInfo> generateCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer, int numberOfProcessors) {
 
 //        if (tasksMatchFTOConditions(currentLayer)) {
 //
 //        } else {
-            return generateAllCombinations(scheduleinfo, currentLayer);
+            return generateAllCombinations(scheduleinfo, currentLayer, numberOfProcessors);
 //        }
 
     }
@@ -120,7 +120,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
 //
 //    }
 
-    private List<ScheduleInfo> generateAllCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer) {
+    private List<ScheduleInfo> generateAllCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer, int numberOfProcessors  ) {
         Schedule schedule = scheduleinfo.schedule;
 
         currentLayer = new ArrayList<>(currentLayer);
