@@ -1,6 +1,7 @@
 package internseason.scheduler.algorithm;
 
 import internseason.scheduler.model.Graph;
+import internseason.scheduler.model.Processor;
 import internseason.scheduler.model.Schedule;
 import internseason.scheduler.model.Task;
 
@@ -23,23 +24,47 @@ class ScheduleInfo {
         this.freeList = freeList;
     }
 
+    //finishing time of parent task + edge cost from parent to task
+    private int calculateDRT(Task task) {
+        //if no parent return 0
+        if (task.getNumberOfParents() == 0) {
+            return 0;
+        }
+
+        //should only have 1 parent
+        if (task.getNumberOfParents() == 1) {
+            Task parent = task.getParentTasks().get(0);
+
+            //finish time of parent
+            int finTime = this.schedule.getTaskStartTime(parent) + parent.getCost();
+            int cost = parent.getCostToChild(task);
+
+            return finTime + cost;
+
+        }
+
+        return -1;
+    }
+
+
     private List<Task> sortDRTTasks(List<Task> tasks) {
-        return Collections.sort(tasks, new Comparator<Task>() {
+        Collections.sort(tasks, new Comparator<Task>() {
 
             @Override
             public int compare(Task t1, Task t2) {
-                if (schedule.calculateDRT(t1) < schedule.calculateDRT(t2)) {
+                if (calculateDRT(t1) < calculateDRT(t2)) {
                     return -1;
                 }
 
-                if (schedule.calculateDRT(t1)> schedule.calculateDRT(t2)) {
+                if (calculateDRT(t1)> calculateDRT(t2)) {
                     return 1;
                 }
 
                 //tie
                 return 0;
             }
-        })
+        });
+        return tasks;
     }
 
     @Override
