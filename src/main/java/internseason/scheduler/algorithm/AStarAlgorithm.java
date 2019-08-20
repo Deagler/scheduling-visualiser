@@ -5,6 +5,7 @@ import internseason.scheduler.model.Schedule;
 import internseason.scheduler.model.Task;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -60,6 +61,29 @@ public class AStarAlgorithm extends BaseAlgorithm {
         Schedule initialSchedule = new Schedule(numberOfProcessors);
 
         scheduleQueue.add(new ScheduleInfo(initialSchedule, 0)); // Add the empty schedule to the queue.
+        // Calculates the Bottom Level for each task.
+        List<Task> leafs = graph.getTasks().values() //find all the leaf nodes
+                .stream()
+                .filter((Task task) -> task.getOutgoingEdges().size() == 0)
+                .collect(Collectors.toList());
+
+
+        for (Task leaf : leafs) { //Compute the bottom levels for the nodes
+            leaf.setBottomLevel(leaf.getCost());
+            getBottomLevels(leaf.getParentTasks(), leaf.getCost());
+        }
+
+        Task maxTask = null;
+        for (Task task : graph.getTasks().values()) {
+           if (maxTask == null) {
+               maxTask = task;
+           }
+
+           if (task.getBottomLevel() > maxTask.getBottomLevel()) {
+               maxTask = task;
+           }
+        }
+
 
         Set<Integer> visited = new HashSet<>();
         visited.add(initialSchedule.hashCode());
@@ -99,6 +123,21 @@ public class AStarAlgorithm extends BaseAlgorithm {
         }
 
         return null;
+    }
+
+    private int calculateIdleHeuristic(Schedule schedule) {
+        int totalTaskTime = 0;
+        for (Task task : schedule.getTasks()) {
+            totalTaskTime += task.getCost();
+        }
+
+        return ((totalTaskTime + schedule.getIdleTime()) / schedule.getNumOfProcessors());
+
+    }
+
+    private Integer calculateCost(Schedule schedule) {
+        return (Math.max(schedule.getMaxBottomLevel(), calculateIdleHeuristic(schedule)));
+
     }
 
     /**
@@ -153,6 +192,18 @@ public class AStarAlgorithm extends BaseAlgorithm {
         return out;
     }
 
+    private void getBottomLevels(List<Task> tasks, int currentBottomLevel) {
+        for (Task node : tasks) {
+            if (node.getCost() < currentBottomLevel + node.getCost()) {
+                node.setBottomLevel(currentBottomLevel + node.getCost());
+            }
+            if (!node.getParentTasks().isEmpty()) {
+                getBottomLevels(node.getParentTasks(),
+                        node.getBottomLevel());
+            }
+        }
+    }
+
     /**
      * Heuristic that orders schedules in ascending order of cost. (Lowest cost first)
      * If costs are equal then the schedule with a higher number of tasks assigned comes first.
@@ -163,19 +214,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
         public int compare(ScheduleInfo o1Info, ScheduleInfo o2Info) {
             Schedule o1 = o1Info.schedule;
             Schedule o2 = o2Info.schedule;
-            if (o1.getCost() < o2.getCost()) {
-                return -1;
-            } else if (o1.getCost() > o2.getCost()) {
-                return 1;
-            } else {
-                if (o1.getNumberOfTasks() > o2.getNumberOfTasks()) {
-                    return -1;
-                } else if (o1.getNumberOfTasks() == o2.getNumberOfTasks()) {
-                    return 0;
-                } else {
-                    return 1;
-                }
-            }
+            return calculateCost(o1).compareTo(calculateCost(o2));
         }
 
     }
