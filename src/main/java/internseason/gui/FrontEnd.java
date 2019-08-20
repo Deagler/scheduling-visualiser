@@ -23,8 +23,7 @@ public class FrontEnd extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        primaryStage.setTitle("Hello World");
-        //System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+        primaryStage.setTitle("Scheduler");
         primaryStage.setScene(new Scene(root, 1280, 800));
         primaryStage.show();
     }

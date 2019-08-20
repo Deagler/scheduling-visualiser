@@ -41,7 +41,7 @@ public class Graph {
         return topologicalOrdering;
     }
 
-    private Map<String, List<String>> getAdjacencyList() {
+    public Map<String, List<String>> getAdjacencyList() {
         if (this.adjacencyList != null) {
             return this.adjacencyList;
         }

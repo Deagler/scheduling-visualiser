@@ -1,0 +1,24 @@
+/*graph {*/
+/*    fill-color: #FFFF;*/
+/*}*/
+
+node {
+    size: 5px;
+    fill-color: #777;
+    text-mode: hidden;
+    z-index: 0;
+}
+
+edge {
+    shape: line;
+    fill-color: #222;
+    arrow-size: 3px, 2px;
+}
+
+node#A {
+    fill-color: blue;
+}
+
+node:clicked {
+    fill-color: red;
+}
