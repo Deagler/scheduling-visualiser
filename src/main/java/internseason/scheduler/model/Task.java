@@ -3,10 +3,7 @@ package internseason.scheduler.model;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Task implements Serializable {
 
@@ -15,6 +12,7 @@ public class Task implements Serializable {
     private List<Dependency> outgoingEdges;
     private List<Task> parentTasks;
     private Map<Task, Integer> childCosts;
+    private Set<String> childrenTasks;
     private int cost;
     private String id;
 
@@ -24,6 +22,7 @@ public class Task implements Serializable {
         incomingEdges = new ArrayList<>();
         outgoingEdges = new ArrayList<>();
         parentTasks = new ArrayList<>();
+        childrenTasks = new HashSet<>();
         childCosts = new HashMap<>();
     }
 
@@ -39,6 +38,7 @@ public class Task implements Serializable {
 
     public void addChildTask(Task task, int communicationCost) {
         this.childCosts.put(task, communicationCost);
+        this.childrenTasks.add(task.getId());
     }
 
     public int getCostToChild(Task task) {
@@ -63,6 +63,18 @@ public class Task implements Serializable {
 
     public List<Dependency> getIncomingEdges(){
         return incomingEdges;
+    }
+
+    public int getNumberOfParents() {
+        return this.parentTasks.size();
+    }
+
+    public int getNumberOfChildren() {
+        return this.childCosts.size();
+    }
+
+    public Set<String> getChildren() {
+        return this.childrenTasks;
     }
 
     public int getDelayTo(Task task) {

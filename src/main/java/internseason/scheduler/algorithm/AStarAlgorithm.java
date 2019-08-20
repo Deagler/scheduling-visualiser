@@ -5,6 +5,7 @@ import internseason.scheduler.model.Schedule;
 import internseason.scheduler.model.Task;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -14,10 +15,12 @@ import java.util.*;
 class ScheduleInfo {
     public Schedule schedule;
     public Integer layer;
+    List<String> freeList;
 
-    public ScheduleInfo(Schedule schedule, Integer layer) {
+    public ScheduleInfo(Schedule schedule, Integer layer, List<String> freeList) {
         this.schedule = schedule;
         this.layer = layer;
+        this.freeList = freeList
     }
 
     @Override
@@ -62,7 +65,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
         int totalTasks = graph.getTasks().size();
         Schedule initialSchedule = new Schedule(getNumberOfProcessors());
 
-        scheduleQueue.add(new ScheduleInfo(initialSchedule, 0)); // Add the empty schedule to the queue.
+        scheduleQueue.add(new ScheduleInfo(initialSchedule, 0, new ArrayList<>())); // Add the empty schedule to the queue.
 
         Set<Integer> visited = new HashSet<>();
         visited.add(initialSchedule.hashCode());
@@ -111,21 +114,65 @@ public class AStarAlgorithm extends BaseAlgorithm {
         return out;
     }
 
-    /**
-     * Generates all possible schedules if a node from the current topological layering
-     * has not been assigned in the schedule.
-     * @param scheduleinfo
-     * @param currentLayer
-     * @return
-     */
+//    /**
+//     * Generates all possible schedules if a node from the current topological layering
+//     * has not been assigned in the schedule.
+//     * @param scheduleinfo
+//     * @param currentLayer
+//     * @return
+//     */
     private List<ScheduleInfo> generateCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer) {
 
 //        if (tasksMatchFTOConditions(currentLayer)) {
 //
 //        } else {
-            return generateAllCombinations(scheduleinfo, currentLayer);
+//            return generateAllCombinations(scheduleinfo, currentLayer);
 //        }
+//
+        return null;
+    }
 
+
+    private boolean isFTO(ScheduleInfo info, List<Task> currentLayer) {
+        String commonChildId =  "";
+        Integer commonParentProcessorId = null;
+
+        List<Task> freeNodes = new ArrayList<>(currentLayer);
+        freeNodes.addAll(this.graph.buildTaskListFromIds(info.freeList));
+
+        // check how many parents and childrens task has
+        for (Task task : freeNodes) {
+            if (task.getNumberOfParents() > 1 || task.getNumberOfChildren() > 1){
+                return false;
+            }
+
+            if (task.getNumberOfChildren() == 1) {
+                for (String childId : task.getChildren()) {
+                    if (commonChildId.isEmpty()) {
+                        commonChildId = childId;
+                    } else {
+                        if (!commonChildId.equals(childId)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            if (task.getNumberOfParents() == 1) {
+                for (Task parent : task.getParentTasks()) {
+                    Schedule s = info.schedule;
+                    int parentProcessorId = s.getProcessorIdForTask(parent);
+                    if (commonParentProcessorId == null) {
+                        commonParentProcessorId = parentProcessorId;
+                    } else {
+                        if (commonParentProcessorId != parentProcessorId) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
 //    private List<ScheduleInfo> generateFTOCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer) {
@@ -155,13 +202,31 @@ public class AStarAlgorithm extends BaseAlgorithm {
             for (int processId = 0; processId < numberOfProcessors; processId++) {
                 Schedule newSchedule = new Schedule(schedule);
                 newSchedule.add(node, processId);
-                out.add(new ScheduleInfo(newSchedule, scheduleinfo.layer));
+
+                List<String> expandedFreeNodes = new ArrayList<>();
+
+                for (String childId : node.getChildren()) {
+                    Task child = this.graph.getTask(childId);
+                    boolean isTaskFree = true;
+                    for (Task task : child.getParentTasks()) {
+                        if (!schedule.isTaskAssigned(task)) {
+                            isTaskFree = false;
+                            break;
+                        }
+                    }
+                    if (isTaskFree) {
+                        expandedFreeNodes.add(childId);
+                    }
+                }
+
+                out.add(new ScheduleInfo(newSchedule, scheduleinfo.layer, expandedFreeNodes));
             }
         }
 
-
         return out;
     }
+
+
 
     /**
      * Heuristic that orders schedules in ascending order of cost. (Lowest cost first)

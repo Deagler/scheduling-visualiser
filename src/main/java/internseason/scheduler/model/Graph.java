@@ -1,6 +1,7 @@
 package internseason.scheduler.model;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Graph {
     Map<String, Task> tasks;
@@ -111,6 +112,14 @@ public class Graph {
             }
         }
         return inDegrees;
+    }
+
+    public List<Task> buildTaskListFromIds(List<String> taskIds) {
+        List<Task> result = taskIds.stream()
+                .map(t -> tasks.get(t))
+                .collect(Collectors.toList());
+
+        return result;
     }
 
 }
