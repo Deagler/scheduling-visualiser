@@ -1,9 +1,7 @@
-package internseason.scheduler;
+package internseason.scheduler.model;
 
+import internseason.scheduler.input.DOTParser;
 import internseason.scheduler.exceptions.InputException;
-import internseason.scheduler.model.Dependency;
-import internseason.scheduler.model.Graph;
-import internseason.scheduler.model.Task;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,7 +40,7 @@ public class TopSortTest {
         try {
             Graph graph = this.dotparser.parse(path);
             //get top ordering
-            List<List<String>> topOrder =  graph.getTopologicalOrdering();
+            List<List<Task>> topOrder =  graph.getTopologicalOrdering();
             List<Task> visited = new ArrayList<>();
             System.out.println(topOrder);
             //check that each task's outgoing edge isnt already visited, if it is then top ordering is violated

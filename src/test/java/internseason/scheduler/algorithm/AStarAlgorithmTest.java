@@ -1,14 +1,10 @@
-package scheduler;
+package internseason.scheduler.algorithm;
 
-import internseason.scheduler.DOTParser;
-import internseason.scheduler.algorithm.AStarAlgorithm;
+import internseason.scheduler.input.DOTParser;
 import internseason.scheduler.exceptions.InputException;
 import internseason.scheduler.model.*;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -24,8 +20,8 @@ public class AStarAlgorithmTest {
     public void testAStarSchedule() {
         try {
             Graph graph = this.parser.parse("src/test/resources/Test_Diamond.dot");
-            AStarAlgorithm algorithm = new AStarAlgorithm(graph,2);
-            Schedule schedule = algorithm.execute();
+            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.A_STAR_ALGORITHM, 0);
+            Schedule schedule = algorithm.execute(graph, 2);
             //System.out.println(schedule);
             assertEquals("Processor 0\n" +
                     "t1 scheduled at: 4\n" +
