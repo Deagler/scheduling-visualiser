@@ -160,7 +160,7 @@ public class Schedule implements Serializable {
     }
 
     //finishing time of parent task + edge cost from parent to task
-    public int calculateDRT(Task task, Map<String, Task> scheduledTasks) {
+    public int calculateDRT(Task task) {
 
         int min = Integer.MAX_VALUE;
 
@@ -168,7 +168,7 @@ public class Schedule implements Serializable {
             int max = 0;
 
             for (String parentId : task.getParentTasks()) {
-                Task parent = scheduledTasks.get(parentId);
+                Task parent = allTasks.get(parentId);
 
                 //finish time of parent
                 Processor parentProcessor = processorIdMap.get(taskIdProcessorMap.get(parent.getId()));
@@ -190,6 +190,31 @@ public class Schedule implements Serializable {
         }
 
         return min;
+    }
+
+    //TODO throw exception
+    //finishing time of parent task + edge cost from parent to task
+    //input task should have a maximum of 1 parent
+    public int calculateDRTSingle(Task task) {
+        //if no parent return 0
+        if (task.getNumberOfParents() == 0) {
+            return 0;
+        }
+
+        //should only have 1 parent
+        if (task.getNumberOfParents() == 1) {
+            String parentTaskId = task.getParentTasks().get(0);
+            Task parent = allTasks.get(parentTaskId);
+
+            //finish time of parent
+            int finTime = this.getTaskStartTime(parent) + parent.getCost();
+            int cost = parent.getCostToChild(task);
+
+            return finTime + cost;
+
+        }
+
+        return -1;
     }
 
 

@@ -1,7 +1,6 @@
 package internseason.scheduler.algorithm;
 
 import com.google.gson.Gson;
-import com.sun.xml.internal.ws.developer.Serialization;
 import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Processor;
 import internseason.scheduler.model.Schedule;
@@ -24,7 +23,6 @@ class ScheduleInfo {
     private Integer totalNumberOfTasks;
     private Integer hashCode;
     private Integer layer;
-    private static Gson gson = new Gson();
     private List<String> freeList;
 
     public ScheduleInfo(Schedule schedule, Integer layer, List<String> freeList, int totalScheduleCost) {
@@ -199,7 +197,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
     private int calculateDRTHeuristic(Schedule schedule, List<Task> freeTasks){
         int maxDRT = Integer.MIN_VALUE;
         for (Task task : freeTasks){
-            int drt = schedule.calculateDRT(task, graph.getTasks());
+            int drt = schedule.calculateDRT(task);
             int bottomLevel = task.getBottomLevel();
             maxDRT = Math.max(maxDRT, (drt+bottomLevel));
         }
@@ -329,17 +327,17 @@ public class AStarAlgorithm extends BaseAlgorithm {
         return out;
     }
 
-    private List<Task> sortDRTTasks(List<Task> tasks, Schedule schedule) {
+    private List<Task> sortFTOTasks(List<Task> tasks, Schedule schedule) {
         Collections.sort(tasks, new Comparator<Task>() {
 
             @Override
             public int compare(Task t1, Task t2) {
                 Map<String, Task> tasks = graph.getTasks();
-                if (schedule.calculateDRT(t1, tasks) < schedule.calculateDRT(t2, tasks)) {
+                if (schedule.calculateDRTSingle(t1) < schedule.calculateDRTSingle(t2)) {
                     return -1;
                 }
 
-                if (schedule.calculateDRT(t1,  tasks)> schedule.calculateDRT(t2,  tasks)) {
+                if (schedule.calculateDRTSingle(t1)> schedule.calculateDRTSingle(t2)) {
                     return 1;
                 }
 
