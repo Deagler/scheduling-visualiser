@@ -24,16 +24,28 @@ class ScheduleInfo {
         this.freeList = freeList;
     }
 
+    //TODO throw exception
     //finishing time of parent task + edge cost from parent to task
     //input task should have a maximum of 1 parent
     public int calculateDRT(Task task) {
-        //number of parents should be between 0 and 1
-        if (!(task.getNumberOfParents() == 0 || task.getNumberOfParents() == 1)) {
-            //TODO throw exception
+        //if no parent return 0
+        if (task.getNumberOfParents() == 0) {
             return 0;
         }
 
-        return this.schedule.calculateDRT(task);
+        //should only have 1 parent
+        if (task.getNumberOfParents() == 1) {
+            Task parent = task.getParentTasks().get(0);
+
+            //finish time of parent
+            int finTime = this.schedule.getTaskStartTime(parent) + parent.getCost();
+            int cost = parent.getCostToChild(task);
+
+            return finTime + cost;
+
+        }
+
+        return -1;
     }
 
 
