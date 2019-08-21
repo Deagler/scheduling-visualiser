@@ -233,6 +233,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 //if next schedule in queue has the same freelist
                 List<String> nextFreeIdList = scheduleQueue.peek().getFreeList();
                 List<Task> nextFreeList = getMergedFreeList(scheduleQueue.peek().getSchedule(), currentLayer, nextFreeIdList);
+                FTOList.remove();
 
                 if (!(nextFreeList.containsAll(FTOList) && FTOList.containsAll(nextFreeList))) {
                     knownFTO = false;
@@ -451,7 +452,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
 
     private Queue<Task> sortFTOTasks(List<Task> tasks, Schedule schedule) {
-        Queue<Task> result = new PriorityQueue<Task>(new Comparator<Task>() {
+        PriorityQueue<Task> result = new PriorityQueue<Task>(new Comparator<Task>() {
             @Override
             public int compare(Task t1, Task t2) {
                 Map<String, Task> tasks = graph.getTasks();
@@ -488,8 +489,12 @@ public class AStarAlgorithm extends BaseAlgorithm {
         });
 
         result.addAll(tasks);
-        //TODO verify Sorted FTO Order
-        return result;
+
+        if (verifySortedFTOList(result)) {
+            return result;
+        } else {
+            return null;
+        }
     }
 
 
@@ -507,9 +512,25 @@ public class AStarAlgorithm extends BaseAlgorithm {
         }
     }
 
-    private boolean verifySortedFTOList(Queue<Task> ftoList) {
+    private boolean verifySortedFTOList(PriorityQueue<Task> ftoList) {
 
-        return false;
+        Queue<Task> tempList = new PriorityQueue<Task>(ftoList.comparator());
+        tempList.addAll(ftoList);
+
+        int outCost = Integer.MIN_VALUE;
+
+        while (!tempList.isEmpty()) {
+            Task t = tempList.poll();
+            int costToChildTask = t.getCostToChild(graph.getTask(t.getChildrenList().get(0)));
+
+            if (costToChildTask >= outCost) {
+                outCost = costToChildTask;
+            } else {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
