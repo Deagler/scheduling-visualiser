@@ -55,6 +55,11 @@ class ScheduleInfo {
         return totalCost;
     }
 
+    public List<String> getFreeList() {
+        return freeList;
+    }
+
+
     @Override
     public String toString() {
         return "ScheduleInfo{" +
@@ -122,7 +127,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
         // Calculates the Bottom Level for each task.
         List<Task> leafs = graph.getTasks().values() //find all the leaf nodes
                 .stream()
-                .filter((Task task) -> task.getOutgoingEdges().size() == 0)
+                .filter((Task task) -> task.getNumberOfChildren() == 0)
                 .collect(Collectors.toList());
 
 
@@ -149,11 +154,11 @@ public class AStarAlgorithm extends BaseAlgorithm {
         while (!scheduleQueue.isEmpty()) {
             //ScheduleInfo head = scheduleQueue.poll();
             ScheduleInfo head = scheduleQueue.peek();
+            Schedule realSchedule = head.getSchedule();
             scheduleQueue.remove();
             // Return the optimal schedule (First complete schedule, orchestrated by AStar Heuristic)
-            if (head.getTotalNumberOfTasks() == totalTasks) {
-                System.out.println(counter);
-                return head.getSchedule();
+            if (realSchedule.getNumberOfTasks() == totalTasks) {
+                return realSchedule;
             }
 
 
@@ -193,6 +198,27 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
     }
 
+    private int calculateDRT(Schedule schedule, Task task) {
+        //if no parent return 0
+        if (task.getNumberOfParents() == 0) {
+            return 0;
+        }
+
+        //should only have 1 parent
+        if (task.getNumberOfParents() == 1) {
+            Task parent = task.getParentTasks().get(0);
+
+            //finish time of parent
+            int finTime = schedule.getTaskStartTime(parent) + parent.getCost();
+            int cost = parent.getCostToChild(task);
+
+            return finTime + cost;
+
+        }
+
+        return -1;
+    }
+
     /**
      * Generates all possible schedules if a node from the current topological layering
      * has not been assigned in the schedule.
@@ -215,7 +241,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
         Integer commonParentProcessorId = null;
 
         List<Task> freeNodes = new ArrayList<>(currentLayer);
-        freeNodes.addAll(this.graph.buildTaskListFromIds(info.freeList));
+        freeNodes.addAll(this.graph.buildTaskListFromIds(info.getFreeList()));
 
         // check how many parents and childrens task has
         for (Task task : freeNodes) {
@@ -236,8 +262,9 @@ public class AStarAlgorithm extends BaseAlgorithm {
             }
 
             if (task.getNumberOfParents() == 1) {
+                Schedule s = info.getSchedule();
                 for (Task parent : task.getParentTasks()) {
-                    Schedule s = info.schedule;
+
                     int parentProcessorId = s.getProcessorIdForTask(parent);
                     if (commonParentProcessorId == null) {
                         commonParentProcessorId = parentProcessorId;
@@ -296,23 +323,23 @@ public class AStarAlgorithm extends BaseAlgorithm {
                     }
                 }
 
-                out.add(new ScheduleInfo(newSchedule, scheduleinfo.layer, expandedFreeNodes, calculateCost(newSchedule));
+                out.add(new ScheduleInfo(newSchedule, scheduleinfo.getLayer(), expandedFreeNodes, calculateCost(newSchedule)));
             }
         }
 
         return out;
     }
 
-    private List<Task> sortDRTTasks(List<Task> tasks, ScheduleInfo scheduleInfo) {
+    private List<Task> sortDRTTasks(List<Task> tasks, Schedule schedule) {
         Collections.sort(tasks, new Comparator<Task>() {
 
             @Override
             public int compare(Task t1, Task t2) {
-                if (scheduleInfo.calculateDRT(t1) < scheduleInfo.calculateDRT(t2)) {
+                if (schedule.calculateDRT(t1) < schedule.calculateDRT(t2)) {
                     return -1;
                 }
 
-                if (scheduleInfo.calculateDRT(t1)> scheduleInfo.calculateDRT(t2)) {
+                if (schedule.calculateDRT(t1)> schedule.calculateDRT(t2)) {
                     return 1;
                 }
 

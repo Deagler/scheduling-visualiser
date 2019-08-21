@@ -8,8 +8,7 @@ import java.util.*;
 public class Task implements Serializable {
 
 
-    private List<Dependency> incomingEdges;
-    private List<Dependency> outgoingEdges;
+
     private List<Task> parentTasks;
     private Map<Task, Integer> childCosts;
     private Set<String> childrenTasks;
@@ -20,20 +19,11 @@ public class Task implements Serializable {
     public Task(int cost, String id) {
         this.cost = cost;
         this.id = id;
-        incomingEdges = new ArrayList<>();
-        outgoingEdges = new ArrayList<>();
         parentTasks = new ArrayList<>();
         childrenTasks = new HashSet<>();
         childCosts = new HashMap<>();
     }
 
-    public void addIncoming(Dependency edge) {
-        this.incomingEdges.add(edge);
-    }
-
-    public void addOutgoing(Dependency edge) {
-        this.outgoingEdges.add(edge);
-    }
 
     public void addParentTask(Task task) { this.parentTasks.add(task);}
 
@@ -67,13 +57,7 @@ public class Task implements Serializable {
         this.bottomLevel = Math.max(bottomLevel, this.bottomLevel);
     }
 
-    public List<Dependency> getOutgoingEdges(){
-        return outgoingEdges;
-    }
 
-    public List<Dependency> getIncomingEdges(){
-        return incomingEdges;
-    }
 
     public int getNumberOfParents() {
         return this.parentTasks.size();
@@ -88,19 +72,6 @@ public class Task implements Serializable {
     }
 
     public List<String> getChildrenList() { return new ArrayList<>(this.childrenTasks); }
-
-    public int getDelayTo(Task task) {
-        //check if task depends on this
-
-        for (Dependency dependency : outgoingEdges) {
-            if (dependency.getTargetTask().equals(task)) {
-                return dependency.getDependencyCost();
-            }
-        }
-
-        //TODO throw exception
-        return 0;
-    }
 
     @Override
     public String toString() {
