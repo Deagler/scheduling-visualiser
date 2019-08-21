@@ -63,8 +63,9 @@ class ScheduleInfo {
  * Possible Schedules are generated layer-by-layer as to avoid generating schedules that have dependency violations.
  */
 public class AStarAlgorithm extends BaseAlgorithm {
-    Queue<ScheduleInfo> scheduleQueue;
-    int totalTaskTime;
+    private Queue<ScheduleInfo> scheduleQueue;
+    private int totalTaskTime;
+    private Graph graph;
 
     /**
      * Tepmorary constructor to test factory pattern
@@ -88,11 +89,14 @@ public class AStarAlgorithm extends BaseAlgorithm {
         for (Task task: graph.getTasks().values()){
             totalTaskTime +=task.getCost();
         }
+
+        this.graph = graph;
+
         List<List<Task>> topologicalTasks = graph.getTopologicalOrdering();
 
         Schedule initialSchedule = new Schedule(numberOfProcessors);
 
-        scheduleQueue.add(new ScheduleInfo(initialSchedule, 0, new ArrayList<String>()); // Add the empty schedule to the queue.
+        scheduleQueue.add(new ScheduleInfo(initialSchedule, 0, new ArrayList<String>())); // Add the empty schedule to the queue.
         // Calculates the Bottom Level for each task.
         List<Task> leafs = graph.getTasks().values() //find all the leaf nodes
                 .stream()
@@ -181,8 +185,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
 //        } else {
             return generateAllCombinations(scheduleinfo, currentLayer, numberOfProcessors);
 //        }
-//
-        return null;
     }
 
 

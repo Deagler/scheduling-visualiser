@@ -104,7 +104,7 @@ public class Graph {
 
         // convert to task objects
         for (List<String> layer : layers) {
-            topologicalOrdering.add(getTasksFromIds(layer));
+            topologicalOrdering.add(buildTaskListFromIds(layer));
         }
     }
 

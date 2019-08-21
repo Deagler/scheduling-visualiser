@@ -155,27 +155,35 @@ public class Schedule {
 
     //finishing time of parent task + edge cost from parent to task
     public int calculateDRT(Task task) {
-        //if no parent return 0
-        if (task.getNumberOfParents() == 0) {
-            return 0;
-        }
 
-        int max = 0;
+        int min = Integer.MIN_VALUE;
 
-        for (int i=0; i<task.getParentTasks().size(); i++) {
-            Task parent = task.getParentTasks().get(i);
+        for (int processorId : processorIdMap.keySet()) {
+            int max = 0;
 
-            //finish time of parent
-            Processor parentProcessor = processorIdMap.get(taskIdProcessorMap.get(parent.getId()));
-            int finTime = parentProcessor.getTaskStartTime(parent) + parent.getCost();
-            int communicationCost = parent.getCostToChild(task);
+            for (int i=0; i<task.getParentTasks().size(); i++) {
+                Task parent = task.getParentTasks().get(i);
 
-            if (finTime + communicationCost > max) {
-                max = finTime + cost;
+                //finish time of parent
+                Processor parentProcessor = processorIdMap.get(taskIdProcessorMap.get(parent.getId()));
+                int finTime = parentProcessor.getTaskStartTime(parent) + parent.getCost();
+                int communicationCost = 0;
+
+                if (parentProcessor.getId() != processorId) {
+                    communicationCost = parent.getCostToChild(task)
+                }
+
+                if (finTime + communicationCost > max) {
+                    max = finTime + cost;
+                }
+            }
+
+            if (max < min ) {
+                min = max;
             }
         }
 
-        return max;
+        return min;
     }
 
 
