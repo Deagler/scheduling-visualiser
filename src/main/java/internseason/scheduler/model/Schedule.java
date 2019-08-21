@@ -75,6 +75,7 @@ public class Schedule {
     }
 
     public int getIdleTime() {
+
         return idleTime;
     }
 

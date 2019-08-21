@@ -1,5 +1,6 @@
 package internseason.scheduler.algorithm;
 
+import com.google.gson.Gson;
 import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Processor;
 import internseason.scheduler.model.Schedule;
@@ -9,51 +10,71 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
+
 /**
  * Temporary Data-structure to store a schedule and the given topological layer the internseason.scheduler.algorithm should attempt to generate
  * new schedules from.
  */
 class ScheduleInfo {
-    public Schedule schedule;
-    public Integer layer;
-    List<String> freeList;
+    private String serialisedSchedule;
+    private Integer maxBottomLevel;
+    private Integer totalCost;
+    private Integer totalNumberOfTasks;
+    private Integer hashCode;
+    private Integer layer;
+    private static Gson gson = new Gson();
+    private List<String> freeList;
 
-    public ScheduleInfo(Schedule schedule, Integer layer, List<String> freeList) {
-        this.schedule = schedule;
+    public ScheduleInfo(Schedule schedule, Integer layer, List<String> freeList, int totalScheduleCost) {
+        this.serialisedSchedule = gson.toJson(schedule);
+        this.maxBottomLevel = schedule.getMaxBottomLevel();
+        this.hashCode = schedule.hashCode();
+        this.totalCost = totalScheduleCost;
+        this.totalNumberOfTasks = schedule.getNumberOfTasks();
         this.layer = layer;
         this.freeList = freeList;
     }
 
-    //TODO throw exception
-    //finishing time of parent task + edge cost from parent to task
-    //input task should have a maximum of 1 parent
-    public int calculateDRT(Task task) {
-        //if no parent return 0
-        if (task.getNumberOfParents() == 0) {
-            return 0;
-        }
-
-        //should only have 1 parent
-        if (task.getNumberOfParents() == 1) {
-            Task parent = task.getParentTasks().get(0);
-
-            //finish time of parent
-            int finTime = this.schedule.getTaskStartTime(parent) + parent.getCost();
-            int cost = parent.getCostToChild(task);
-
-            return finTime + cost;
-
-        }
-
-        return -1;
+    public Integer getTotalNumberOfTasks() {
+        return totalNumberOfTasks;
     }
 
+    public Schedule getSchedule() {
+        return gson.fromJson(serialisedSchedule, Schedule.class);
+    }
+
+    public Integer getLayer() {
+        return layer;
+    }
+
+    public void incrementLayer() {
+        this.layer++;
+    }
+
+    public Integer getTotalCost() {
+        return totalCost;
+    }
 
     @Override
     public String toString() {
         return "ScheduleInfo{" +
                 ", layer=" + layer +
                 '}';
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ScheduleInfo that = (ScheduleInfo) o;
+        return Objects.equals(hashCode, that.hashCode);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCode;
     }
 }
 
@@ -97,7 +118,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
         Schedule initialSchedule = new Schedule(numberOfProcessors);
 
-        scheduleQueue.add(new ScheduleInfo(initialSchedule, 0, new ArrayList<String>())); // Add the empty schedule to the queue.
+        scheduleQueue.add(new ScheduleInfo(initialSchedule, 0, new ArrayList<String>(), 0)); // Add the empty schedule to the queue.
         // Calculates the Bottom Level for each task.
         List<Task> leafs = graph.getTasks().values() //find all the leaf nodes
                 .stream()
@@ -130,29 +151,29 @@ public class AStarAlgorithm extends BaseAlgorithm {
             ScheduleInfo head = scheduleQueue.peek();
             scheduleQueue.remove();
             // Return the optimal schedule (First complete schedule, orchestrated by AStar Heuristic)
-            if (head.schedule.getNumberOfTasks() == totalTasks) {
+            if (head.getTotalNumberOfTasks() == totalTasks) {
                 System.out.println(counter);
-                return head.schedule;
+                return head.getSchedule();
             }
 
 
             // Extending the polled schedule to generate all possible "next" states.
-            List<ScheduleInfo> combinations = generateCombinations(head, topologicalTasks.get(head.layer), numberOfProcessors);
+            List<ScheduleInfo> combinations = generateCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors);
 
 
             if (combinations == null) { // Move to next topological layer if no possible schedules on current layer.
-                head.layer = head.layer +1;
-                combinations = generateCombinations(head, topologicalTasks.get(head.layer), numberOfProcessors);
+                head.incrementLayer();
+                combinations = generateCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors);
                 //scheduleQueue.clear();
             }
 
             for (ScheduleInfo possibleCombination : combinations) {
 
-                if (visited.contains(possibleCombination.schedule.hashCode())) {
+                if (visited.contains(possibleCombination.hashCode())) {
                     continue;
                 }
                 scheduleQueue.add(possibleCombination);
-                visited.add(possibleCombination.schedule.hashCode());
+                visited.add(possibleCombination.hashCode());
             }
 
 
@@ -236,7 +257,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
 //    }
 
     private List<ScheduleInfo> generateAllCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer, int numberOfProcessors) {
-        Schedule schedule = scheduleinfo.schedule;
+        Schedule schedule = scheduleinfo.getSchedule();
 
         currentLayer = new ArrayList<>(currentLayer);
         for (int i = currentLayer.size() - 1; i >= 0; i--) {
@@ -275,7 +296,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
                     }
                 }
 
-                out.add(new ScheduleInfo(newSchedule, scheduleinfo.layer, expandedFreeNodes));
+                out.add(new ScheduleInfo(newSchedule, scheduleinfo.layer, expandedFreeNodes, calculateCost(newSchedule));
             }
         }
 
@@ -346,9 +367,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
         @Override
         public int compare(ScheduleInfo o1Info, ScheduleInfo o2Info) {
-            Schedule o1 = o1Info.schedule;
-            Schedule o2 = o2Info.schedule;
-            return calculateCost(o1).compareTo(calculateCost(o2));
+            return o1Info.getTotalCost().compareTo(o2Info.getTotalCost());
         }
 
     }
