@@ -24,6 +24,7 @@ class ScheduleInfo {
     private Integer hashCode;
     private Integer layer;
     private List<String> freeList;
+    private Schedule schedule;
 
     public ScheduleInfo(Schedule schedule, Integer layer, List<String> freeList, int totalScheduleCost) {
         this.serialisedSchedule = SerializationUtils.serialize(schedule);
@@ -33,6 +34,7 @@ class ScheduleInfo {
         this.totalNumberOfTasks = schedule.getNumberOfTasks();
         this.layer = layer;
         this.freeList = freeList;
+        this.schedule = null;
     }
 
     public Integer getTotalNumberOfTasks() {
@@ -40,7 +42,11 @@ class ScheduleInfo {
     }
 
     public Schedule getSchedule() {
-        return (Schedule)SerializationUtils.deserialize(serialisedSchedule);
+        if (this.schedule == null) {
+            this.schedule = (Schedule)SerializationUtils.deserialize(serialisedSchedule);
+        }
+
+        return this.schedule;
     }
 
     public Integer getLayer() {
@@ -151,6 +157,9 @@ public class AStarAlgorithm extends BaseAlgorithm {
         Set<Integer> visited = new HashSet<>();
         visited.add(initialSchedule.hashCode());
         int counter = 0;
+
+        boolean knownFTO = false; //variable that tells us if we need to call isFTO()
+
         while (!scheduleQueue.isEmpty()) {
             //ScheduleInfo head = scheduleQueue.poll();
             ScheduleInfo head = scheduleQueue.peek();
@@ -163,13 +172,50 @@ public class AStarAlgorithm extends BaseAlgorithm {
             }
 
 
-            // Extending the polled schedule to generate all possible "next" states.
-            List<ScheduleInfo> combinations = generateCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors);
+            List<Task> currentLayer = topologicalTasks.get(head.getLayer());
+            List<Task> FTOList = null;
+
+            if (!knownFTO) {
+                FTOList = isFTO(head, currentLayer);
+                knownFTO = true;
+            }
+            List<ScheduleInfo> combinations;
+
+            if (FTOList != null) {
+                combinations = generateFTOCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors);
+
+//                //Queue<Task> ftoTasks =  sortFTOTasks(FTOList, schedule);
+//                boolean same = true;
+//                while (same) {
+//                    //Task head = ftoTasks.peek();
+//                    ftoTasks.remove();
+//                    List<ScheduleInfo> ftoCombinations = generateFTOCombinations(head, FTOList, numberOfProcessors);
+//
+//                    List<Task> originalFreeList = getMergedFreeList(scheduleinfo.getSchedule(), currentLayer, scheduleinfo.getFreeList());
+//                    //compare ftotasks with new free list
+//
+//                    //if same
+//                    scheduleQueue.remove();
+//                }
+//
+//                generateCombinations();
+            } else {
+                // Extending the polled schedule to generate all possible "next" states.
+                combinations = generateAllCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors);
+            }
 
 
             if (combinations == null) { // Move to next topological layer if no possible schedules on current layer.
                 head.incrementLayer();
-                combinations = generateCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors);
+                //scheduleQueue.
+                currentLayer = topologicalTasks.get(head.getLayer());
+                FTOList = isFTO(head, currentLayer);
+                if (FTOList != null) {
+                    combinations = generateFTOCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors);
+                } else {
+                    combinations = generateAllCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors);
+                }
+                //combinations = generateCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors, realSchedule);
             }
 
             for (ScheduleInfo possibleCombination : combinations) {
@@ -180,6 +226,35 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 scheduleQueue.add(possibleCombination);
                 visited.add(possibleCombination.hashCode());
             }
+
+            //if was in FTO
+            if (FTOList != null) {
+                //if next schedule in queue has the same freelist
+                List<String> nextFreeIdList = scheduleQueue.peek().getFreeList();
+                List<Task> nextFreeList = getMergedFreeList(scheduleQueue.peek().getSchedule(), currentLayer, nextFreeIdList);
+
+                HashSet<Task> set = new HashSet<>();
+                set.addAll(nextFreeList);
+
+                for (Task t: FTOList) {
+                    if (!set.contains(t)) {
+                        //NEED TO CHECK FTO
+                        knownFTO = false;
+                        counter++;
+                        continue;
+                    } else {
+                        set.remove(t);
+                    }
+                }
+
+                if (set.size() != 0) {
+                    knownFTO = false;
+                }
+            }
+
+            knownFTO = false;
+
+
 
 
             counter++;
@@ -221,17 +296,58 @@ public class AStarAlgorithm extends BaseAlgorithm {
      * @param currentLayer
      * @return
      */
-    private List<ScheduleInfo> generateCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer, int numberOfProcessors) {
-
-//        if (tasksMatchFTOConditions(currentLayer)) {
+//    private List<ScheduleInfo> generateCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer, int numberOfProcessors, Schedule schedule) {
 //
+//        List<Task> FTOList = isFTO(scheduleinfo, currentLayer);
+//        //FTOList = sortFTOTasks(FTOList, schedule);
+//        if (FTOList != null) {
+//            //Queue<Task> ftoTasks =  sortFTOTasks(FTOList, schedule);
+//            boolean same = true;
+//            while (same) {
+//                Task head = ftoTasks.peek();
+//                ftoTasks.remove();
+//                List<ScheduleInfo> ftoCombinations = generateFTOCombinations(scheduleinfo, FTOList, numberOfProcessors);
+//
+//                List<Task> originalFreeList = getMergedFreeList(scheduleinfo.getSchedule(), currentLayer, scheduleinfo.getFreeList());
+//                //compare ftotasks with new free list
+//
+//                //if same
+//                scheduleQueue.remove();
+//            }
+//
+//                generateCombinations();
+//            }
+//            //TODO VERIFY NONDECREASING OUTGOING EDGE COST ORDER
+//            return generateFTOCombinations(scheduleinfo, FTOList, numberOfProcessors);
+//            //List<Task> sortedTasks = sortFTOTasks( //list of ALL Freetasks ,schedule);
 //        } else {
-            return generateAllCombinations(scheduleinfo, currentLayer, numberOfProcessors);
+//            return generateAllCombinations(scheduleinfo, currentLayer, numberOfProcessors);
 //        }
+//    }
+
+    private List<Task> getMergedFreeList(Schedule schedule, List<Task> layer, List<String> extraNodes) {
+        List<Task> freeNodes = new ArrayList<>(layer);
+        freeNodes.addAll(this.graph.buildTaskListFromIds(extraNodes));
+
+        for (int i = layer.size() - 1; i >= 0; i--) {
+            Task task = layer.get(i);
+            if (schedule.isTaskAssigned(task.getId())) {
+                freeNodes.remove(i);
+            }
+        }
+
+        return freeNodes;
     }
 
-
-    private boolean isFTO(ScheduleInfo info, List<Task> currentLayer) {
+    /**
+     *
+     * @param info
+     * @param currentLayer
+     * @return
+     *      the list of all freenodes if it is in FTO,
+     *      else returns null
+     */
+    private List<Task> isFTO(ScheduleInfo info, List<Task> currentLayer) {
         String commonChildId =  "";
         Integer commonParentProcessorId = null;
 
@@ -241,7 +357,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
         // check how many parents and childrens task has
         for (Task task : freeNodes) {
             if (task.getNumberOfParents() > 1 || task.getNumberOfChildren() > 1){
-                return false;
+                return null;
             }
 
             if (task.getNumberOfChildren() == 1) {
@@ -250,7 +366,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
                         commonChildId = childId;
                     } else {
                         if (!commonChildId.equals(childId)) {
-                            return false;
+                            return null;
                         }
                     }
                 }
@@ -265,13 +381,15 @@ public class AStarAlgorithm extends BaseAlgorithm {
                         commonParentProcessorId = parentProcessorId;
                     } else {
                         if (commonParentProcessorId != parentProcessorId) {
-                            return false;
+                            return null;
                         }
                     }
                 }
             }
         }
-        return true;
+
+        sortFTOTasks(freeNodes, info.getSchedule());
+        return freeNodes;
     }
 
 //    private List<ScheduleInfo> generateFTOCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer) {
@@ -326,6 +444,42 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
         return out;
     }
+
+    //TODO make ftolist a queue
+    private List<ScheduleInfo> generateFTOCombinations(ScheduleInfo scheduleInfo, List<Task> ftoList, int numberOfProcesses) {
+        //given a schedule, ftolist and processor schedule top fto task to all processors
+        Schedule schedule = scheduleInfo.getSchedule();
+
+        List<ScheduleInfo> out = new ArrayList<>();
+        for (int processId=0;processId< numberOfProcesses;processId++){
+            Task head = ftoList.get(0);
+            Schedule newSchedule = new Schedule(schedule, graph.getTasks());
+            newSchedule.add(head, processId);
+
+            List<String> expandedFreeNodeIds = new ArrayList<>();
+            List<Task> expandedFreeNodes = new ArrayList<>();
+
+            for (String childId : head.getChildrenList()) {
+                Task child = this.graph.getTask(childId);
+                boolean isTaskFree = true;
+                for (String parentId : child.getParentTasks()) {
+                    if (!schedule.isTaskAssigned(parentId)) {
+                        isTaskFree = false;
+                        break;
+                    }
+                }
+                if (isTaskFree) {
+                    expandedFreeNodeIds.add(childId);
+                    expandedFreeNodes.add(child);
+                }
+            }
+
+            out.add(new ScheduleInfo(newSchedule, scheduleInfo.getLayer(), expandedFreeNodeIds, calculateCost(newSchedule, expandedFreeNodes)));
+        }
+        ftoList.remove(0);
+        return out;
+    }
+
 
     private List<Task> sortFTOTasks(List<Task> tasks, Schedule schedule) {
         Collections.sort(tasks, new Comparator<Task>() {
