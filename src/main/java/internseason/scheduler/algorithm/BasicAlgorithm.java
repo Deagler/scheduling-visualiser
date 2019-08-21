@@ -10,7 +10,7 @@ public class BasicAlgorithm extends BaseAlgorithm {
 
     @Override
     public Schedule execute(Graph graph, int numberOfProcessors) {
-        Schedule schedule = new Schedule(numberOfProcessors);
+        Schedule schedule = new Schedule(numberOfProcessors, graph.getTasks());
         List<List<Task>> topological = graph.getTopologicalOrdering();
 
         for (List<Task> layer : topological) {

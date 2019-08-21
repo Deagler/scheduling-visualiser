@@ -123,7 +123,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
         List<List<Task>> topologicalTasks = graph.getTopologicalOrdering();
 
-        Schedule initialSchedule = new Schedule(numberOfProcessors);
+        Schedule initialSchedule = new Schedule(numberOfProcessors, graph.getTasks());
 
         scheduleQueue.add(new ScheduleInfo(initialSchedule, 0, new ArrayList<String>(), 0)); // Add the empty schedule to the queue.
         // Calculates the Bottom Level for each task.
@@ -160,6 +160,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
             scheduleQueue.remove();
             // Return the optimal schedule (First complete schedule, orchestrated by AStar Heuristic)
             if (realSchedule.getNumberOfTasks() == totalTasks) {
+                System.out.println(counter);
                 return realSchedule;
             }
 
@@ -171,7 +172,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
             if (combinations == null) { // Move to next topological layer if no possible schedules on current layer.
                 head.incrementLayer();
                 combinations = generateCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors);
-                //scheduleQueue.clear();
             }
 
             for (ScheduleInfo possibleCombination : combinations) {
@@ -199,7 +199,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
     private int calculateDRTHeuristic(Schedule schedule, List<Task> freeTasks){
         int maxDRT = Integer.MIN_VALUE;
         for (Task task : freeTasks){
-            int drt = schedule.calculateDRT(task);
+            int drt = schedule.calculateDRT(task, graph.getTasks());
             int bottomLevel = task.getBottomLevel();
             maxDRT = Math.max(maxDRT, (drt+bottomLevel));
         }
@@ -207,7 +207,11 @@ public class AStarAlgorithm extends BaseAlgorithm {
     }
 
     private Integer calculateCost(Schedule schedule, List<Task> freeTasks) {
-        return Math.max(Math.max(schedule.getMaxBottomLevel(), calculateIdleHeuristic(schedule)),calculateDRTHeuristic(schedule, freeTasks));
+        //return calculateDRTHeuristic(schedule,freeTasks);
+        //return schedule.getMaxBottomLevel();
+        //return Math.max(schedule.getMaxBottomLevel(), calculateIdleHeuristic(schedule));
+        //return Math.max(schedule.getMaxBottomLevel(), calculateDRTHeuristic(schedule,freeTasks));
+        return Math.max(schedule.getMaxBottomLevel(), calculateIdleHeuristic(schedule));
 
     }
 
@@ -297,7 +301,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
             Task node = currentLayer.get(i);
 
             for (int processId = 0; processId < numberOfProcessors; processId++) {
-                Schedule newSchedule = new Schedule(schedule);
+                Schedule newSchedule = new Schedule(schedule, graph.getTasks());
                 newSchedule.add(node, processId);
 
                 List<String> expandedFreeNodeIds = new ArrayList<>();
@@ -330,11 +334,12 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
             @Override
             public int compare(Task t1, Task t2) {
-                if (schedule.calculateDRT(t1) < schedule.calculateDRT(t2)) {
+                Map<String, Task> tasks = graph.getTasks();
+                if (schedule.calculateDRT(t1, tasks) < schedule.calculateDRT(t2, tasks)) {
                     return -1;
                 }
 
-                if (schedule.calculateDRT(t1)> schedule.calculateDRT(t2)) {
+                if (schedule.calculateDRT(t1,  tasks)> schedule.calculateDRT(t2,  tasks)) {
                     return 1;
                 }
 

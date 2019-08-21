@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DOTOutputWriter {
     private BufferedWriter writer;
@@ -25,7 +26,7 @@ public class DOTOutputWriter {
             this.schedule = finalSchedule;
             this.taskMap = taskMap;
 
-            List<Task> tasks = this.schedule.getTasks();
+            List<Task> tasks = this.schedule.getTasks().stream().map(t -> taskMap.get(t)).collect(Collectors.toList());
 
             // nodes
             for (Task task : tasks) {

@@ -10,20 +10,30 @@ public class Schedule implements Serializable {
 
     private HashMap<Integer, Processor> processorIdMap; //map from processId to processor
     private HashMap<String, Integer> taskIdProcessorMap; // map from task to process id
-    private HashMap<String, Task> scheduledTasks;
     private int numOfProcessors;
     private int cost;
     private int maxBottomLevel;
     private int idleTime;
+    private transient Map<String, Task> allTasks;
 
-    public Schedule(int numOfProcessors) {
+    public Schedule(int numOfProcessors, Map<String, Task> allTasks) {
         this.numOfProcessors = numOfProcessors;
         this.cost = 0;
         this.taskIdProcessorMap = new HashMap<>();
         this.idleTime =0;
-        this.scheduledTasks = new HashMap<>();
+        this.allTasks = allTasks;
 
         this.initializeProcessMap(numOfProcessors);
+    }
+
+    public Schedule(Schedule schedule, Map<String, Task> allTasks) {
+        this.processorIdMap = SerializationUtils.clone(schedule.processorIdMap);
+        this.taskIdProcessorMap = SerializationUtils.clone(schedule.taskIdProcessorMap);
+        this.numOfProcessors = schedule.numOfProcessors;
+        this.cost = schedule.cost;
+        this.maxBottomLevel = schedule.maxBottomLevel;
+        this.allTasks = allTasks;
+        this.idleTime = schedule.idleTime;
     }
 
     public void initializeProcessMap(int numberOfProcesses) {
@@ -38,15 +48,7 @@ public class Schedule implements Serializable {
         return numOfProcessors;
     }
 
-    public Schedule(Schedule schedule) {
-        this.processorIdMap = SerializationUtils.clone(schedule.processorIdMap);
-        this.taskIdProcessorMap = SerializationUtils.clone(schedule.taskIdProcessorMap);
-        this.scheduledTasks = SerializationUtils.clone(schedule.scheduledTasks);
-        this.numOfProcessors = schedule.numOfProcessors;
-        this.cost = schedule.cost;
-        this.maxBottomLevel = schedule.maxBottomLevel;
-        this.idleTime = schedule.idleTime;
-    }
+
 
     public int numProcessors() {
         return numOfProcessors;
@@ -63,7 +65,6 @@ public class Schedule implements Serializable {
         Integer startTime = findNextAvailableTimeInProcessor(task, processorId);
         processor.addTaskAt(task, startTime);
         this.taskIdProcessorMap.put(task.getId(), processorId);
-        this.scheduledTasks.put(task.getId(), task);
         checkIncreasedCost(processor.getCost());
 
 
@@ -97,7 +98,7 @@ public class Schedule implements Serializable {
             }
 
             Processor process = this.processorIdMap.get(sourceProcess);
-            Task parentTask = scheduledTasks.get(parentId);
+            Task parentTask = allTasks.get(parentId);
             int parentFinishTime = process.getTaskStartTime(parentId) + parentTask.getCost();
             int communicationCost = parentTask.getCostToChild(task);
 
@@ -134,8 +135,14 @@ public class Schedule implements Serializable {
     }
 
     //get all tasks in all processors of this schedule
-    public List<Task> getTasks() {
-        return new ArrayList<>(scheduledTasks.values());
+    public List<String> getTasks() {
+        List<String> result = new ArrayList<>();
+
+        for (Processor processor: processorIdMap.values()) {
+            result.addAll(processor.getTaskIds());
+        }
+
+        return result;
     }
 
     public int getNumberOfTasks() {
@@ -153,7 +160,7 @@ public class Schedule implements Serializable {
     }
 
     //finishing time of parent task + edge cost from parent to task
-    public int calculateDRT(Task task) {
+    public int calculateDRT(Task task, Map<String, Task> scheduledTasks) {
 
         int min = Integer.MAX_VALUE;
 

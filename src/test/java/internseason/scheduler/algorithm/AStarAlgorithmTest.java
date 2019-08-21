@@ -60,20 +60,14 @@ public class AStarAlgorithmTest {
     }
 
     @Test
-    public void test11NodeGraphOnFourProcessors() {
-        testGraph("src/test/resources/Nodes_11_OutTree.dot", 4, 227);
+    public void test21NodeGraphOnTwoProcessors() {
+        testGraph("src/test/resources/Nodes_21_floating.dot", 2, 92);
     }
 
-    private void testGraph(String graphPath, int numberOfProcessors, int expectedCost) {
-        try {
-            Graph graph = this.parser.parse(graphPath);
-            AStarAlgorithm algorithm = new AStarAlgorithm();
-            Schedule schedule = algorithm.execute(graph,numberOfProcessors);
 
-            assertEquals(schedule.getCost(), expectedCost);
-        } catch (InputException e) {
-            e.printStackTrace();
-        }
+    @Test
+    public void test11NodeGraphOnFourProcessors() {
+        testGraph("src/test/resources/Nodes_11_OutTree.dot", 4, 227);
     }
 
 
@@ -105,15 +99,22 @@ public class AStarAlgorithmTest {
 
     @Test
     public void testAStarSchedule6() {
-        try {
-            Graph graph = this.parser.parse("src/test/resources/Nodes_8_Random.dot");
-            AStarAlgorithm algorithm = new AStarAlgorithm();
-            Schedule schedule = algorithm.execute(graph,2);
+        testGraph("src/test/resources/Nodes_8_Random.dot", 2, 581);
 
-            assertEquals(schedule.getCost(), 581);
+    }
+
+
+    private void testGraph(String graphPath, int numberOfProcessors, int expectedCost) {
+        try {
+            Graph graph = this.parser.parse(graphPath);
+            AStarAlgorithm algorithm = new AStarAlgorithm();
+            Schedule schedule = algorithm.execute(graph,numberOfProcessors);
+
+            assertEquals(expectedCost, schedule.getCost());
         } catch (InputException e) {
             e.printStackTrace();
         }
     }
+
 
 }

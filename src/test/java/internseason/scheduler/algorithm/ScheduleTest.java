@@ -37,7 +37,7 @@ public class ScheduleTest {
 
     @Test
     public void testOneDependencySameProcessor() {
-        Schedule schedule = new Schedule(1);
+        Schedule schedule = new Schedule(1, graph.getTasks());
         try {
             schedule.add(t0, 0);
             schedule.add(t1, 0);
@@ -55,7 +55,7 @@ public class ScheduleTest {
 
     @Test
     public void testOneDependencyDifferentProcessor() {
-        Schedule schedule = new Schedule(2);
+        Schedule schedule = new Schedule(2, graph.getTasks());
 
         try {
 
@@ -78,7 +78,7 @@ public class ScheduleTest {
 
     @Test
     public void testTwoDependencyProcessorZero() {
-        Schedule schedule = new Schedule(2);
+        Schedule schedule = new Schedule(2, graph.getTasks());
         try {
             schedule.add(t0, 0);
             schedule.add(t1, 0);
@@ -102,7 +102,7 @@ public class ScheduleTest {
 
     @Test
     public void testTwoDependencyProcessorOne() {
-        Schedule schedule = new Schedule(2);
+        Schedule schedule = new Schedule(2, graph.getTasks());
         try {
             schedule.add(t0, 0);
             schedule.add(t1, 0);
@@ -126,7 +126,7 @@ public class ScheduleTest {
 
     @Test
     public void testTwoDependencyProcessorTwo() {
-        Schedule schedule = new Schedule(3);
+        Schedule schedule = new Schedule(3, graph.getTasks());
         try {
             schedule.add(t0, 0);
             schedule.add(t1, 0);
@@ -152,11 +152,11 @@ public class ScheduleTest {
 
     @Test
     public void testHashCodeEquivalence() {
-        Schedule one = new Schedule(2);
+        Schedule one = new Schedule(2, graph.getTasks());
         one.add(new Task(10,"1"), 1);
         one.add(new Task(10,"2"), 1);
 
-        Schedule two = new Schedule(2);
+        Schedule two = new Schedule(2, graph.getTasks());
         two.add(new Task(10,"1"), 1);
         two.add(new Task(10,"2"), 1);
 
@@ -165,11 +165,11 @@ public class ScheduleTest {
 
     @Test
     public void testHashCodeInequivalence() {
-        Schedule one = new Schedule(2);
+        Schedule one = new Schedule(2, graph.getTasks());
         one.add(new Task(10,"1"), 1);
         one.add(new Task(10,"2"), 1);
 
-        Schedule two = new Schedule(2);
+        Schedule two = new Schedule(2, graph.getTasks());
         two.add(new Task(10,"1"), 1);
         two.add(new Task(10,"3"), 1);
 
@@ -179,11 +179,11 @@ public class ScheduleTest {
 
     @Test
     public void testProcessNormalisationHashCode() {
-        Schedule one = new Schedule(2);
+        Schedule one = new Schedule(2, graph.getTasks());
         one.add(new Task(10,"1"), 1);
         one.add(new Task(10,"2"), 1);
 
-        Schedule two = new Schedule(2);
+        Schedule two = new Schedule(2, graph.getTasks());
         two.add(new Task(10,"1"), 0);
         two.add(new Task(10,"2"), 0);
 
