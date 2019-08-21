@@ -15,6 +15,7 @@ public class Task implements Serializable {
     private Set<String> childrenTasks;
     private int cost;
     private String id;
+    private int bottomLevel;
 
     public Task(int cost, String id) {
         this.cost = cost;
@@ -55,6 +56,15 @@ public class Task implements Serializable {
 
     public String getId(){
         return id;
+    }
+
+
+    public int getBottomLevel() {
+        return bottomLevel;
+    }
+
+    public void setBottomLevel(int bottomLevel) {
+        this.bottomLevel = Math.max(bottomLevel, this.bottomLevel);
     }
 
     public List<Dependency> getOutgoingEdges(){

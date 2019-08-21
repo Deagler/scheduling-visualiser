@@ -1,6 +1,6 @@
 package internseason.scheduler.dotparser;
 
-import internseason.scheduler.DOTParser;
+import internseason.scheduler.input.DOTParser;
 import internseason.scheduler.exceptions.InputException;
 import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Task;

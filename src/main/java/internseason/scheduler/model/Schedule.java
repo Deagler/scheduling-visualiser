@@ -11,11 +11,14 @@ public class Schedule {
     private HashMap<String, Integer> taskIdProcessorMap; // map from task to process id
     private int numOfProcessors;
     private int cost;
+    private int maxBottomLevel;
+    private int idleTime;
 
     public Schedule(int numOfProcessors) {
         this.numOfProcessors = numOfProcessors;
         this.cost = 0;
         this.taskIdProcessorMap = new HashMap<>();
+        this.idleTime =0;
 
         this.initializeProcessMap(numOfProcessors);
     }
@@ -28,11 +31,17 @@ public class Schedule {
         }
     }
 
+    public int getNumOfProcessors() {
+        return numOfProcessors;
+    }
+
     public Schedule(Schedule schedule) {
         this.processorIdMap = SerializationUtils.clone(schedule.processorIdMap);
         this.numOfProcessors = schedule.numOfProcessors;
         this.cost = schedule.cost;
         this.taskIdProcessorMap = SerializationUtils.clone(schedule.taskIdProcessorMap);
+        this.maxBottomLevel = schedule.maxBottomLevel;
+        this.idleTime = schedule.idleTime;
     }
 
     public int numProcessors() {
@@ -46,14 +55,28 @@ public class Schedule {
         }
 
         Processor processor = processorIdMap.get(processorId);
-
-        processor.addTaskAt(task, findNextAvailableTimeInProcessor(task, processorId));
+        Integer processorCost = processor.getCost();
+        Integer startTime = findNextAvailableTimeInProcessor(task, processorId);
+        processor.addTaskAt(task, startTime);
 
         this.taskIdProcessorMap.put(task.getId(), processorId);
 
         checkIncreasedCost(processor.getCost());
+
+        Integer slack = startTime - processorCost;
+
+        this.idleTime += slack;
+
+        this.maxBottomLevel = Math.max(this.maxBottomLevel, startTime + task.getBottomLevel());
     }
 
+    public int getMaxBottomLevel() {
+        return maxBottomLevel;
+    }
+
+    public int getIdleTime() {
+        return idleTime;
+    }
 
     private int findNextAvailableTimeInProcessor(Task task, int processorId) {
         List<Task> parentTasks = task.getParentTasks();
