@@ -173,7 +173,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
 
             List<Task> currentLayer = topologicalTasks.get(head.getLayer());
-            List<Task> FTOList = null;
+            Queue<Task> FTOList = null;
 
             if (!knownFTO) {
                 FTOList = isFTO(head, currentLayer);
@@ -182,6 +182,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
             List<ScheduleInfo> combinations;
 
             if (FTOList != null) {
+                //TODO generateFTOCombinations to use the queue?
                 combinations = generateFTOCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors);
 
 //                //Queue<Task> ftoTasks =  sortFTOTasks(FTOList, schedule);
@@ -233,23 +234,28 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 List<String> nextFreeIdList = scheduleQueue.peek().getFreeList();
                 List<Task> nextFreeList = getMergedFreeList(scheduleQueue.peek().getSchedule(), currentLayer, nextFreeIdList);
 
-                HashSet<Task> set = new HashSet<>();
-                set.addAll(nextFreeList);
-
-                for (Task t: FTOList) {
-                    if (!set.contains(t)) {
-                        //NEED TO CHECK FTO
-                        knownFTO = false;
-                        counter++;
-                        continue;
-                    } else {
-                        set.remove(t);
-                    }
-                }
-
-                if (set.size() != 0) {
+                if (!(nextFreeList.containsAll(FTOList) && FTOList.containsAll(nextFreeList))) {
                     knownFTO = false;
+                    continue;
                 }
+
+//                HashSet<Task> set = new HashSet<>();
+//                set.addAll(nextFreeList);
+//
+//                for (Task t: FTOList) {
+//                    if (!set.contains(t)) {
+//                        //NEED TO CHECK FTO
+//                        knownFTO = false;
+//                        counter++;
+//                        continue;
+//                    } else {
+//                        set.remove(t);
+//                    }
+//                }
+//
+//                if (set.size() != 0) {
+//                    knownFTO = false;
+//                }
             }
 
             knownFTO = false;
@@ -289,42 +295,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
     }
 
 
-    /**
-     * Generates all possible schedules if a node from the current topological layering
-     * has not been assigned in the schedule.
-     * @param scheduleinfo
-     * @param currentLayer
-     * @return
-     */
-//    private List<ScheduleInfo> generateCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer, int numberOfProcessors, Schedule schedule) {
-//
-//        List<Task> FTOList = isFTO(scheduleinfo, currentLayer);
-//        //FTOList = sortFTOTasks(FTOList, schedule);
-//        if (FTOList != null) {
-//            //Queue<Task> ftoTasks =  sortFTOTasks(FTOList, schedule);
-//            boolean same = true;
-//            while (same) {
-//                Task head = ftoTasks.peek();
-//                ftoTasks.remove();
-//                List<ScheduleInfo> ftoCombinations = generateFTOCombinations(scheduleinfo, FTOList, numberOfProcessors);
-//
-//                List<Task> originalFreeList = getMergedFreeList(scheduleinfo.getSchedule(), currentLayer, scheduleinfo.getFreeList());
-//                //compare ftotasks with new free list
-//
-//                //if same
-//                scheduleQueue.remove();
-//            }
-//
-//                generateCombinations();
-//            }
-//            //TODO VERIFY NONDECREASING OUTGOING EDGE COST ORDER
-//            return generateFTOCombinations(scheduleinfo, FTOList, numberOfProcessors);
-//            //List<Task> sortedTasks = sortFTOTasks( //list of ALL Freetasks ,schedule);
-//        } else {
-//            return generateAllCombinations(scheduleinfo, currentLayer, numberOfProcessors);
-//        }
-//    }
-
     private List<Task> getMergedFreeList(Schedule schedule, List<Task> layer, List<String> extraNodes) {
         List<Task> freeNodes = new ArrayList<>(layer);
         freeNodes.addAll(this.graph.buildTaskListFromIds(extraNodes));
@@ -347,7 +317,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
      *      the list of all freenodes if it is in FTO,
      *      else returns null
      */
-    private List<Task> isFTO(ScheduleInfo info, List<Task> currentLayer) {
+    private Queue<Task> isFTO(ScheduleInfo info, List<Task> currentLayer) {
         String commonChildId =  "";
         Integer commonParentProcessorId = null;
 
@@ -388,8 +358,8 @@ public class AStarAlgorithm extends BaseAlgorithm {
             }
         }
 
-        sortFTOTasks(freeNodes, info.getSchedule());
-        return freeNodes;
+        return sortFTOTasks(freeNodes, info.getSchedule());
+        //return freeNodes;
     }
 
 //    private List<ScheduleInfo> generateFTOCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer) {
@@ -445,7 +415,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
         return out;
     }
 
-    //TODO make ftolist a queue
     private List<ScheduleInfo> generateFTOCombinations(ScheduleInfo scheduleInfo, List<Task> ftoList, int numberOfProcesses) {
         //given a schedule, ftolist and processor schedule top fto task to all processors
         Schedule schedule = scheduleInfo.getSchedule();
@@ -481,9 +450,8 @@ public class AStarAlgorithm extends BaseAlgorithm {
     }
 
 
-    private List<Task> sortFTOTasks(List<Task> tasks, Schedule schedule) {
-        Collections.sort(tasks, new Comparator<Task>() {
-
+    private Queue<Task> sortFTOTasks(List<Task> tasks, Schedule schedule) {
+        Queue<Task> result = new PriorityQueue<Task>(new Comparator<Task>() {
             @Override
             public int compare(Task t1, Task t2) {
                 Map<String, Task> tasks = graph.getTasks();
@@ -491,7 +459,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
                     return -1;
                 }
 
-                if (schedule.calculateDRTSingle(t1)> schedule.calculateDRTSingle(t2)) {
+                if (schedule.calculateDRTSingle(t1) > schedule.calculateDRTSingle(t2)) {
                     return 1;
                 }
 
@@ -516,11 +484,12 @@ public class AStarAlgorithm extends BaseAlgorithm {
                     return 1;
                 }
                 return 0;
-
-
             }
         });
-        return tasks;
+
+        result.addAll(tasks);
+        //TODO verify Sorted FTO Order
+        return result;
     }
 
 
@@ -536,6 +505,11 @@ public class AStarAlgorithm extends BaseAlgorithm {
                         node.getBottomLevel());
             }
         }
+    }
+
+    private boolean verifySortedFTOList(Queue<Task> ftoList) {
+
+        return false;
     }
 
     /**
