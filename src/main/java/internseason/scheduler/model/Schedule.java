@@ -153,6 +153,43 @@ public class Schedule {
         return this.taskIdProcessorMap.get(task.getId());
     }
 
+    //finishing time of parent task + edge cost from parent to task
+    public int calculateDRT(Task task) {
+
+        int min = Integer.MAX_VALUE;
+
+        for (int processorId : processorIdMap.keySet()) {
+            int max = 0;
+
+            for (int i=0; i<task.getParentTasks().size(); i++) {
+                Task parent = task.getParentTasks().get(i);
+
+                //finish time of parent
+                Processor parentProcessor = processorIdMap.get(taskIdProcessorMap.get(parent.getId()));
+                int finTime = parentProcessor.getTaskStartTime(parent) + parent.getCost();
+                int communicationCost = 0;
+
+                if (parentProcessor.getId() != processorId) {
+                    communicationCost = parent.getCostToChild(task);
+                }
+
+                if (finTime + communicationCost > max) {
+                    max = finTime + cost;
+                }
+            }
+
+            if (max < min ) {
+                min = max;
+            }
+        }
+
+        return min;
+    }
+
+
+
+
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
 

@@ -1,6 +1,7 @@
 package internseason.scheduler.algorithm;
 
 import internseason.scheduler.model.Graph;
+import internseason.scheduler.model.Processor;
 import internseason.scheduler.model.Schedule;
 import internseason.scheduler.model.Task;
 
@@ -15,11 +16,38 @@ import java.util.stream.Collectors;
 class ScheduleInfo {
     public Schedule schedule;
     public Integer layer;
+    List<String> freeList;
 
-    public ScheduleInfo(Schedule schedule, Integer layer) {
+    public ScheduleInfo(Schedule schedule, Integer layer, List<String> freeList) {
         this.schedule = schedule;
         this.layer = layer;
+        this.freeList = freeList;
     }
+
+    //TODO throw exception
+    //finishing time of parent task + edge cost from parent to task
+    //input task should have a maximum of 1 parent
+    public int calculateDRT(Task task) {
+        //if no parent return 0
+        if (task.getNumberOfParents() == 0) {
+            return 0;
+        }
+
+        //should only have 1 parent
+        if (task.getNumberOfParents() == 1) {
+            Task parent = task.getParentTasks().get(0);
+
+            //finish time of parent
+            int finTime = this.schedule.getTaskStartTime(parent) + parent.getCost();
+            int cost = parent.getCostToChild(task);
+
+            return finTime + cost;
+
+        }
+
+        return -1;
+    }
+
 
     @Override
     public String toString() {
@@ -36,8 +64,9 @@ class ScheduleInfo {
  * Possible Schedules are generated layer-by-layer as to avoid generating schedules that have dependency violations.
  */
 public class AStarAlgorithm extends BaseAlgorithm {
-    Queue<ScheduleInfo> scheduleQueue;
-    int totalTaskTime;
+    private Queue<ScheduleInfo> scheduleQueue;
+    private int totalTaskTime;
+    private Graph graph;
 
     /**
      * Tepmorary constructor to test factory pattern
@@ -61,11 +90,14 @@ public class AStarAlgorithm extends BaseAlgorithm {
         for (Task task: graph.getTasks().values()){
             totalTaskTime +=task.getCost();
         }
+
+        this.graph = graph;
+
         List<List<Task>> topologicalTasks = graph.getTopologicalOrdering();
 
         Schedule initialSchedule = new Schedule(numberOfProcessors);
 
-        scheduleQueue.add(new ScheduleInfo(initialSchedule, 0)); // Add the empty schedule to the queue.
+        scheduleQueue.add(new ScheduleInfo(initialSchedule, 0, new ArrayList<String>())); // Add the empty schedule to the queue.
         // Calculates the Bottom Level for each task.
         List<Task> leafs = graph.getTasks().values() //find all the leaf nodes
                 .stream()
@@ -154,7 +186,49 @@ public class AStarAlgorithm extends BaseAlgorithm {
 //        } else {
             return generateAllCombinations(scheduleinfo, currentLayer, numberOfProcessors);
 //        }
+    }
 
+
+    private boolean isFTO(ScheduleInfo info, List<Task> currentLayer) {
+        String commonChildId =  "";
+        Integer commonParentProcessorId = null;
+
+        List<Task> freeNodes = new ArrayList<>(currentLayer);
+        freeNodes.addAll(this.graph.buildTaskListFromIds(info.freeList));
+
+        // check how many parents and childrens task has
+        for (Task task : freeNodes) {
+            if (task.getNumberOfParents() > 1 || task.getNumberOfChildren() > 1){
+                return false;
+            }
+
+            if (task.getNumberOfChildren() == 1) {
+                for (String childId : task.getChildren()) {
+                    if (commonChildId.isEmpty()) {
+                        commonChildId = childId;
+                    } else {
+                        if (!commonChildId.equals(childId)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            if (task.getNumberOfParents() == 1) {
+                for (Task parent : task.getParentTasks()) {
+                    Schedule s = info.schedule;
+                    int parentProcessorId = s.getProcessorIdForTask(parent);
+                    if (commonParentProcessorId == null) {
+                        commonParentProcessorId = parentProcessorId;
+                    } else {
+                        if (commonParentProcessorId != parentProcessorId) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
 //    private List<ScheduleInfo> generateFTOCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer) {
@@ -184,13 +258,73 @@ public class AStarAlgorithm extends BaseAlgorithm {
             for (int processId = 0; processId < numberOfProcessors; processId++) {
                 Schedule newSchedule = new Schedule(schedule);
                 newSchedule.add(node, processId);
-                out.add(new ScheduleInfo(newSchedule, scheduleinfo.layer));
+
+                List<String> expandedFreeNodes = new ArrayList<>();
+
+                for (String childId : node.getChildren()) {
+                    Task child = this.graph.getTask(childId);
+                    boolean isTaskFree = true;
+                    for (Task task : child.getParentTasks()) {
+                        if (!schedule.isTaskAssigned(task)) {
+                            isTaskFree = false;
+                            break;
+                        }
+                    }
+                    if (isTaskFree) {
+                        expandedFreeNodes.add(childId);
+                    }
+                }
+
+                out.add(new ScheduleInfo(newSchedule, scheduleinfo.layer, expandedFreeNodes));
             }
         }
 
-
         return out;
     }
+
+    private List<Task> sortDRTTasks(List<Task> tasks, ScheduleInfo scheduleInfo) {
+        Collections.sort(tasks, new Comparator<Task>() {
+
+            @Override
+            public int compare(Task t1, Task t2) {
+                if (scheduleInfo.calculateDRT(t1) < scheduleInfo.calculateDRT(t2)) {
+                    return -1;
+                }
+
+                if (scheduleInfo.calculateDRT(t1)> scheduleInfo.calculateDRT(t2)) {
+                    return 1;
+                }
+
+                //tie
+                //sort by DESCENDING outgoing edge cost
+                if (t1.getNumberOfChildren() == 0) {
+                    return 1;
+                }
+
+                if (t2.getNumberOfChildren() == 0) {
+                    return -1;
+                }
+
+                int t1costToChildTask = t1.getCostToChild(graph.getTask(t1.getChildrenList().get(0)));
+                int t2costToChildTask = t2.getCostToChild(graph.getTask(t2.getChildrenList().get(0)));
+
+                if (t1costToChildTask > t2costToChildTask) {
+                    return -1;
+                }
+
+                if (t1costToChildTask < t2costToChildTask) {
+                    return 1;
+                }
+                return 0;
+
+
+            }
+        });
+        return tasks;
+    }
+
+
+
 
     private void getBottomLevels(List<Task> tasks, int currentBottomLevel) {
         for (Task node : tasks) {
