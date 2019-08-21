@@ -167,8 +167,24 @@ public class AStarAlgorithm extends BaseAlgorithm {
         return (totalTaskTime + schedule.getIdleTime()-1) / schedule.getNumOfProcessors();
     }
 
+    //todo: method that returns free tasks for a schedule
+    private List<Task> getFreeTasks(){
+        return null;
+    }
+    private int calculateDRTHeuristic(Schedule schedule){
+        List<Task> freeTasks = this.getFreeTasks();
+
+        int maxDRT = Integer.MIN_VALUE;
+        for (Task task : freeTasks){
+            int drt = schedule.calculateDRT(task);
+            int bottomLevel = task.getBottomLevel();
+            maxDRT = Math.max(maxDRT, (drt+bottomLevel));
+        }
+        return maxDRT;
+    }
+
     private Integer calculateCost(Schedule schedule) {
-        return (Math.max(schedule.getMaxBottomLevel(), calculateIdleHeuristic(schedule)));
+        return Math.max(Math.max(schedule.getMaxBottomLevel(), calculateIdleHeuristic(schedule)),calculateDRTHeuristic(schedule));
 
     }
 
