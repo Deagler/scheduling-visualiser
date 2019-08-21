@@ -30,14 +30,15 @@ public class DOTOutputWriter {
             // nodes
             for (Task task : tasks) {
                 int startTime = this.schedule.getTaskStartTime(task);
-                int processorId = this.schedule.getProcessorIdForTask(task);
+                int processorId = this.schedule.getProcessorIdForTask(task.getId());
                 this.writeNode(task, startTime, processorId);
 
             }
 
             // edges
             for (Task child : tasks) {
-                for (Task parent: child.getParentTasks()) {
+                for (String parentId: child.getParentTasks()) {
+                    Task parent = taskMap.get(parentId);
                     int cost = parent.getCostToChild(child);
                     this.writeEdge(parent, child, cost);
                 }

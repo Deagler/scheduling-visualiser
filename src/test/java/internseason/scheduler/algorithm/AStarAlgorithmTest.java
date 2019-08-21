@@ -55,17 +55,27 @@ public class AStarAlgorithmTest {
     }
 
     @Test
-    public void testAStarSchedule3() {
-        try {
-            Graph graph = this.parser.parse("src/test/resources/Nodes_11_OutTree.dot");
-            AStarAlgorithm algorithm = new AStarAlgorithm();
-            Schedule schedule = algorithm.execute(graph,2);
+    public void test11NodeGraphOnTwoProcessors() {
+        testGraph("src/test/resources/Nodes_11_OutTree.dot", 2, 350);
+    }
 
-            assertEquals(schedule.getCost(), 350);
+    @Test
+    public void test11NodeGraphOnFourProcessors() {
+        testGraph("src/test/resources/Nodes_11_OutTree.dot", 4, 227);
+    }
+
+    private void testGraph(String graphPath, int numberOfProcessors, int expectedCost) {
+        try {
+            Graph graph = this.parser.parse(graphPath);
+            AStarAlgorithm algorithm = new AStarAlgorithm();
+            Schedule schedule = algorithm.execute(graph,numberOfProcessors);
+
+            assertEquals(schedule.getCost(), expectedCost);
         } catch (InputException e) {
             e.printStackTrace();
         }
     }
+
 
     @Test
     public void testAStarSchedule4() {

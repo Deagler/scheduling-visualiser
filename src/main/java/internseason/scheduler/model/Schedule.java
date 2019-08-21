@@ -3,12 +3,14 @@ package internseason.scheduler.model;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Schedule {
+public class Schedule implements Serializable {
 
     private HashMap<Integer, Processor> processorIdMap; //map from processId to processor
     private HashMap<String, Integer> taskIdProcessorMap; // map from task to process id
+    private HashMap<String, Task> scheduledTasks;
     private int numOfProcessors;
     private int cost;
     private int maxBottomLevel;
@@ -19,6 +21,7 @@ public class Schedule {
         this.cost = 0;
         this.taskIdProcessorMap = new HashMap<>();
         this.idleTime =0;
+        this.scheduledTasks = new HashMap<>();
 
         this.initializeProcessMap(numOfProcessors);
     }
@@ -37,9 +40,10 @@ public class Schedule {
 
     public Schedule(Schedule schedule) {
         this.processorIdMap = SerializationUtils.clone(schedule.processorIdMap);
+        this.taskIdProcessorMap = SerializationUtils.clone(schedule.taskIdProcessorMap);
+        this.scheduledTasks = SerializationUtils.clone(schedule.scheduledTasks);
         this.numOfProcessors = schedule.numOfProcessors;
         this.cost = schedule.cost;
-        this.taskIdProcessorMap = SerializationUtils.clone(schedule.taskIdProcessorMap);
         this.maxBottomLevel = schedule.maxBottomLevel;
         this.idleTime = schedule.idleTime;
     }
@@ -58,15 +62,14 @@ public class Schedule {
         Integer processorCost = processor.getCost();
         Integer startTime = findNextAvailableTimeInProcessor(task, processorId);
         processor.addTaskAt(task, startTime);
-
         this.taskIdProcessorMap.put(task.getId(), processorId);
-
+        this.scheduledTasks.put(task.getId(), task);
         checkIncreasedCost(processor.getCost());
 
+
+
         Integer slack = startTime - processorCost;
-
         this.idleTime += slack;
-
         this.maxBottomLevel = Math.max(this.maxBottomLevel, startTime + task.getBottomLevel());
     }
 
@@ -80,22 +83,23 @@ public class Schedule {
     }
 
     private int findNextAvailableTimeInProcessor(Task task, int processorId) {
-        List<Task> parentTasks = task.getParentTasks();
+        List<String> parentTasks = task.getParentTasks();
 
         int result = processorIdMap.get(processorId).getCost();
 
-        for (Task parent: parentTasks) {
+        for (String parentId: parentTasks) {
 
 
-            Integer sourceProcess = this.taskIdProcessorMap.get(parent.getId());
+            Integer sourceProcess = this.taskIdProcessorMap.get(parentId);
 
             if (sourceProcess == processorId) {
                 continue;
             }
 
             Processor process = this.processorIdMap.get(sourceProcess);
-            int parentFinishTime = process.getTaskStartTime(parent) + parent.getCost();
-            int communicationCost = parent.getCostToChild(task);
+            Task parentTask = scheduledTasks.get(parentId);
+            int parentFinishTime = process.getTaskStartTime(parentId) + parentTask.getCost();
+            int communicationCost = parentTask.getCostToChild(task);
 
             int newScheduleTime = parentFinishTime + communicationCost;
 
@@ -105,8 +109,8 @@ public class Schedule {
         return result;
     }
 
-    public boolean isTaskAssigned(Task task) {
-        return this.taskIdProcessorMap.containsKey(task.getId());
+    public boolean isTaskAssigned(String taskId) {
+        return this.taskIdProcessorMap.containsKey(taskId);
     }
 
     private void checkIncreasedCost(int cost) {
@@ -131,13 +135,7 @@ public class Schedule {
 
     //get all tasks in all processors of this schedule
     public List<Task> getTasks() {
-        List<Task> result = new ArrayList<>();
-
-        for (Processor processor: processorIdMap.values()) {
-            result.addAll(processor.getTasks());
-        }
-
-        return result;
+        return new ArrayList<>(scheduledTasks.values());
     }
 
     public int getNumberOfTasks() {
@@ -147,11 +145,11 @@ public class Schedule {
     public int getTaskStartTime(Task task) {
         int processId = taskIdProcessorMap.get(task.getId());
         Processor processor = processorIdMap.get(processId);
-        return processor.getTaskStartTime(task);
+        return processor.getTaskStartTime(task.getId());
     }
 
-    public int getProcessorIdForTask(Task task) {
-        return this.taskIdProcessorMap.get(task.getId());
+    public int getProcessorIdForTask(String taskId) {
+        return this.taskIdProcessorMap.get(taskId);
     }
 
     //finishing time of parent task + edge cost from parent to task
@@ -162,12 +160,12 @@ public class Schedule {
         for (int processorId : processorIdMap.keySet()) {
             int max = 0;
 
-            for (int i=0; i<task.getParentTasks().size(); i++) {
-                Task parent = task.getParentTasks().get(i);
+            for (String parentId : task.getParentTasks()) {
+                Task parent = scheduledTasks.get(parentId);
 
                 //finish time of parent
                 Processor parentProcessor = processorIdMap.get(taskIdProcessorMap.get(parent.getId()));
-                int finTime = parentProcessor.getTaskStartTime(parent) + parent.getCost();
+                int finTime = parentProcessor.getTaskStartTime(parentId) + parent.getCost();
                 int communicationCost = 0;
 
                 if (parentProcessor.getId() != processorId) {

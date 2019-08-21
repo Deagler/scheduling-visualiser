@@ -1,10 +1,12 @@
 package internseason.scheduler.algorithm;
 
 import com.google.gson.Gson;
+import com.sun.xml.internal.ws.developer.Serialization;
 import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Processor;
 import internseason.scheduler.model.Schedule;
 import internseason.scheduler.model.Task;
+import org.apache.commons.lang3.SerializationUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -16,7 +18,7 @@ import java.util.stream.Collectors;
  * new schedules from.
  */
 class ScheduleInfo {
-    private String serialisedSchedule;
+    private byte[] serialisedSchedule;
     private Integer maxBottomLevel;
     private Integer totalCost;
     private Integer totalNumberOfTasks;
@@ -26,7 +28,7 @@ class ScheduleInfo {
     private List<String> freeList;
 
     public ScheduleInfo(Schedule schedule, Integer layer, List<String> freeList, int totalScheduleCost) {
-        this.serialisedSchedule = gson.toJson(schedule);
+        this.serialisedSchedule = SerializationUtils.serialize(schedule);
         this.maxBottomLevel = schedule.getMaxBottomLevel();
         this.hashCode = schedule.hashCode();
         this.totalCost = totalScheduleCost;
@@ -40,7 +42,7 @@ class ScheduleInfo {
     }
 
     public Schedule getSchedule() {
-        return gson.fromJson(serialisedSchedule, Schedule.class);
+        return (Schedule)SerializationUtils.deserialize(serialisedSchedule);
     }
 
     public Integer getLayer() {
@@ -133,7 +135,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
         for (Task leaf : leafs) { //Compute the bottom levels for the nodes
             leaf.setBottomLevel(leaf.getCost());
-            getBottomLevels(leaf.getParentTasks(), leaf.getCost());
+            getBottomLevels(graph.buildTaskListFromIds(leaf.getParentTasks()), leaf.getCost());
         }
 
         Task maxTask = null;
@@ -193,13 +195,8 @@ public class AStarAlgorithm extends BaseAlgorithm {
         return (totalTaskTime + schedule.getIdleTime()-1) / schedule.getNumOfProcessors();
     }
 
-    //todo: method that returns free tasks for a schedule
-    private List<Task> getFreeTasks(){
-        return null;
-    }
-    private int calculateDRTHeuristic(Schedule schedule){
-        List<Task> freeTasks = this.getFreeTasks();
 
+    private int calculateDRTHeuristic(Schedule schedule, List<Task> freeTasks){
         int maxDRT = Integer.MIN_VALUE;
         for (Task task : freeTasks){
             int drt = schedule.calculateDRT(task);
@@ -209,31 +206,11 @@ public class AStarAlgorithm extends BaseAlgorithm {
         return maxDRT;
     }
 
-    private Integer calculateCost(Schedule schedule) {
-        return Math.max(Math.max(schedule.getMaxBottomLevel(), calculateIdleHeuristic(schedule)),calculateDRTHeuristic(schedule));
+    private Integer calculateCost(Schedule schedule, List<Task> freeTasks) {
+        return Math.max(Math.max(schedule.getMaxBottomLevel(), calculateIdleHeuristic(schedule)),calculateDRTHeuristic(schedule, freeTasks));
 
     }
 
-    private int calculateDRT(Schedule schedule, Task task) {
-        //if no parent return 0
-        if (task.getNumberOfParents() == 0) {
-            return 0;
-        }
-
-        //should only have 1 parent
-        if (task.getNumberOfParents() == 1) {
-            Task parent = task.getParentTasks().get(0);
-
-            //finish time of parent
-            int finTime = schedule.getTaskStartTime(parent) + parent.getCost();
-            int cost = parent.getCostToChild(task);
-
-            return finTime + cost;
-
-        }
-
-        return -1;
-    }
 
     /**
      * Generates all possible schedules if a node from the current topological layering
@@ -266,7 +243,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
             }
 
             if (task.getNumberOfChildren() == 1) {
-                for (String childId : task.getChildren()) {
+                for (String childId : task.getChildrenList()) {
                     if (commonChildId.isEmpty()) {
                         commonChildId = childId;
                     } else {
@@ -279,9 +256,9 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
             if (task.getNumberOfParents() == 1) {
                 Schedule s = info.getSchedule();
-                for (Task parent : task.getParentTasks()) {
+                for (String parentId : task.getParentTasks()) {
 
-                    int parentProcessorId = s.getProcessorIdForTask(parent);
+                    int parentProcessorId = s.getProcessorIdForTask(parentId);
                     if (commonParentProcessorId == null) {
                         commonParentProcessorId = parentProcessorId;
                     } else {
@@ -305,7 +282,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
         currentLayer = new ArrayList<>(currentLayer);
         for (int i = currentLayer.size() - 1; i >= 0; i--) {
             Task task = currentLayer.get(i);
-            if (schedule.isTaskAssigned(task)) {
+            if (schedule.isTaskAssigned(task.getId())) {
                 currentLayer.remove(i);
             }
         }
@@ -323,23 +300,25 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 Schedule newSchedule = new Schedule(schedule);
                 newSchedule.add(node, processId);
 
-                List<String> expandedFreeNodes = new ArrayList<>();
+                List<String> expandedFreeNodeIds = new ArrayList<>();
+                List<Task> expandedFreeNodes = new ArrayList<>();
 
-                for (String childId : node.getChildren()) {
+                for (String childId : node.getChildrenList()) {
                     Task child = this.graph.getTask(childId);
                     boolean isTaskFree = true;
-                    for (Task task : child.getParentTasks()) {
-                        if (!schedule.isTaskAssigned(task)) {
+                    for (String parentId : child.getParentTasks()) {
+                        if (!schedule.isTaskAssigned(parentId)) {
                             isTaskFree = false;
                             break;
                         }
                     }
                     if (isTaskFree) {
-                        expandedFreeNodes.add(childId);
+                        expandedFreeNodeIds.add(childId);
+                        expandedFreeNodes.add(child);
                     }
                 }
 
-                out.add(new ScheduleInfo(newSchedule, scheduleinfo.getLayer(), expandedFreeNodes, calculateCost(newSchedule)));
+                out.add(new ScheduleInfo(newSchedule, scheduleinfo.getLayer(), expandedFreeNodeIds, calculateCost(newSchedule, expandedFreeNodes)));
             }
         }
 
@@ -396,7 +375,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 node.setBottomLevel(currentBottomLevel + node.getCost());
             }
             if (!node.getParentTasks().isEmpty()) {
-                getBottomLevels(node.getParentTasks(),
+                getBottomLevels(graph.buildTaskListFromIds(node.getParentTasks()),
                         node.getBottomLevel());
             }
         }

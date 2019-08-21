@@ -62,10 +62,8 @@ public class DOTParser {
                     targetTask,
                     getCostOfGraphElement(edge)
             );
-            sourceTask.addOutgoing(dependency);
-            targetTask.addIncoming(dependency);
 
-            // current a duplicate of two lines above but experimenting with different data structures
+
             sourceTask.addChildTask(targetTask, getCostOfGraphElement(edge));
             targetTask.addParentTask(sourceTask);
 

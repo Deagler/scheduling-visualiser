@@ -9,9 +9,8 @@ public class Task implements Serializable {
 
 
 
-    private List<Task> parentTasks;
-    private Map<Task, Integer> childCosts;
-    private Set<String> childrenTasks;
+    private List<String> parentTasks;
+    private Map<String, Integer> childCosts;
     private int cost;
     private String id;
     private int bottomLevel;
@@ -20,23 +19,21 @@ public class Task implements Serializable {
         this.cost = cost;
         this.id = id;
         parentTasks = new ArrayList<>();
-        childrenTasks = new HashSet<>();
         childCosts = new HashMap<>();
     }
 
 
-    public void addParentTask(Task task) { this.parentTasks.add(task);}
+    public void addParentTask(Task task) { this.parentTasks.add(task.getId());}
 
     public void addChildTask(Task task, int communicationCost) {
-        this.childCosts.put(task, communicationCost);
-        this.childrenTasks.add(task.getId());
+        this.childCosts.put(task.getId(), communicationCost);
     }
 
     public int getCostToChild(Task task) {
-        return this.childCosts.get(task);
+        return this.childCosts.get(task.getId());
     }
 
-    public List<Task> getParentTasks() {
+    public List<String> getParentTasks() {
         return this.parentTasks;
     }
 
@@ -67,11 +64,7 @@ public class Task implements Serializable {
         return this.childCosts.size();
     }
 
-    public Set<String> getChildren() {
-        return this.childrenTasks;
-    }
-
-    public List<String> getChildrenList() { return new ArrayList<>(this.childrenTasks); }
+    public List<String> getChildrenList() { return new ArrayList<String>(this.childCosts.keySet()); }
 
     @Override
     public String toString() {
