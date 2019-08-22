@@ -9,7 +9,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="schedulingproblem_main" />
+    <orderEntry type="module" module-name="schedulingproblem.main" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -46,5 +46,5 @@
     <orderEntry type="library" name="Gradle: org.abego.treelayout:org.abego.treelayout.core:1.0.1" level="project" />
     <orderEntry type="library" name="Gradle: org.antlr:antlr4-annotations:4.2" level="project" />
   </component>
-  <component name="TestModuleProperties" production-module="schedulingproblem_main" />
+  <component name="TestModuleProperties" production-module="schedulingproblem.main" />
 </module>

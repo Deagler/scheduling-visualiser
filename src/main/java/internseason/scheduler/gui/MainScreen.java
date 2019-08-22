@@ -17,9 +17,7 @@ import org.graphstream.ui.javafx.FxGraphRenderer;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class MainScreen implements Initializable {
     private SingleGraph input_graph;
@@ -28,7 +26,7 @@ public class MainScreen implements Initializable {
 
     private long startTime;
     private Timer timer;
-
+    HashMap<Integer, Integer> parentMap;
 
 
     @FXML private Pane input_graph_pane;
@@ -55,8 +53,11 @@ public class MainScreen implements Initializable {
         System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
         input_graph = new SingleGraph("IG");
         schedule_graph = new SingleGraph("SG");
+        parentMap = new HashMap<>();
+
         setup_labels("4", "4", "24 gb");
-        load_input_graph();
+        load_input_graph("src/test/resources/Nodes_11_OutTree.dot");
+
         load_schedule_graph();
     }
 
@@ -93,11 +94,11 @@ public class MainScreen implements Initializable {
 
     }
 
-    private void load_input_graph() {
+    private void load_input_graph(String path) {
         DOTParser parser = new DOTParser();
         try {
             FxViewer v = new FxViewer(input_graph, FxViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
-            internseason.scheduler.model.Graph graph = parser.parse("src/test/resources/Nodes_11_OutTree.dot");
+            internseason.scheduler.model.Graph graph = parser.parse(path);
             GraphAdapter graphAdapter = new GraphAdapter(graph, input_graph, "test");
             input_graph = graphAdapter.getFrontEndGraph();
             //sample_generator_2(input_graph);
@@ -117,19 +118,47 @@ public class MainScreen implements Initializable {
 
     private void load_schedule_graph() {
         FxViewer v = new FxViewer(schedule_graph, FxViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
-        sample_generator(schedule_graph);
+//        sample_generator(schedule_graph);
+        schedule_graph.addNode("0" );
+        schedule_graph.addNode("1" );
+        schedule_graph.addNode("2" );
+        schedule_graph.addNode("3" );
+        schedule_graph.addNode("4" );
+        schedule_graph.addNode("5" );
+        schedule_graph.addNode("6" );
+        schedule_graph.addEdge("01", "0", "1");
+        schedule_graph.addEdge("02", "0", "2");
+        schedule_graph.addEdge("03", "0", "3");
+        schedule_graph.addEdge("14", "1", "4");
+        schedule_graph.addEdge("15", "1", "5");
+        schedule_graph.addEdge("16", "1", "6");
+
 
         schedule_graph.setAttribute("ui.antialias");
         schedule_graph.setAttribute("ui.quality");
         schedule_graph.setAttribute("ui.stylesheet", "url('internseason/scheduler/gui/stylesheets/graph_css.css')");
+
+        schedule_graph.getEdge("01").setAttribute("ui.class", "visited");
         v.enableAutoLayout();
 
         FxViewPanel panel = (FxViewPanel) v.addDefaultView(false, new FxGraphRenderer());
-        panel.getCamera().setViewPercent(0.3);
+        //panel.getCamera().setViewPercent(0.3);
         panel.setMaxSize(456, 219);
         panel.setCenterShape(true);
 
         schedule_graph_pane.getChildren().add(panel);
+    }
+
+    private void drawShit(Integer node, List<Integer> children){
+        for (Integer n :children) {
+            parentMap.put(n, node);
+            schedule_graph.addNode(n.toString());
+            schedule_graph.addEdge(node.toString() + n.toString(), node.toString(), n.toString());
+        }
+        if (parentMap.containsKey(node)){
+            Integer parentNode = parentMap.get(node);
+            schedule_graph.getEdge(parentNode.toString() + node.toString()).setAttribute("ui.class", "visited");
+        }
     }
 
     private void startTimer(){
@@ -177,6 +206,9 @@ public class MainScreen implements Initializable {
         if(file!=null) {
             graph_path = file;
             loaded_graph_label.setText(file.toString());
+            input_graph = new SingleGraph(graph_path.toString());
+
+            load_input_graph(graph_path.toString());
         }
     }
 
