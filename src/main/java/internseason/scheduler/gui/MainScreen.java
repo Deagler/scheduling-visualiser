@@ -1,14 +1,26 @@
 package internseason.scheduler.gui;
 
-import internseason.scheduler.Config;
-import internseason.scheduler.DOTParser;
+import internseason.scheduler.Main;
+import internseason.scheduler.algorithm.SystemInformation;
+import internseason.scheduler.input.CLIException;
+import internseason.scheduler.input.Config;
+import internseason.scheduler.input.DOTParser;
 import internseason.scheduler.exceptions.InputException;
+import internseason.scheduler.model.Schedule;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import javafx.util.StringConverter;
 import org.graphstream.algorithm.generator.BarabasiAlbertGenerator;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
@@ -17,6 +29,7 @@ import org.graphstream.ui.fx_viewer.FxViewer;
 import org.graphstream.ui.javafx.FxGraphRenderer;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
@@ -24,6 +37,7 @@ public class MainScreen implements Initializable {
     private SingleGraph input_graph;
     private  SingleGraph schedule_graph;
     private File graph_path;
+    private SystemInformation sysInfo;
 
     private long startTime;
     private Timer timer;
@@ -50,6 +64,14 @@ public class MainScreen implements Initializable {
 
     public MainScreen(Config config) {
         this.config = config;
+        this.sysInfo = new SystemInformation();
+
+    }
+
+    private void bindLabel(IntegerProperty systemProperty, Label label) {
+        systemProperty.addListener((obs, oldVal, newVal) -> {
+            Platform.runLater(() -> label.setText(String.valueOf(newVal)));
+        });
     }
 
     @Override
@@ -61,8 +83,11 @@ public class MainScreen implements Initializable {
 
         setup_labels("4", "4", "24 gb");
         load_input_graph(this.config.getInputDotFile());
-
+        this.loaded_graph_label.setText(this.config.getInputDotFile());
         load_schedule_graph();
+
+        this.bindLabel(sysInfo.schedulesQueuedProperty(), schedules_in_queue);
+        this.bindLabel(sysInfo.schedulesExploredProperty(), schedules_explored);
     }
 
     public void setup_labels(String cores, String processors, String max_mem){
@@ -184,9 +209,39 @@ public class MainScreen implements Initializable {
         }, 0, 5);
     }
 
+    private void stopTimer() {
+        this.timer.cancel();
+    }
+
     @FXML
     public void playButtonPressed(){
+
         startTimer();
+        Service<Schedule> service = new Service<Schedule>() {
+
+            @Override
+            protected Task<Schedule> createTask() {
+                return new Task<Schedule>() {
+                    @Override
+                    protected Schedule call() throws IOException, InterruptedException {
+                       return  Main.startAlgorithm(config, sysInfo);
+                    }
+                };
+            }
+        };
+
+
+        service.setOnSucceeded((e) -> {
+            System.out.println("Algorithm Finished");
+            this.stopTimer();
+        });
+
+        service.setOnFailed((t) -> {
+            System.out.println("Algorithm Failed");
+            this.stopTimer();
+        });
+
+        service.start();
     }
 
     @FXML
@@ -203,13 +258,14 @@ public class MainScreen implements Initializable {
     }
 
     @FXML
-    public void loadButtonPressed(){
+    public void loadButtonPressed()  {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Graph Resource File");
         File file = fileChooser.showOpenDialog(input_graph_pane.getScene().getWindow());
         if(file!=null) {
             graph_path = file;
             loaded_graph_label.setText(file.toString());
+            config.setInputDotFile(file.toString());
             input_graph = new SingleGraph(graph_path.toString());
 
             load_input_graph(graph_path.toString());

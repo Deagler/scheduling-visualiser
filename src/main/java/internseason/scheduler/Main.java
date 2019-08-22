@@ -2,7 +2,9 @@ package internseason.scheduler;
 import internseason.scheduler.algorithm.AlgorithmFactory;
 import internseason.scheduler.algorithm.AlgorithmType;
 import internseason.scheduler.algorithm.BaseAlgorithm;
+import internseason.scheduler.algorithm.SystemInformation;
 import internseason.scheduler.exceptions.InputException;
+import internseason.scheduler.gui.FXVisualisation;
 import internseason.scheduler.input.CLIException;
 import internseason.scheduler.input.CLIParser;
 import internseason.scheduler.input.Config;
@@ -10,6 +12,7 @@ import internseason.scheduler.input.DOTParser;
 import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Schedule;
 import internseason.scheduler.output.DOTOutputWriter;
+import javafx.application.Application;
 
 public class Main {
     public static Config config;
@@ -24,7 +27,7 @@ public class Main {
              if (config.isVisualisationEnabled()) {
                 Application.launch(FXVisualisation.class);
             } else {
-                startAlgorithm(config);
+                startAlgorithm(config, new SystemInformation());
             }
         } catch (CLIException e) {
             System.out.println("Error: "+e.getMessage());
@@ -33,7 +36,7 @@ public class Main {
 
     }
 
-    public static void startAlgorithm(Config config) {
+    public static Schedule startAlgorithm(Config config, SystemInformation sysInfo) {
         DOTParser dotparser = new DOTParser();
         Graph graph = null;
         try {
@@ -47,11 +50,12 @@ public class Main {
                 config.getNumberOfCores()
         );
 
-        Schedule schedule = algorithm.execute(graph, config.getNumberOfProcessors());
+        Schedule schedule = algorithm.execute(graph, config.getNumberOfProcessors(), sysInfo);
         DOTOutputWriter outputWriter = new DOTOutputWriter();
 
         outputWriter.write(config.getOutputFileName(), schedule, graph.getTasks());
 
+        return schedule;
 
 
     }

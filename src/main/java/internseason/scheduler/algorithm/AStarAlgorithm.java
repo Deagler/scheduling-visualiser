@@ -113,7 +113,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
      * @return An optimal schedule
      */
     @Override
-    public Schedule execute(Graph graph, int numberOfProcessors) {
+    public Schedule execute(Graph graph, int numberOfProcessors, SystemInformation sysInfo) {
         this.scheduler = new Scheduler(graph);
 
         int totalTasks = graph.getTasks().size();
@@ -227,6 +227,8 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 visited.add(possibleCombination.hashCode());
             }
 
+            sysInfo.setSchedulesQueued(scheduleQueue.size());
+            sysInfo.setSchedulesExplored(counter);
             //if was in FTO
             if (FTOList != null) {
                 //if next schedule in queue has the same freelist
