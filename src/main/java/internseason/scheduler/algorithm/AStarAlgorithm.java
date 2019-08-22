@@ -183,7 +183,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
             if (FTOList != null) {
                 //TODO generateFTOCombinations to use the queue?
-                combinations = generateFTOCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors);
+                combinations = generateFTOCombinations(head, FTOList, numberOfProcessors);
 
 //                //Queue<Task> ftoTasks =  sortFTOTasks(FTOList, schedule);
 //                boolean same = true;
@@ -212,7 +212,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 currentLayer = topologicalTasks.get(head.getLayer());
                 FTOList = isFTO(head, currentLayer);
                 if (FTOList != null) {
-                    combinations = generateFTOCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors);
+                    combinations = generateFTOCombinations(head, FTOList, numberOfProcessors);
                 } else {
                     combinations = generateAllCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors);
                 }
@@ -239,6 +239,8 @@ public class AStarAlgorithm extends BaseAlgorithm {
                     knownFTO = false;
                     continue;
                 }
+
+                continue;
 
 //                HashSet<Task> set = new HashSet<>();
 //                set.addAll(nextFreeList);
@@ -416,13 +418,14 @@ public class AStarAlgorithm extends BaseAlgorithm {
         return out;
     }
 
-    private List<ScheduleInfo> generateFTOCombinations(ScheduleInfo scheduleInfo, List<Task> ftoList, int numberOfProcesses) {
+    private List<ScheduleInfo> generateFTOCombinations(ScheduleInfo scheduleInfo, Queue<Task> ftoList, int numberOfProcesses) {
         //given a schedule, ftolist and processor schedule top fto task to all processors
         Schedule schedule = scheduleInfo.getSchedule();
 
         List<ScheduleInfo> out = new ArrayList<>();
         for (int processId=0;processId< numberOfProcesses;processId++){
-            Task head = ftoList.get(0);
+            Task head = ftoList.poll();
+            //Task head = ftoList.get(0);
             Schedule newSchedule = new Schedule(schedule, graph.getTasks());
             newSchedule.add(head, processId);
 
