@@ -1,5 +1,6 @@
 package internseason.scheduler.model;
 
+import internseason.scheduler.algorithm.BBScheduleInfo;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -281,6 +282,31 @@ public class Schedule implements Serializable {
         return sb.toString();
     }
 
+    public static Schedule buildGreedySchedule(BBScheduleInfo scheduleInfo, Graph graph) {
+        Schedule cloneSchedule = new Schedule(scheduleInfo.getSchedule(),graph.getTasks());
+
+        Set<String> freeList = scheduleInfo.getFreeTasks();
+        System.out.println("original free list"+freeList);
+        int counter = 0;
+        while (freeList.size() > 0) {
+
+            Set<String> temp = new HashSet<>();
+            for (String taskId : freeList) {
+                Task task = graph.getTask(taskId);
+                cloneSchedule.addWithLowestStartTime(graph.getTask(taskId));
+                for (String childId : task.getChildrenList()) {
+                    Task child = graph.getTask(childId);
+                    if (cloneSchedule.isTaskFree(child)) {
+                        temp.add(child.getId());
+                    }
+                }
+            }
+            freeList = temp;
+            System.out.println(" new free list "+ freeList+ " iteration: "+ counter);
+            counter++;
+        }
+        return cloneSchedule;
+    }
     @Override
     public int hashCode() {
         HashCodeBuilder builder = new HashCodeBuilder();
