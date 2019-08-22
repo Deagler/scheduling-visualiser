@@ -15,6 +15,7 @@ import org.graphstream.ui.fx_viewer.FxViewPanel;
 import org.graphstream.ui.fx_viewer.FxViewer;
 import org.graphstream.ui.javafx.FxGraphRenderer;
 
+import javax.swing.plaf.synth.SynthTextAreaUI;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
@@ -57,9 +58,30 @@ public class MainScreen implements Initializable {
 
         setup_labels("4", "4", "24 gb");
         load_input_graph("src/test/resources/Nodes_11_OutTree.dot");
-
         load_schedule_graph();
+        test_populate();
     }
+
+    public void test_populate(){
+
+        //drawShit();
+        int counter = 1;
+        for (int i=1; i<2;i++){
+            List<Integer> chil = new Vector<>();
+            for (int j=1+i;j<i+5;j++){
+                chil.add(j);
+                counter++;
+            }
+            System.out.println(i);
+            System.out.println(chil);
+            drawShit(i,chil);
+        }
+
+
+        drawShit(2, new ArrayList<>(Arrays.asList(6,7,8)));
+
+    }
+
 
     public void setup_labels(String cores, String processors, String max_mem){
         runtime.setText("00:00:000 (s)");
@@ -119,46 +141,51 @@ public class MainScreen implements Initializable {
     private void load_schedule_graph() {
         FxViewer v = new FxViewer(schedule_graph, FxViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
 //        sample_generator(schedule_graph);
-        schedule_graph.addNode("0" );
-        schedule_graph.addNode("1" );
-        schedule_graph.addNode("2" );
-        schedule_graph.addNode("3" );
-        schedule_graph.addNode("4" );
-        schedule_graph.addNode("5" );
-        schedule_graph.addNode("6" );
-        schedule_graph.addEdge("01", "0", "1");
-        schedule_graph.addEdge("02", "0", "2");
-        schedule_graph.addEdge("03", "0", "3");
-        schedule_graph.addEdge("14", "1", "4");
-        schedule_graph.addEdge("15", "1", "5");
-        schedule_graph.addEdge("16", "1", "6");
+//        schedule_graph.addNode("0" );
+//        schedule_graph.addNode("1" );
+//        schedule_graph.addNode("2" );
+//        schedule_graph.addNode("3" );
+//        schedule_graph.addNode("4" );
+//        schedule_graph.addNode("5" );
+//        schedule_graph.addNode("6" );
+//        schedule_graph.addEdge("01", "0", "1");
+//        schedule_graph.addEdge("02", "0", "2");
+//        schedule_graph.addEdge("03", "0", "3");
+//        schedule_graph.addEdge("14", "1", "4");
+//        schedule_graph.addEdge("15", "1", "5");
+//        schedule_graph.addEdge("16", "1", "6");
 
 
         schedule_graph.setAttribute("ui.antialias");
         schedule_graph.setAttribute("ui.quality");
         schedule_graph.setAttribute("ui.stylesheet", "url('internseason/scheduler/gui/stylesheets/graph_css.css')");
 
-        schedule_graph.getEdge("01").setAttribute("ui.class", "visited");
+//        schedule_graph.getEdge("01").setAttribute("ui.class", "visited");
         v.enableAutoLayout();
 
         FxViewPanel panel = (FxViewPanel) v.addDefaultView(false, new FxGraphRenderer());
         //panel.getCamera().setViewPercent(0.3);
         panel.setMaxSize(456, 219);
         panel.setCenterShape(true);
-
         schedule_graph_pane.getChildren().add(panel);
     }
 
     private void drawShit(Integer node, List<Integer> children){
-        for (Integer n :children) {
-            parentMap.put(n, node);
-            schedule_graph.addNode(n.toString());
-            schedule_graph.addEdge(node.toString() + n.toString(), node.toString(), n.toString());
-        }
         if (parentMap.containsKey(node)){
             Integer parentNode = parentMap.get(node);
             schedule_graph.getEdge(parentNode.toString() + node.toString()).setAttribute("ui.class", "visited");
+        }else{
+            schedule_graph.addNode(node.toString());
+            schedule_graph.getNode(node.toString()).setAttribute("ui.class", "root");
         }
+
+        for (Integer n :children) {
+            parentMap.put(n, node);
+            System.out.println(n);
+            schedule_graph.addNode(n.toString());
+            schedule_graph.addEdge(node.toString() + n.toString(), node.toString(), n.toString());
+        }
+
     }
 
     private void startTimer(){
