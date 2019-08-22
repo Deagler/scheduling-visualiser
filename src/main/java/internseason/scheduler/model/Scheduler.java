@@ -114,4 +114,8 @@ public class Scheduler {
 
         return -1;
     }
+
+    public Task getTask(String id) {
+        return allTasks.get(id);
+    }
 }

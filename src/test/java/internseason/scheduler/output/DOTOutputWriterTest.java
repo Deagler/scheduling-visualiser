@@ -7,6 +7,7 @@ import internseason.scheduler.input.DOTParser;
 import internseason.scheduler.exceptions.InputException;
 import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Schedule;
+import internseason.scheduler.model.Scheduler;
 import internseason.scheduler.model.Task;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,12 +33,13 @@ public class DOTOutputWriterTest {
         try {
             Graph graph = this.parser.parse("src/test/resources/Test_Diamond.dot");
             Map<String, Task> tasks = graph.getTasks();
-            Schedule schedule = new Schedule(4, tasks);
+            Scheduler scheduler = new Scheduler(graph);
+            Schedule schedule = new Schedule(4);
 
-            schedule.add(tasks.get("0"), 0);
-            schedule.add(tasks.get("1"),  1);
-            schedule.add(tasks.get("2"),  2);
-            schedule.add(tasks.get("3"),  3);
+            scheduler.addTask(schedule, tasks.get("0"), 0);
+            scheduler.addTask(schedule, tasks.get("1"),  1);
+            scheduler.addTask(schedule, tasks.get("2"),  2);
+            scheduler.addTask(schedule, tasks.get("3"),  3);
 
             this.writer.write("bruh.txt", schedule, tasks);
             validateOutputParser("bruh.txt", schedule, tasks);
