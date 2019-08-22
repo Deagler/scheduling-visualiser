@@ -1,9 +1,6 @@
 package internseason.scheduler.algorithm;
 
-import internseason.scheduler.model.Graph;
-import internseason.scheduler.model.Processor;
-import internseason.scheduler.model.Schedule;
-import internseason.scheduler.model.Task;
+import internseason.scheduler.model.*;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.util.*;
@@ -98,6 +95,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
     private Queue<ScheduleInfo> scheduleQueue;
     private int totalTaskTime;
     private Graph graph;
+    private Scheduler scheduler;
 
     /**
      * Tepmorary constructor to test factory pattern
@@ -116,6 +114,8 @@ public class AStarAlgorithm extends BaseAlgorithm {
      */
     @Override
     public Schedule execute(Graph graph, int numberOfProcessors) {
+        this.scheduler = new Scheduler(graph);
+
         int totalTasks = graph.getTasks().size();
         totalTaskTime = 0;
         for (Task task: graph.getTasks().values()){
@@ -126,7 +126,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
         List<List<Task>> topologicalTasks = graph.getTopologicalOrdering();
 
-        Schedule initialSchedule = new Schedule(numberOfProcessors, graph.getTasks());
+        Schedule initialSchedule = new Schedule(numberOfProcessors);
 
         scheduleQueue.add(new ScheduleInfo(initialSchedule, 0, new ArrayList<String>(), 0)); // Add the empty schedule to the queue.
         // Calculates the Bottom Level for each task.
@@ -241,23 +241,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
                 continue;
 
-//                HashSet<Task> set = new HashSet<>();
-//                set.addAll(nextFreeList);
-//
-//                for (Task t: FTOList) {
-//                    if (!set.contains(t)) {
-//                        //NEED TO CHECK FTO
-//                        knownFTO = false;
-//                        counter++;
-//                        continue;
-//                    } else {
-//                        set.remove(t);
-//                    }
-//                }
-//
-//                if (set.size() != 0) {
-//                    knownFTO = false;
-//                }
             }
 
             knownFTO = false;
@@ -280,7 +263,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
     private int calculateDRTHeuristic(Schedule schedule, List<Task> freeTasks){
         int maxDRT = Integer.MIN_VALUE;
         for (Task task : freeTasks){
-            int drt = schedule.calculateDRT(task);
+            int drt = this.scheduler.calculateDRT(schedule, task);
             int bottomLevel = task.getBottomLevel();
             maxDRT = Math.max(maxDRT, (drt+bottomLevel));
         }
@@ -288,10 +271,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
     }
 
     private Integer calculateCost(Schedule schedule, List<Task> freeTasks) {
-        //return calculateDRTHeuristic(schedule,freeTasks);
-        //return schedule.getMaxBottomLevel();
-        //return Math.max(schedule.getMaxBottomLevel(), calculateIdleHeuristic(schedule));
-        //return Math.max(schedule.getMaxBottomLevel(), calculateDRTHeuristic(schedule,freeTasks));
         return Math.max(schedule.getMaxBottomLevel(), calculateIdleHeuristic(schedule));
 
     }
@@ -392,8 +371,8 @@ public class AStarAlgorithm extends BaseAlgorithm {
             Task node = currentLayer.get(i);
 
             for (int processId = 0; processId < numberOfProcessors; processId++) {
-                Schedule newSchedule = new Schedule(schedule, graph.getTasks());
-                newSchedule.add(node, processId);
+                Schedule newSchedule = new Schedule(schedule);
+                this.scheduler.addTask(newSchedule, node, processId);
 
                 List<String> expandedFreeNodeIds = new ArrayList<>();
                 List<Task> expandedFreeNodes = new ArrayList<>();
@@ -431,8 +410,8 @@ public class AStarAlgorithm extends BaseAlgorithm {
         for (int processId=0;processId< numberOfProcesses;processId++){
             Task head = ftoList.peek();
             //Task head = ftoList.get(0);
-            Schedule newSchedule = new Schedule(schedule, graph.getTasks());
-            newSchedule.add(head, processId);
+            Schedule newSchedule = new Schedule(schedule);
+            this.scheduler.addTask(newSchedule, head, processId);
 
             List<String> expandedFreeNodeIds = new ArrayList<>();
             List<Task> expandedFreeNodes = new ArrayList<>();

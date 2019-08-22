@@ -4,6 +4,7 @@ import internseason.scheduler.exceptions.InputException;
 import internseason.scheduler.input.DOTParser;
 import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Schedule;
+import internseason.scheduler.model.Scheduler;
 import internseason.scheduler.model.Task;
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,6 +24,7 @@ public class ScheduleInfoTest {
     private Task t1;
     private Task t2;
     private Task t3;
+    private Scheduler scheduler;
 
     @Before
     public void setup() {
@@ -35,6 +37,7 @@ public class ScheduleInfoTest {
             t1 = graph.getTask("1");
             t2 = graph.getTask("2");
             t3 = graph.getTask("3");
+            scheduler = new Scheduler(graph);
 
         } catch (InputException e) {
             e.printStackTrace();
@@ -44,12 +47,12 @@ public class ScheduleInfoTest {
     @Test
     public void testGetSchedule() {
 
-        Schedule schedule = new Schedule(2, graph.getTasks());
+        Schedule schedule = new Schedule(2);
         try {
-            schedule.add(t0, 0);
-            schedule.add(t1, 0);
-            schedule.add(t2, 1);
-            schedule.add(t3, 0);
+            scheduler.addTask(schedule, t0, 0);
+            scheduler.addTask(schedule, t1, 0);
+            scheduler.addTask(schedule, t2, 1);
+            scheduler.addTask(schedule, t3, 0);
 
 
             List<String> freeList = new ArrayList<String>();
