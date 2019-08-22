@@ -53,7 +53,7 @@ public class DotParserTest {
             Map<String, Integer> parentCountMap = this.getNode8ParentCountMap();
 
             for (Task task : tasks.values()) {
-                List<Task> parents = task.getParentTasks();
+                List<Task> parents = graph.buildTaskListFromIds(task.getParentTasks());
                 assertEquals(Integer.valueOf(parentCountMap.get(task.getId())), Integer.valueOf(parents.size()));
             }
 

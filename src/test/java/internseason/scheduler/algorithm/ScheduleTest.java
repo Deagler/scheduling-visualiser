@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class ScheduleTest {
 
@@ -23,7 +24,7 @@ public class ScheduleTest {
 
         try {
             graph = this.parser.parse("src/test/resources/Test_Diamond.dot");
-            //Map<String, Task> map = graph.getTasks();
+            //Map<String, Task> map = graph.getTaskIds();
             t0 = graph.getTask("0");
             t1 = graph.getTask("1");
             t2 = graph.getTask("2");
@@ -36,7 +37,7 @@ public class ScheduleTest {
 
     @Test
     public void testOneDependencySameProcessor() {
-        Schedule schedule = new Schedule(1);
+        Schedule schedule = new Schedule(1, graph.getTasks());
         try {
             schedule.add(t0, 0);
             schedule.add(t1, 0);
@@ -54,7 +55,7 @@ public class ScheduleTest {
 
     @Test
     public void testOneDependencyDifferentProcessor() {
-        Schedule schedule = new Schedule(2);
+        Schedule schedule = new Schedule(2, graph.getTasks());
 
         try {
 
@@ -77,7 +78,7 @@ public class ScheduleTest {
 
     @Test
     public void testTwoDependencyProcessorZero() {
-        Schedule schedule = new Schedule(2);
+        Schedule schedule = new Schedule(2, graph.getTasks());
         try {
             schedule.add(t0, 0);
             schedule.add(t1, 0);
@@ -101,7 +102,7 @@ public class ScheduleTest {
 
     @Test
     public void testTwoDependencyProcessorOne() {
-        Schedule schedule = new Schedule(2);
+        Schedule schedule = new Schedule(2, graph.getTasks());
         try {
             schedule.add(t0, 0);
             schedule.add(t1, 0);
@@ -125,7 +126,7 @@ public class ScheduleTest {
 
     @Test
     public void testTwoDependencyProcessorTwo() {
-        Schedule schedule = new Schedule(3);
+        Schedule schedule = new Schedule(3, graph.getTasks());
         try {
             schedule.add(t0, 0);
             schedule.add(t1, 0);
@@ -148,5 +149,47 @@ public class ScheduleTest {
                 "Total schedule cost is: 9", schedule.toString());
         //System.out.println(schedule.toString());
     }
+
+    @Test
+    public void testHashCodeEquivalence() {
+        Schedule one = new Schedule(2, graph.getTasks());
+        one.add(new Task(10,"1"), 1);
+        one.add(new Task(10,"2"), 1);
+
+        Schedule two = new Schedule(2, graph.getTasks());
+        two.add(new Task(10,"1"), 1);
+        two.add(new Task(10,"2"), 1);
+
+        assertEquals(one.hashCode(), two.hashCode());
+    }
+
+    @Test
+    public void testHashCodeInequivalence() {
+        Schedule one = new Schedule(2, graph.getTasks());
+        one.add(new Task(10,"1"), 1);
+        one.add(new Task(10,"2"), 1);
+
+        Schedule two = new Schedule(2, graph.getTasks());
+        two.add(new Task(10,"1"), 1);
+        two.add(new Task(10,"3"), 1);
+
+        assertNotEquals(one.hashCode(), two.hashCode());
+    }
+
+
+    @Test
+    public void testProcessNormalisationHashCode() {
+        Schedule one = new Schedule(2, graph.getTasks());
+        one.add(new Task(10,"1"), 1);
+        one.add(new Task(10,"2"), 1);
+
+        Schedule two = new Schedule(2, graph.getTasks());
+        two.add(new Task(10,"1"), 0);
+        two.add(new Task(10,"2"), 0);
+
+        assertEquals(one.hashCode(), two.hashCode());
+    }
+
+
 
 }

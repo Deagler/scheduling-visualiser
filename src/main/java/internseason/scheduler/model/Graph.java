@@ -1,6 +1,7 @@
 package internseason.scheduler.model;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Graph {
     Map<String, Task> tasks;
@@ -103,7 +104,7 @@ public class Graph {
 
         // convert to task objects
         for (List<String> layer : layers) {
-            topologicalOrdering.add(getTasksFromIds(layer));
+            topologicalOrdering.add(buildTaskListFromIds(layer));
         }
     }
 
@@ -117,15 +118,12 @@ public class Graph {
         return inDegrees;
     }
 
+    public List<Task> buildTaskListFromIds(List<String> taskIds) {
+        List<Task> result = taskIds.stream()
+                .map(t -> tasks.get(t))
+                .collect(Collectors.toList());
 
-    private List<Task> getTasksFromIds(List<String> taskIds) {
-        List<Task> out = new ArrayList<>();
-        for (String taskId : taskIds) {
-            out.add(tasks.get(taskId));
-        }
-
-        return out;
+        return result;
     }
-
 
 }

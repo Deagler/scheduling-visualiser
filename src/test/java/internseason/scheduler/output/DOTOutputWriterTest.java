@@ -32,7 +32,7 @@ public class DOTOutputWriterTest {
         try {
             Graph graph = this.parser.parse("src/test/resources/Test_Diamond.dot");
             Map<String, Task> tasks = graph.getTasks();
-            Schedule schedule = new Schedule(4);
+            Schedule schedule = new Schedule(4, tasks);
 
             schedule.add(tasks.get("0"), 0);
             schedule.add(tasks.get("1"),  1);
@@ -59,7 +59,7 @@ public class DOTOutputWriterTest {
             Map<String, Object> attributes = node.getAttributes();
             Task task = taskMap.get(node.getId());
             assertEquals(String.valueOf(taskMap.get(node.getId()).getCost()),attributes.get("Weight"));
-            assertEquals(String.valueOf(schedule.getProcessorIdForTask(task)), attributes.get("Processor"));
+            assertEquals(String.valueOf(schedule.getProcessorIdForTask(task.getId())), attributes.get("Processor"));
             assertEquals(String.valueOf(schedule.getTaskStartTime(task)), attributes.get("Start_time"));
         }
 

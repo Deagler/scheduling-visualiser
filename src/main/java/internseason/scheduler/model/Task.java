@@ -1,49 +1,39 @@
 package internseason.scheduler.model;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Task implements Serializable {
 
 
-    private List<Dependency> incomingEdges;
-    private List<Dependency> outgoingEdges;
-    private List<Task> parentTasks;
-    private Map<Task, Integer> childCosts;
+
+    private List<String> parentTasks;
+    private Map<String, Integer> childCosts;
     private int cost;
     private String id;
+    private int bottomLevel;
 
     public Task(int cost, String id) {
         this.cost = cost;
         this.id = id;
-        incomingEdges = new ArrayList<>();
-        outgoingEdges = new ArrayList<>();
         parentTasks = new ArrayList<>();
         childCosts = new HashMap<>();
     }
 
-    public void addIncoming(Dependency edge) {
-        this.incomingEdges.add(edge);
-    }
 
-    public void addOutgoing(Dependency edge) {
-        this.outgoingEdges.add(edge);
-    }
-
-    public void addParentTask(Task task) { this.parentTasks.add(task);}
+    public void addParentTask(Task task) { this.parentTasks.add(task.getId());}
 
     public void addChildTask(Task task, int communicationCost) {
-        this.childCosts.put(task, communicationCost);
+        this.childCosts.put(task.getId(), communicationCost);
     }
 
     public int getCostToChild(Task task) {
-        return this.childCosts.get(task);
+        return this.childCosts.get(task.getId());
     }
 
-    public List<Task> getParentTasks() {
+    public List<String> getParentTasks() {
         return this.parentTasks;
     }
 
@@ -55,29 +45,36 @@ public class Task implements Serializable {
         return id;
     }
 
-    public List<Dependency> getOutgoingEdges(){
-        return outgoingEdges;
+
+    public int getBottomLevel() {
+        return bottomLevel;
     }
 
-    public List<Dependency> getIncomingEdges(){
-        return incomingEdges;
+    public void setBottomLevel(int bottomLevel) {
+        this.bottomLevel = Math.max(bottomLevel, this.bottomLevel);
     }
 
-    public int getDelayTo(Task task) {
-        //check if task depends on this
 
-        for (Dependency dependency : outgoingEdges) {
-            if (dependency.getTargetTask().equals(task)) {
-                return dependency.getDependencyCost();
-            }
-        }
 
-        //TODO throw exception
-        return 0;
+    public int getNumberOfParents() {
+        return this.parentTasks.size();
     }
+
+    public int getNumberOfChildren() {
+        return this.childCosts.size();
+    }
+
+    public List<String> getChildrenList() { return new ArrayList<String>(this.childCosts.keySet()); }
 
     @Override
     public String toString() {
         return "Task " + this.id + ", Cost: " + this.cost;
+    }
+
+    @Override
+    public int hashCode() {
+        HashCodeBuilder builder = new HashCodeBuilder();
+        builder.append(getId());
+        return builder.hashCode();
     }
 }
