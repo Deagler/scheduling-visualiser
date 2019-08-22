@@ -460,44 +460,9 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
 
     private Queue<Task> sortFTOTasks(List<Task> tasks, Schedule schedule) {
-        PriorityQueue<Task> result = new PriorityQueue<Task>(new Comparator<Task>() {
-            @Override
-            public int compare(Task t1, Task t2) {
-                Map<String, Task> tasks = graph.getTasks();
-                if (schedule.calculateDRTSingle(t1) < schedule.calculateDRTSingle(t2)) {
-                    return -1;
-                }
-
-                if (schedule.calculateDRTSingle(t1) > schedule.calculateDRTSingle(t2)) {
-                    return 1;
-                }
-
-                //tie
-                //sort by DESCENDING outgoing edge cost
-                if (t1.getNumberOfChildren() == 0) {
-                    return 1;
-                }
-
-                if (t2.getNumberOfChildren() == 0) {
-                    return -1;
-                }
-
-                int t1costToChildTask = t1.getCostToChild(graph.getTask(t1.getChildrenList().get(0)));
-                int t2costToChildTask = t2.getCostToChild(graph.getTask(t2.getChildrenList().get(0)));
-
-                if (t1costToChildTask > t2costToChildTask) {
-                    return -1;
-                }
-
-                if (t1costToChildTask < t2costToChildTask) {
-                    return 1;
-                }
-                return 0;
-            }
-        });
+        PriorityQueue<Task> result = new PriorityQueue<Task>(new FTOComparator(schedule, this.graph));
 
         result.addAll(tasks);
-
 
         if (verifySortedFTOList(result)) {
             return result;
