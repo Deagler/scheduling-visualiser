@@ -1,6 +1,7 @@
 package internseason.scheduler.model;
 
 import javafx.util.Pair;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public class Processor implements Serializable {
     private int cost;
     private int processorId;
 
-    private ArrayList<Pair<Task, Integer>> taskScheduleList; // task along with when its scheduled
+    private ArrayList<Pair<String, Integer>> taskScheduleList; // task along with when its scheduled
     private HashMap<String, Integer> taskIdScheduleMap; // map from task to time scheduled
 
     public Processor(int processorId) {
@@ -37,19 +38,20 @@ public class Processor implements Serializable {
 
     public void addTask(Task task) {
         taskIdScheduleMap.put(task.getId(), this.cost);
-        taskScheduleList.add(new Pair(task, this.cost));
+        taskScheduleList.add(new Pair(task.getId(), this.cost));
         this.cost += task.getCost();
     }
 
-    public int getTaskStartTime(Task task) {
-        return this.taskIdScheduleMap.get(task.getId());
+    public int getTaskStartTime(String taskId) {
+        return this.taskIdScheduleMap.get(taskId);
     }
 
-    public List<Task> getTasks() {
-        ArrayList<Task> result = new ArrayList<>();
-        for (Pair<Task, Integer> pair: taskScheduleList) {
+    public List<String> getTaskIds() {
+        ArrayList<String> result = new ArrayList<>();
+        for (Pair<String, Integer> pair: taskScheduleList) {
             result.add(pair.getKey());
         }
+
 
         return result;
 
@@ -62,7 +64,7 @@ public class Processor implements Serializable {
         }
 
         this.taskIdScheduleMap.put(task.getId(), time);
-        this.taskScheduleList.add(new Pair(task, time));
+        this.taskScheduleList.add(new Pair(task.getId(), time));
 
         this.cost = time + task.getCost();
 
@@ -71,10 +73,16 @@ public class Processor implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (Pair<Task, Integer> t: this.taskScheduleList) {
-            sb.append("t" + t.getKey().getId() + " scheduled at: " + t.getValue() + "\n");
+        for (Pair<String, Integer> t: this.taskScheduleList) {
+            sb.append("t" + t.getKey() + " scheduled at: " + t.getValue() + "\n");
         }
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        HashCodeBuilder builder = new HashCodeBuilder();
+        builder.append(taskIdScheduleMap.hashCode());
+        return builder.hashCode();
+    }
 }

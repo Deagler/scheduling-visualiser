@@ -19,7 +19,7 @@
 
 #### Usage
 ```
-usage: scheduler-basic-T10 INPUT.dot <NumberOfProcessors>
+usage: internseason.scheduler.algorithm-basic-T10 INPUT.dot <NumberOfProcessors>
  -o <OUTPUT>   output file is named OUTPUT (default is INPUT-output.dot)
  -p <N>        use N cores for execution in parallel (default is
                sequential) <currently disabled>
