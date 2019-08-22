@@ -14,7 +14,7 @@ public class Schedule implements Serializable {
     private int cost;
     private int maxBottomLevel;
     private int idleTime;
-    private transient Map<String, Task> allTasks;
+    private Map<String, Task> allTasks;
 
     public Schedule(int numOfProcessors, Map<String, Task> allTasks) {
         this.numOfProcessors = numOfProcessors;
@@ -84,6 +84,9 @@ public class Schedule implements Serializable {
     }
 
     private int findNextAvailableTimeInProcessor(Task task, int processorId) {
+        if (task == null) {
+            System.out.println("chad mode");
+        }
         List<String> parentTasks = task.getParentTasks();
 
         int result = processorIdMap.get(processorId).getCost();

@@ -33,8 +33,8 @@ public class AStarAlgorithmTest {
         try {
             Graph graph = this.parser.parse("src/test/resources/Test_Diamond.dot");
             AStarAlgorithm algorithm = new AStarAlgorithm();
-            Schedule schedule = algorithm.execute(graph,3);
-
+            Schedule schedule = algorithm.execute(graph,2);
+            System.out.println(schedule);
             assertEquals(schedule.getCost(), 8);
         } catch (InputException e) {
             e.printStackTrace();

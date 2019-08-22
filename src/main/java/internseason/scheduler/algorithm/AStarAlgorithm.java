@@ -1,6 +1,5 @@
 package internseason.scheduler.algorithm;
 
-import com.google.gson.Gson;
 import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Processor;
 import internseason.scheduler.model.Schedule;
@@ -324,8 +323,9 @@ public class AStarAlgorithm extends BaseAlgorithm {
         String commonChildId =  "";
         Integer commonParentProcessorId = null;
 
-        List<Task> freeNodes = new ArrayList<>(currentLayer);
-        freeNodes.addAll(this.graph.buildTaskListFromIds(info.getFreeList()));
+//        List<Task> freeNodes = new ArrayList<>(currentLayer);
+//        freeNodes.addAll(this.graph.buildTaskListFromIds(info.getFreeList()));
+
 
         // check how many parents and childrens task has
         for (Task task : freeNodes) {
@@ -424,7 +424,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
         List<ScheduleInfo> out = new ArrayList<>();
         for (int processId=0;processId< numberOfProcesses;processId++){
-            Task head = ftoList.poll();
+            Task head = ftoList.peek();
             //Task head = ftoList.get(0);
             Schedule newSchedule = new Schedule(schedule, graph.getTasks());
             newSchedule.add(head, processId);
@@ -450,6 +450,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
             out.add(new ScheduleInfo(newSchedule, scheduleInfo.getLayer(), expandedFreeNodeIds, calculateCost(newSchedule, expandedFreeNodes)));
         }
         ftoList.remove(0);
+        System.out.println("suck my ass");
         return out;
     }
 
@@ -524,7 +525,12 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
         while (!tempList.isEmpty()) {
             Task t = tempList.poll();
-            int costToChildTask = t.getCostToChild(graph.getTask(t.getChildrenList().get(0)));
+
+            int costToChildTask = 0;
+            //t.getCostToChild(graph.getTask(t.getChildrenList().get(0)));
+            if (t.getNumberOfChildren() == 1) {
+                costToChildTask = t.getCostToChild(graph.getTask(t.getChildrenList().get(0)));
+            }
 
             if (costToChildTask >= outCost) {
                 outCost = costToChildTask;
