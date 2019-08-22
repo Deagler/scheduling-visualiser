@@ -9,7 +9,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="schedulingproblem.main" />
+    <orderEntry type="module" module-name="schedulingproblem_main" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -46,5 +46,5 @@
       </library>
     </orderEntry>
   </component>
-  <component name="TestModuleProperties" production-module="schedulingproblem.main" />
+  <component name="TestModuleProperties" production-module="schedulingproblem_main" />
 </module>

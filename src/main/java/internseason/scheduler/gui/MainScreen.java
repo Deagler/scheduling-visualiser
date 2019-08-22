@@ -1,5 +1,6 @@
 package internseason.scheduler.gui;
 
+import internseason.scheduler.Config;
 import internseason.scheduler.DOTParser;
 import internseason.scheduler.exceptions.InputException;
 import javafx.application.Platform;
@@ -27,6 +28,7 @@ public class MainScreen implements Initializable {
     private long startTime;
     private Timer timer;
     HashMap<Integer, Integer> parentMap;
+    private Config config;
 
 
     @FXML private Pane input_graph_pane;
@@ -46,7 +48,9 @@ public class MainScreen implements Initializable {
     @FXML private Label schedules_in_array;
 
 
-
+    public MainScreen(Config config) {
+        this.config = config;
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -56,7 +60,7 @@ public class MainScreen implements Initializable {
         parentMap = new HashMap<>();
 
         setup_labels("4", "4", "24 gb");
-        load_input_graph("src/test/resources/Nodes_11_OutTree.dot");
+        load_input_graph(this.config.getInputDotFile());
 
         load_schedule_graph();
     }
