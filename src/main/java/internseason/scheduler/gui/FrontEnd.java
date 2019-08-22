@@ -1,4 +1,4 @@
-package internseason.gui;
+package internseason.scheduler.gui;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -19,7 +19,10 @@ public class FrontEnd extends Application {
         Parent root = null;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("MainScreen.fxml"));
+            MainScreen ms = loader.getController();
             root = loader.load();
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -28,3 +31,5 @@ public class FrontEnd extends Application {
         primaryStage.show();
     }
 }
+
+
