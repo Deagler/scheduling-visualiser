@@ -115,6 +115,9 @@ public class AStarAlgorithmTest {
         }
     }
 
+    @Test
+    public void testVerifySortedFTOList() {
 
+    }
 
 }
