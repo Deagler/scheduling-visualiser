@@ -130,17 +130,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
         scheduleQueue.add(new ScheduleInfo(initialSchedule, 0, new ArrayList<String>(), 0)); // Add the empty schedule to the queue.
         // Calculates the Bottom Level for each task.
-        List<Task> leafs = graph.getTasks().values() //find all the leaf nodes
-                .stream()
-                .filter((Task task) -> task.getNumberOfChildren() == 0)
-                .collect(Collectors.toList());
-
-
-        for (Task leaf : leafs) { //Compute the bottom levels for the nodes
-            leaf.setBottomLevel(leaf.getCost());
-            getBottomLevels(graph.buildTaskListFromIds(leaf.getParentTasks()), leaf.getCost());
-        }
-
         Task maxTask = null;
         for (Task task : graph.getTasks().values()) {
            if (maxTask == null) {
@@ -507,19 +496,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
     }
 
 
-
-
-    private void getBottomLevels(List<Task> tasks, int currentBottomLevel) {
-        for (Task node : tasks) {
-            if (node.getCost() < currentBottomLevel + node.getCost()) {
-                node.setBottomLevel(currentBottomLevel + node.getCost());
-            }
-            if (!node.getParentTasks().isEmpty()) {
-                getBottomLevels(graph.buildTaskListFromIds(node.getParentTasks()),
-                        node.getBottomLevel());
-            }
-        }
-    }
 
     private boolean verifySortedFTOList(PriorityQueue<Task> ftoList) {
 

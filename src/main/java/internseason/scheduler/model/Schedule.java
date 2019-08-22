@@ -65,13 +65,43 @@ public class Schedule implements Serializable {
         Integer startTime = findNextAvailableTimeInProcessor(task, processorId);
         processor.addTaskAt(task, startTime);
         this.taskIdProcessorMap.put(task.getId(), processorId);
-        checkIncreasedCost(processor.getCost());
+        setCostIfIncreased(processor.getCost());
 
 
 
         Integer slack = startTime - processorCost;
         this.idleTime += slack;
         this.maxBottomLevel = Math.max(this.maxBottomLevel, startTime + task.getBottomLevel());
+    }
+
+
+    /**
+     * Given a task t, schedule it on a processor p such that t's start time is minimised
+     */
+    public void addWithLowestStartTime(Task task) {
+        int earliest = Integer.MAX_VALUE;
+        int targetProcessorId = 0;
+        for (int processorId = 0; processorId < numOfProcessors; processorId++) {
+            int time = findNextAvailableTimeInProcessor(task, processorId);
+            if (time < earliest) {
+                earliest = time;
+                targetProcessorId = processorId;
+            }
+        }
+
+        this.add(task, targetProcessorId);
+    }
+
+
+    public int getEarliestStartTime(Task task){
+        int earliest = Integer.MAX_VALUE;
+        for (int processorId = 0; processorId < numOfProcessors; processorId++) {
+            int time = findNextAvailableTimeInProcessor(task, processorId);
+            if (time < earliest) {
+                earliest = time;
+            }
+        }
+        return earliest;
     }
 
     public int getMaxBottomLevel() {
@@ -117,7 +147,19 @@ public class Schedule implements Serializable {
         return this.taskIdProcessorMap.containsKey(taskId);
     }
 
-    private void checkIncreasedCost(int cost) {
+    public boolean isTaskFree(Task task) {
+        boolean isTaskFree = true;
+        for (String parentId : task.getParentTasks()) {
+            if (!isTaskAssigned(parentId)) {
+                isTaskFree = false;
+                break;
+            }
+
+        }
+        return isTaskFree;
+    }
+
+    private void setCostIfIncreased(int cost) {
         if (cost > this.cost) {
             this.cost = cost;
         }
