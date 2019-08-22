@@ -9,7 +9,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Set;
 
 
 public class SystemInformation implements AlgorithmEvent {
@@ -51,7 +51,7 @@ public class SystemInformation implements AlgorithmEvent {
 
 
     @Override
-    public void fireSchedulesGenerated(Integer parentHashcode, List<Integer> childHashcodes) {
+    public void fireSchedulesGenerated(Integer parentHashcode, Set<Integer> childHashcodes) {
         for (AlgorithmEventListener listener : listeners) {
             listener.schedulesGenerated(parentHashcode, childHashcodes);
         }

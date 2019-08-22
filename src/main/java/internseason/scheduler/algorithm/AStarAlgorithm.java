@@ -202,19 +202,21 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 }
                 //combinations = generateCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors, realSchedule);
             }
-            for (ScheduleInfo possibleCombination : combinations) {
 
+            Set<Integer> childScheduleHashCodes = new HashSet<>();
+            for (ScheduleInfo possibleCombination : combinations) {
                 if (visited.contains(possibleCombination.hashCode())) {
                     continue;
                 }
+
                 scheduleQueue.add(possibleCombination);
                 visited.add(possibleCombination.hashCode());
+                childScheduleHashCodes.add(possibleCombination.hashCode());
             }
 
-            List<Integer> childSchedules = combinations.stream()
-                    .map(schedInfo -> schedInfo.hashCode())
-                    .collect(Collectors.toList());
-            sysInfo.fireSchedulesGenerated(head.hashCode(), childSchedules);
+
+
+            sysInfo.fireSchedulesGenerated(head.hashCode(), childScheduleHashCodes);
 
             sysInfo.setSchedulesQueued(scheduleQueue.size());
             sysInfo.setSchedulesExplored(counter);

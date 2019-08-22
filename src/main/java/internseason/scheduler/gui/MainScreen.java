@@ -75,16 +75,12 @@ public class MainScreen implements Initializable {
         setup_labels("4", "4", "24 gb");
         load_input_graph(this.config.getInputDotFile());
         this.loaded_graph_label.setText(this.config.getInputDotFile());
+        load_schedule_graph();
 
         this.bindLabel(sysInfo.schedulesQueuedProperty(), schedules_in_queue);
         this.bindLabel(sysInfo.schedulesExploredProperty(), schedules_explored);
-
-        sysInfo.addListener(new AlgorithmEventListener() {
-            @Override
-            public void schedulesGenerated(Integer parentHashcode, List<Integer> childHashcodes) {
-                buildScheduleGraph(parentHashcode, childHashcodes);
-            }
-        });
+        System.out.println("initialised");
+        sysInfo.addListener(this::buildScheduleGraph);
 
     }
 
@@ -182,7 +178,8 @@ public class MainScreen implements Initializable {
         schedule_graph_pane.getChildren().add(panel);
     }
 
-    private void buildScheduleGraph(Integer node, List<Integer> children){
+    private void buildScheduleGraph(Integer node, Set<Integer> children){
+        System.out.println(node+" :"+children);
         if (parentMap.containsKey(node)){
             Integer parentNode = parentMap.get(node);
             schedule_graph.getEdge(parentNode.toString() + node.toString()).setAttribute("ui.class", "visited");
@@ -194,7 +191,6 @@ public class MainScreen implements Initializable {
   
         for (Integer n :children) {
             parentMap.put(n, node);
-            System.out.println(n);
             schedule_graph.addNode(n.toString());
             schedule_graph.addEdge(node.toString() + n.toString(), node.toString(), n.toString());
         }
