@@ -323,6 +323,8 @@ public class AStarAlgorithm extends BaseAlgorithm {
         String commonChildId =  "";
         Integer commonParentProcessorId = null;
 
+        List<Task> freeNodes = this.getMergedFreeList(info.getSchedule(), currentLayer, info.getFreeList());
+
 //        List<Task> freeNodes = new ArrayList<>(currentLayer);
 //        freeNodes.addAll(this.graph.buildTaskListFromIds(info.getFreeList()));
 
@@ -419,6 +421,9 @@ public class AStarAlgorithm extends BaseAlgorithm {
     }
 
     private List<ScheduleInfo> generateFTOCombinations(ScheduleInfo scheduleInfo, Queue<Task> ftoList, int numberOfProcesses) {
+        if (ftoList.isEmpty()) {
+            return null;
+        }
         //given a schedule, ftolist and processor schedule top fto task to all processors
         Schedule schedule = scheduleInfo.getSchedule();
 
@@ -450,7 +455,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
             out.add(new ScheduleInfo(newSchedule, scheduleInfo.getLayer(), expandedFreeNodeIds, calculateCost(newSchedule, expandedFreeNodes)));
         }
         ftoList.remove(0);
-        System.out.println("suck my ass");
         return out;
     }
 
@@ -493,6 +497,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
         });
 
         result.addAll(tasks);
+
 
         if (verifySortedFTOList(result)) {
             return result;
