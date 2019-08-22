@@ -8,12 +8,13 @@ public class Scheduler {
     private Map<String, Task> allTasks;
 
     public Scheduler(Graph graph) {
-        if (allTasks == null) {
-            allTasks = graph.getTasks();
-        }
+        allTasks = graph.getTasks();
     }
 
     public void addTask(Schedule schedule, Task task, int processorId) {
+
+        int startTime = findNextAvailableTimeInProcessor(schedule, task, processorId);
+        schedule.add(task, processorId, startTime);
 
     }
 
