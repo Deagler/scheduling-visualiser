@@ -48,7 +48,13 @@ public class Schedule implements Serializable {
         return numOfProcessors;
     }
 
+    public Map<Integer, Processor> getProcessorIdMap() {
+        return this.processorIdMap;
+    }
 
+    public Map<String, Integer> getTaskIdProcessorMap() {
+        return this.taskIdProcessorMap;
+    }
 
     public int numProcessors() {
         return numOfProcessors;
