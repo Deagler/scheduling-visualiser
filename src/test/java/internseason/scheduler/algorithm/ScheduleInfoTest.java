@@ -61,6 +61,8 @@ public class ScheduleInfoTest {
 
             assertEquals(si.getSchedule().toString(), schedule.toString());
 
+            //this second assertEquals checks the second predicate outcome of the getSchedule() method
+            assertEquals(si.getSchedule().toString(), schedule.toString());
 
         } catch (Exception e) {
             e.printStackTrace();
