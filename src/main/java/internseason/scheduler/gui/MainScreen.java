@@ -2,7 +2,6 @@ package internseason.scheduler.gui;
 
 import internseason.scheduler.Main;
 import internseason.scheduler.algorithm.SystemInformation;
-import internseason.scheduler.algorithm.event.AlgorithmEventListener;
 import internseason.scheduler.input.Config;
 import internseason.scheduler.input.DOTParser;
 import internseason.scheduler.exceptions.InputException;
@@ -16,14 +15,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
-import org.graphstream.algorithm.generator.BarabasiAlbertGenerator;
-import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.fx_viewer.FxViewPanel;
 import org.graphstream.ui.fx_viewer.FxViewer;
 import org.graphstream.ui.javafx.FxGraphRenderer;
 
-import javax.swing.plaf.synth.SynthTextAreaUI;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -31,36 +27,48 @@ import java.util.*;
 
 public class MainScreen implements Initializable {
     private SingleGraph input_graph;
-    private  SingleGraph schedule_graph;
+    private SingleGraph schedule_graph;
     private File graph_path;
     private SystemInformation sysInfo;
 
     private long startTime;
     private Timer timer;
-    HashMap<Integer, Integer> parentMap;
+    HashMap<String, String> parentMap;
     private Config config;
+    private Service<Schedule> algorithmService;
 
 
-    @FXML private Pane input_graph_pane;
-    @FXML private Pane schedule_graph_pane;
+    @FXML
+    private Pane input_graph_pane;
+    @FXML
+    private Pane schedule_graph_pane;
 
-    @FXML private Label loaded_graph_label;
-    @FXML private Label runtime;
-    @FXML private Label cores_for_execution;
+    @FXML
+    private Label loaded_graph_label;
+    @FXML
+    private Label runtime;
+    @FXML
+    private Label cores_for_execution;
 
-    @FXML private Label available_processors;
-    @FXML private Label max_memory;
-    @FXML private Label used_memory;
-    @FXML private Label free_memory;
+    @FXML
+    private Label available_processors;
+    @FXML
+    private Label max_memory;
+    @FXML
+    private Label used_memory;
+    @FXML
+    private Label free_memory;
 
-    @FXML private Label schedules_explored;
-    @FXML private Label schedules_in_queue;
-    @FXML private Label schedules_in_array;
+    @FXML
+    private Label schedules_explored;
+    @FXML
+    private Label schedules_in_queue;
+    @FXML
+    private Label schedules_in_array;
 
 
     public MainScreen(Config config) {
         this.config = config;
-        this.sysInfo = new SystemInformation();
 
     }
 
@@ -72,15 +80,19 @@ public class MainScreen implements Initializable {
         schedule_graph = new SingleGraph("SG");
         parentMap = new HashMap<>();
 
-        setup_labels("4", "4", "24 gb");
-        load_input_graph(this.config.getInputDotFile());
+        setup_labels(String.valueOf(config.getNumberOfCores()), String.valueOf(config.getNumberOfProcessors()), "24 gb");
+        loadInputGraph(this.config.getInputDotFile());
         this.loaded_graph_label.setText(this.config.getInputDotFile());
-        load_schedule_graph();
-
+        initialiseScheduleGraph();
+        this.sysInfo = new SystemInformation();
         this.bindLabel(sysInfo.schedulesQueuedProperty(), schedules_in_queue);
         this.bindLabel(sysInfo.schedulesExploredProperty(), schedules_explored);
         System.out.println("initialised");
         sysInfo.addListener(this::buildScheduleGraph);
+
+    }
+
+    private void resetVisualisedGraphs(String inputDotFile) {
 
     }
 
@@ -91,7 +103,7 @@ public class MainScreen implements Initializable {
         });
     }
 
-    public void setup_labels(String cores, String processors, String max_mem){
+    public void setup_labels(String cores, String processors, String max_mem) {
         runtime.setText("00:00:000 (s)");
 
         cores_for_execution.setText(cores);
@@ -106,7 +118,7 @@ public class MainScreen implements Initializable {
         schedules_in_array.setText("0 K");
     }
 
-    private void load_input_graph(String path) {
+    private void loadInputGraph(String path) {
         DOTParser parser = new DOTParser();
         try {
             FxViewer v = new FxViewer(input_graph, FxViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
@@ -128,9 +140,8 @@ public class MainScreen implements Initializable {
         }
     }
 
-    private void load_schedule_graph() {
+    private void initialiseScheduleGraph() {
         FxViewer v = new FxViewer(schedule_graph, FxViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
-
 
 
         schedule_graph.setAttribute("ui.antialias");
@@ -145,30 +156,32 @@ public class MainScreen implements Initializable {
         schedule_graph_pane.getChildren().add(panel);
     }
 
-    private void buildScheduleGraph(Integer node, Set<Integer> children){
+
+    private void buildScheduleGraph(Integer scheduleHashCode, Set<Integer> children) {
 
         Platform.runLater(() -> {
-            System.out.println(node+" :"+children);
-            if (parentMap.containsKey(node)){
-                Integer parentNode = parentMap.get(node);
-                schedule_graph.getEdge(parentNode.toString() + node.toString()).setAttribute("ui.class", "visited");
-            }else{
-                schedule_graph.addNode(node.toString());
-                schedule_graph.getNode(node.toString()).setAttribute("ui.class", "root");
+            String node = String.valueOf(scheduleHashCode);
+            String parentNode = parentMap.get(node);
+            System.out.println(parentNode + " : " + node + " :" + children);
+
+            schedule_graph.addNode(node);
+
+            if (parentNode != null) {
+                schedule_graph.addEdge(parentNode + node, parentNode, node);
+            } else {
+                schedule_graph.getNode(node).setAttribute("ui.class", "root");
             }
 
 
-            for (Integer n :children) {
-                parentMap.put(n, node);
-                schedule_graph.addNode(n.toString());
-                schedule_graph.addEdge(node.toString() + n.toString(), node.toString(), n.toString());
+            for (Integer n : children) {
+                parentMap.put(String.valueOf(n), node);
             }
         });
 
 
     }
 
-    private void startTimer(){
+    private void startTimer() {
         startTime = System.currentTimeMillis();
         timer = new Timer();
 
@@ -191,64 +204,81 @@ public class MainScreen implements Initializable {
     }
 
     @FXML
-    public void playButtonPressed(){
+    public void playButtonPressed() {
 
         startTimer();
-        Service<Schedule> service = new Service<Schedule>() {
+        algorithmService = new Service<Schedule>() {
 
             @Override
             protected Task<Schedule> createTask() {
                 return new Task<Schedule>() {
                     @Override
                     protected Schedule call() throws IOException, InterruptedException {
-                       return  Main.startAlgorithm(config, sysInfo);
+                        return Main.startAlgorithm(config, sysInfo);
                     }
                 };
             }
         };
 
 
-        service.setOnSucceeded((e) -> {
+        algorithmService.setOnSucceeded((e) -> {
             System.out.println("Algorithm Finished");
             Schedule optimal = (Schedule) e.getSource().getValue();
-            schedule_graph.getNode(String.valueOf(optimal.hashCode())).setAttribute("ui.class", "root");
+
+            String optimalNode = String.valueOf(optimal.hashCode());
+            String optimalNodeParent = parentMap.get(optimalNode);
+
+            schedule_graph.addNode(optimalNode).setAttribute("ui.class", "root");
+            schedule_graph
+                    .addEdge(optimalNodeParent + optimalNode, optimalNodeParent, optimalNode);
+            while (optimalNodeParent != null) {
+                schedule_graph
+                        .getEdge(optimalNodeParent + optimalNode)
+                        .setAttribute("ui.class", "visited");
+                optimalNode = optimalNodeParent;
+                optimalNodeParent = parentMap.get(optimalNodeParent);
+            }
+
+
+
             this.stopTimer();
         });
 
-        service.setOnFailed((t) -> {
+        algorithmService.setOnFailed((t) -> {
             System.out.println("Algorithm Failed");
             t.getSource().getException().printStackTrace();
             this.stopTimer();
         });
 
-        service.start();
+        algorithmService.start();
     }
 
     @FXML
-    public void stopButtonPressed(){
-
-
-
-    }
-
-    @FXML
-    public void settingsButtonPressed(){
+    public void stopButtonPressed() {
 
 
     }
 
     @FXML
-    public void loadButtonPressed()  {
+    public void settingsButtonPressed() {
+
+
+    }
+
+    @FXML
+    public void loadButtonPressed() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Graph Resource File");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         File file = fileChooser.showOpenDialog(input_graph_pane.getScene().getWindow());
-        if(file!=null) {
+        if (file != null) {
             graph_path = file;
             loaded_graph_label.setText(file.toString());
             config.setInputDotFile(file.toString());
             input_graph = new SingleGraph(graph_path.toString());
+            schedule_graph = new SingleGraph("SG");
 
-            load_input_graph(graph_path.toString());
+            loadInputGraph(graph_path.toString());
         }
     }
 
