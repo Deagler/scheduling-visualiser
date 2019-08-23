@@ -18,8 +18,13 @@ edge {
 node#A {
     fill-color: blue;
 }
+node.root{    size: 20px;
+    fill-color: Green;
+    text-mode: hidden;
+    z-index: 0;}
 
-edge.visited { size: 4px; stroke-color: red; stroke-width: 1px; stroke-mode: plain; }
+
+edge.visited { size: 2px; fill-color: red; stroke-width: 1px; stroke-mode: plain; }
 
 node:clicked {
     fill-color: red;
