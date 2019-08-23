@@ -15,7 +15,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
     private int totalTaskTime;
     private Graph graph;
     private Scheduler scheduler;
-    private int numOfCores;
     private ExecutorService executor;
 
     /** Factory pattern constructor
@@ -38,13 +37,13 @@ public class AStarAlgorithm extends BaseAlgorithm {
         this.executor = Executors.newWorkStealingPool(numOfCores);
         this.scheduler = new Scheduler(graph);
         scheduleQueue = new PriorityQueue<>(new AStarHeuristic());
-        this.taskIndegreeCount = new HashMap<>();
+
 
         int totalTasks = graph.getTasks().size();
         this.totalTaskTime = 0;
         for (Task task: graph.getTasks().values()){
             totalTaskTime +=task.getCost();
-            taskIndegreeCount.put(task.getId(), task.getNumberOfParents());
+
         }
 
         this.graph = graph;
