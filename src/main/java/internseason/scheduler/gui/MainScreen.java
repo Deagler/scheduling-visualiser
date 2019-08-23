@@ -106,24 +106,6 @@ public class MainScreen implements Initializable {
         schedules_in_array.setText("0 K");
     }
 
-
-
-
-    public void add_to_graph(){
-
-    }
-
-    private void sample_generator(Graph g){
-        BarabasiAlbertGenerator gen = new BarabasiAlbertGenerator();
-        gen.addSink(g);
-        gen.begin();
-        for (int i = 0; i < 1000; i++)
-            gen.nextEvents();
-        gen.end();
-        gen.removeSink(g);
-
-    }
-
     private void load_input_graph(String path) {
         DOTParser parser = new DOTParser();
         try {
@@ -148,31 +130,16 @@ public class MainScreen implements Initializable {
 
     private void load_schedule_graph() {
         FxViewer v = new FxViewer(schedule_graph, FxViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
-//        sample_generator(schedule_graph);
-//        schedule_graph.addNode("0" );
-//        schedule_graph.addNode("1" );
-//        schedule_graph.addNode("2" );
-//        schedule_graph.addNode("3" );
-//        schedule_graph.addNode("4" );
-//        schedule_graph.addNode("5" );
-//        schedule_graph.addNode("6" );
-//        schedule_graph.addEdge("01", "0", "1");
-//        schedule_graph.addEdge("02", "0", "2");
-//        schedule_graph.addEdge("03", "0", "3");
-//        schedule_graph.addEdge("14", "1", "4");
-//        schedule_graph.addEdge("15", "1", "5");
-//        schedule_graph.addEdge("16", "1", "6");
+
 
 
         schedule_graph.setAttribute("ui.antialias");
         schedule_graph.setAttribute("ui.quality");
         schedule_graph.setAttribute("ui.stylesheet", "url('internseason/scheduler/gui/stylesheets/graph_css.css')");
 
-//        schedule_graph.getEdge("01").setAttribute("ui.class", "visited");
         v.enableAutoLayout();
 
         FxViewPanel panel = (FxViewPanel) v.addDefaultView(false, new FxGraphRenderer());
-        //panel.getCamera().setViewPercent(0.3);
         panel.setMaxSize(456, 219);
         panel.setCenterShape(true);
         schedule_graph_pane.getChildren().add(panel);
@@ -204,7 +171,6 @@ public class MainScreen implements Initializable {
     private void startTimer(){
         startTime = System.currentTimeMillis();
         timer = new Timer();
-
 
 
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -244,6 +210,8 @@ public class MainScreen implements Initializable {
 
         service.setOnSucceeded((e) -> {
             System.out.println("Algorithm Finished");
+            Schedule optimal = (Schedule) e.getSource().getValue();
+            schedule_graph.getNode(String.valueOf(optimal.hashCode())).setAttribute("ui.class", "root");
             this.stopTimer();
         });
 
