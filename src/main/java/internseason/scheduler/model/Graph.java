@@ -48,6 +48,10 @@ public class Graph {
         }
         this.adjacencyList = new HashMap<>();
 
+        for (Task task : tasks.values()){
+            adjacencyList.put(task.getId(), new ArrayList<>());
+        }
+
         for(Dependency dependency : this.dependencies) {
             String sourceId = dependency.getSourceTask().getId();
             String targetId = dependency.getTargetTask().getId();

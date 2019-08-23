@@ -32,6 +32,9 @@ public class TopSortTest {
     public void testNineSeriesParallelGraphOrder(){ testTopologicalOrder("src/test/resources/Nodes_9_SeriesParallel.dot"); }
 
     @Test
+    public void testDiamondGraphOrder(){ testTopologicalOrder("src/test/resources/Test_Diamond.dot"); }
+
+    @Test
     public void testTenRandomGraphOrder(){
         testTopologicalOrder("src/test/resources/Nodes_10_Random.dot");
     }
