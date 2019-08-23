@@ -179,21 +179,25 @@ public class MainScreen implements Initializable {
     }
 
     private void buildScheduleGraph(Integer node, Set<Integer> children){
-        System.out.println(node+" :"+children);
-        if (parentMap.containsKey(node)){
-            Integer parentNode = parentMap.get(node);
-            schedule_graph.getEdge(parentNode.toString() + node.toString()).setAttribute("ui.class", "visited");
-        }else{
-            schedule_graph.addNode(node.toString());
-            schedule_graph.getNode(node.toString()).setAttribute("ui.class", "root");
-        }
 
-  
-        for (Integer n :children) {
-            parentMap.put(n, node);
-            schedule_graph.addNode(n.toString());
-            schedule_graph.addEdge(node.toString() + n.toString(), node.toString(), n.toString());
-        }
+        Platform.runLater(() -> {
+            System.out.println(node+" :"+children);
+            if (parentMap.containsKey(node)){
+                Integer parentNode = parentMap.get(node);
+                schedule_graph.getEdge(parentNode.toString() + node.toString()).setAttribute("ui.class", "visited");
+            }else{
+                schedule_graph.addNode(node.toString());
+                schedule_graph.getNode(node.toString()).setAttribute("ui.class", "root");
+            }
+
+
+            for (Integer n :children) {
+                parentMap.put(n, node);
+                schedule_graph.addNode(n.toString());
+                schedule_graph.addEdge(node.toString() + n.toString(), node.toString(), n.toString());
+            }
+        });
+
 
     }
 
