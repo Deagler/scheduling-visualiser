@@ -151,6 +151,14 @@ public class Schedule implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Schedule schedule = (Schedule) o;
+        return this.hashCode() == schedule.hashCode();
+    }
+
+    @Override
     public int hashCode() {
         HashCodeBuilder builder = new HashCodeBuilder();
 
