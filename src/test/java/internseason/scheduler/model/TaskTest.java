@@ -18,14 +18,15 @@ public class TaskTest {
 
     @Before
     public void setUp() {
-        Task t0 = new Task(5, "0");
-        Task t1 = new Task( 4, "1");
-        Task t2 = new Task(3, "2");
-        Task t3 = new Task(2, "3");
+        t0 = new Task(5, "0");
+        t1 = new Task( 4, "1");
+        t2 = new Task(3, "2");
+        t3 = new Task(2, "3");
     }
 
     @Test
     public void testCostToChild() {
+
         t0.addChildTask(t1, 2);
         assertEquals(1, t0.getNumberOfChildren());
         t0.addChildTask(t2, 3);
