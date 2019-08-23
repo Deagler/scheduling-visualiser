@@ -67,11 +67,11 @@ public class Graph {
         Map<String, Integer> inDegrees = buildInDegrees(adjacencyList);
         inDegrees = getInDegrees(adjacencyList, inDegrees);
 
-        Set<Integer> visitedSet = new HashSet<>();
+        Set<String> visitedSet = new HashSet<>();
         topologicalOrdering = new ArrayList<>();
 
         // Initialize a queue with all in-degree zero vertices
-        LinkedList<Integer> zeroDegrees = new LinkedList<>();
+        LinkedList<String> zeroDegrees = new LinkedList<>();
 //        for (int i=0; i<inDegrees.length;i++) {
 //            if (inDegrees[i] == 0) {
 //                zeroDegrees.add(i);
@@ -79,7 +79,7 @@ public class Graph {
 //        }
         for (String task : inDegrees.keySet()){
             if (inDegrees.get(task) == 0){
-                zeroDegrees.add(Integer.parseInt(task));
+                zeroDegrees.add(task);
             }
         }
         List<List<String>> layers = new ArrayList<>();
@@ -90,7 +90,7 @@ public class Graph {
             visitedSet.addAll(zeroDegrees);
 
             List<String> layer  = new ArrayList<>();
-            for (Integer vertex : zeroDegrees) {
+            for (String vertex : zeroDegrees) {
                 adjacencyList.remove(String.valueOf(vertex));
                 layer.add(String.valueOf(vertex));
             }
@@ -102,8 +102,8 @@ public class Graph {
             //enqueue any vertice whose in degree became zero
             inDegrees = getInDegrees(adjacencyList, inDegrees);
             for (String task : inDegrees.keySet()){
-                if (inDegrees.get(task) == 0 && !visitedSet.contains(Integer.parseInt(task)) && !zeroDegrees.contains(Integer.parseInt(task))) {
-                    zeroDegrees.add(Integer.parseInt(task));
+                if (inDegrees.get(task) == 0 && !visitedSet.contains(task) && !zeroDegrees.contains(task)) {
+                    zeroDegrees.add(task);
                 }
 
             }

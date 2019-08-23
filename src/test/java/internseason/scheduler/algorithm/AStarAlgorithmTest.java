@@ -53,6 +53,19 @@ public class AStarAlgorithmTest {
     }
 
     @Test
+    public void testAStarScheduleAlphabet() {
+        try {
+            Graph graph = this.parser.parse("src/test/resources/alphabet.dot");
+            AStarAlgorithm algorithm = new AStarAlgorithm();
+            Schedule schedule = algorithm.execute(graph,2);
+            assertEquals(schedule.getCost(), 8);
+        } catch (InputException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Test
     public void testAStarSchedule2() {
         try {
             Graph graph = this.parser.parse("src/test/resources/Nodes_7_OutTree.dot");
