@@ -29,6 +29,18 @@ public class AStarAlgorithmTest {
     }
 
     @Test
+    public void testAStarScheduleBig() {
+        try {
+            Graph graph = this.parser.parse("src/test/resources/big_chungus_16p_30nodes.dot");
+            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.A_STAR_ALGORITHM, 0);
+            Schedule schedule = algorithm.execute(graph, 2);
+
+        } catch (InputException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
     public void testAStarSchedule1() {
         try {
             Graph graph = this.parser.parse("src/test/resources/Test_Diamond.dot");

@@ -63,19 +63,25 @@ public class Graph {
     private void createTopologicalOrdering() {
         // Store the in degree of array
         adjacencyList = getAdjacencyList();
-        int[] inDegrees = getInDegrees(adjacencyList);
+
+        Map<String, Integer> inDegrees = buildInDegrees(adjacencyList);
+        inDegrees = getInDegrees(adjacencyList, inDegrees);
 
         Set<Integer> visitedSet = new HashSet<>();
         topologicalOrdering = new ArrayList<>();
 
         // Initialize a queue with all in-degree zero vertices
         LinkedList<Integer> zeroDegrees = new LinkedList<>();
-        for (int i=0; i<inDegrees.length;i++){
-            if (inDegrees[i] == 0){
-                zeroDegrees.add(i);
+//        for (int i=0; i<inDegrees.length;i++) {
+//            if (inDegrees[i] == 0) {
+//                zeroDegrees.add(i);
+//            }
+//        }
+        for (String task : inDegrees.keySet()){
+            if (inDegrees.get(task) == 0){
+                zeroDegrees.add(Integer.parseInt(task));
             }
         }
-
         List<List<String>> layers = new ArrayList<>();
         //while there are vertices remaining in the queue
         while (!zeroDegrees.isEmpty()){
@@ -94,27 +100,64 @@ public class Graph {
 
 
             //enqueue any vertice whose in degree became zero
-            inDegrees = getInDegrees(adjacencyList);
-            for (int i=0;i<inDegrees.length;i++){
-                if (inDegrees[i] == 0 && !visitedSet.contains(i) && !zeroDegrees.contains(i)){
-                    zeroDegrees.add(i);
+            inDegrees = getInDegrees(adjacencyList, inDegrees);
+            for (String task : inDegrees.keySet()){
+                if (inDegrees.get(task) == 0 && !visitedSet.contains(Integer.parseInt(task)) && !zeroDegrees.contains(Integer.parseInt(task))) {
+                    zeroDegrees.add(Integer.parseInt(task));
                 }
-            }
-        }
 
+            }
+//            for (int i=0;i<inDegrees.length;i++){
+//                if (inDegrees[i] == 0 && !visitedSet.contains(i) && !zeroDegrees.contains(i)){
+//                    zeroDegrees.add(i);
+//                }
+//            }
+        }
         // convert to task objects
         for (List<String> layer : layers) {
             topologicalOrdering.add(buildTaskListFromIds(layer));
         }
     }
 
-    private int[] getInDegrees(Map<String,List<String>> adj) {
-        int[] inDegrees = new int[tasks.size()];
-        for (List<String> value : adj.values()){
-            for (String s : value){
-                inDegrees[Integer.parseInt(s)]++;
+    private Map<String,Integer> buildInDegrees(Map<String, List<String>> adj){
+        HashMap<String, Integer> inDegrees = new HashMap<>();
+        for (String task : adj.keySet()){
+            inDegrees.put(task,0);
+        }
+        for (List<String> tasks : adj.values()){
+            for (String task : tasks){
+                if (!inDegrees.containsKey(task)){
+                    inDegrees.put(task,0);
+                }
             }
         }
+        return inDegrees;
+    }
+
+    private Map<String,Integer> getInDegrees(Map<String,List<String>> adj, Map<String, Integer> inDegrees) {
+        //int[] inDegrees = new int[tasks.size()];
+        for (String task : inDegrees.keySet()){
+            inDegrees.put(task,0);
+        }
+        for (List<String> value : adj.values()){
+            for (String s : value){
+                if (inDegrees.containsKey(s)){
+                    int count = inDegrees.get(s);
+                    count++;
+                    inDegrees.put(s, count);
+                } else {
+                    inDegrees.put(s,1);
+                }
+            }
+        }
+
+//        int[] inDegrees = new int[tasks.size()];
+//        for (List<String> value : adj.values()){
+//            for (String s : value){
+//                inDegrees[Integer.parseInt(s)]++;
+//            }
+//        }
+//        return inDegrees;
         return inDegrees;
     }
 
