@@ -184,21 +184,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 //TODO generateFTOCombinations to use the queue?
                 combinations = generateFTOCombinations(head, FTOList, numberOfProcessors);
 
-//                //Queue<Task> ftoTasks =  sortFTOTasks(FTOList, schedule);
-//                boolean same = true;
-//                while (same) {
-//                    //Task head = ftoTasks.peek();
-//                    ftoTasks.remove();
-//                    List<ScheduleInfo> ftoCombinations = generateFTOCombinations(head, FTOList, numberOfProcessors);
-//
-//                    List<Task> originalFreeList = getMergedFreeList(scheduleinfo.getSchedule(), currentLayer, scheduleinfo.getFreeList());
-//                    //compare ftotasks with new free list
-//
-//                    //if same
-//                    scheduleQueue.remove();
-//                }
-//
-//                generateCombinations();
             } else {
                 // Extending the polled schedule to generate all possible "next" states.
                 combinations = generateAllCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors);
@@ -207,7 +192,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
             if (combinations == null) { // Move to next topological layer if no possible schedules on current layer.
                 head.incrementLayer();
-                //scheduleQueue.
+
                 currentLayer = topologicalTasks.get(head.getLayer());
                 FTOList = isFTO(head, currentLayer);
                 if (FTOList != null) {
@@ -217,7 +202,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 }
                 //combinations = generateCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors, realSchedule);
             }
-
             for (ScheduleInfo possibleCombination : combinations) {
 
                 if (visited.contains(possibleCombination.hashCode())) {
@@ -226,6 +210,11 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 scheduleQueue.add(possibleCombination);
                 visited.add(possibleCombination.hashCode());
             }
+
+            List<Integer> childSchedules = combinations.stream()
+                    .map(schedInfo -> schedInfo.hashCode())
+                    .collect(Collectors.toList());
+            sysInfo.fireSchedulesGenerated(head.hashCode(), childSchedules);
 
             sysInfo.setSchedulesQueued(scheduleQueue.size());
             sysInfo.setSchedulesExplored(counter);

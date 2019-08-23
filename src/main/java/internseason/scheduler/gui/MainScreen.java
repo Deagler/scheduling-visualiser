@@ -2,17 +2,13 @@ package internseason.scheduler.gui;
 
 import internseason.scheduler.Main;
 import internseason.scheduler.algorithm.SystemInformation;
-import internseason.scheduler.input.CLIException;
+import internseason.scheduler.algorithm.event.AlgorithmEventListener;
 import internseason.scheduler.input.Config;
 import internseason.scheduler.input.DOTParser;
 import internseason.scheduler.exceptions.InputException;
 import internseason.scheduler.model.Schedule;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -20,7 +16,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
-import javafx.util.StringConverter;
 import org.graphstream.algorithm.generator.BarabasiAlbertGenerator;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
@@ -69,11 +64,6 @@ public class MainScreen implements Initializable {
 
     }
 
-    private void bindLabel(IntegerProperty systemProperty, Label label) {
-        systemProperty.addListener((obs, oldVal, newVal) -> {
-            Platform.runLater(() -> label.setText(String.valueOf(newVal)));
-        });
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -85,32 +75,25 @@ public class MainScreen implements Initializable {
         setup_labels("4", "4", "24 gb");
         load_input_graph(this.config.getInputDotFile());
         this.loaded_graph_label.setText(this.config.getInputDotFile());
-        load_schedule_graph();
 
         this.bindLabel(sysInfo.schedulesQueuedProperty(), schedules_in_queue);
         this.bindLabel(sysInfo.schedulesExploredProperty(), schedules_explored);
-    }
 
-    public void test_populate(){
-
-        //drawShit();
-        int counter = 1;
-        for (int i=1; i<2;i++){
-            List<Integer> chil = new Vector<>();
-            for (int j=1+i;j<i+5;j++){
-                chil.add(j);
-                counter++;
+        sysInfo.addListener(new AlgorithmEventListener() {
+            @Override
+            public void schedulesGenerated(Integer parentHashcode, List<Integer> childHashcodes) {
+                buildScheduleGraph(parentHashcode, childHashcodes);
             }
-            System.out.println(i);
-            System.out.println(chil);
-            drawShit(i,chil);
-        }
-
-
-        drawShit(2, new ArrayList<>(Arrays.asList(6,7,8)));
+        });
 
     }
 
+
+    private void bindLabel(IntegerProperty systemProperty, Label label) {
+        systemProperty.addListener((obs, oldVal, newVal) -> {
+            Platform.runLater(() -> label.setText(String.valueOf(newVal)));
+        });
+    }
 
     public void setup_labels(String cores, String processors, String max_mem){
         runtime.setText("00:00:000 (s)");
@@ -199,7 +182,7 @@ public class MainScreen implements Initializable {
         schedule_graph_pane.getChildren().add(panel);
     }
 
-    private void drawShit(Integer node, List<Integer> children){
+    private void buildScheduleGraph(Integer node, List<Integer> children){
         if (parentMap.containsKey(node)){
             Integer parentNode = parentMap.get(node);
             schedule_graph.getEdge(parentNode.toString() + node.toString()).setAttribute("ui.class", "visited");
@@ -208,6 +191,7 @@ public class MainScreen implements Initializable {
             schedule_graph.getNode(node.toString()).setAttribute("ui.class", "root");
         }
 
+  
         for (Integer n :children) {
             parentMap.put(n, node);
             System.out.println(n);
@@ -265,6 +249,7 @@ public class MainScreen implements Initializable {
 
         service.setOnFailed((t) -> {
             System.out.println("Algorithm Failed");
+            t.getSource().getException().printStackTrace();
             this.stopTimer();
         });
 
