@@ -117,8 +117,7 @@ public class MainScreen implements Initializable {
 
     }
 
-    private void resetVisualisedGraphs() {
-        input_graph.clear();
+    private void resetScheduleGraph() {
         schedule_graph.clear();
         initialiseScheduleGraph();
     }
@@ -222,14 +221,11 @@ public class MainScreen implements Initializable {
 
     private void initialiseScheduleGraph() {
         FxViewer v = new FxViewer(schedule_graph, FxViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
-
-
         schedule_graph.setAttribute("ui.antialias");
         schedule_graph.setAttribute("ui.quality");
         schedule_graph.setAttribute("ui.stylesheet", "url('internseason/scheduler/gui/stylesheets/graph_css.css')");
 
         v.enableAutoLayout();
-
         FxViewPanel panel = (FxViewPanel) v.addDefaultView(false, new FxGraphRenderer());
         panel.setMaxSize(LARGE_PANE_WIDTH, LARGE_PANE_HEIGHT);
         panel.setCenterShape(true);
@@ -265,7 +261,6 @@ public class MainScreen implements Initializable {
         startTime = System.currentTimeMillis();
         timer = new Timer();
 
-
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -287,6 +282,7 @@ public class MainScreen implements Initializable {
     public void playButtonPressed() {
 
         startTimer();
+        resetScheduleGraph();
         branchesChecked = 0;
         algorithmService = new Service<Pair<Schedule, Graph>>() {
 
@@ -359,7 +355,8 @@ public class MainScreen implements Initializable {
             System.out.println(graph_path.toString());
             loaded_graph_label.setText(file.toString());
             config.setInputDotFile(file.toString());
-            resetVisualisedGraphs();
+            resetScheduleGraph();
+            input_graph.clear();
             loadInputGraph(graph_path.toString());
         }
     }
