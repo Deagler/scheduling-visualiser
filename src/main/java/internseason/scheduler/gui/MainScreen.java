@@ -15,6 +15,7 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -34,6 +35,10 @@ import java.net.URL;
 import java.util.*;
 
 public class MainScreen implements Initializable {
+
+    private Integer LARGE_PANE_WIDTH = 454;
+    private Integer LARGE_PANE_HEIGHT = 219;
+
     private SingleGraph input_graph;
     private SingleGraph schedule_graph;
     private File graph_path;
@@ -45,6 +50,9 @@ public class MainScreen implements Initializable {
     private Config config;
     private Service<Pair<Schedule, Graph>> algorithmService;
 
+    private Integer branchesChecked;
+    @FXML
+    private Label branchesCheckedLabel;
 
     @FXML
     private Pane input_graph_pane;
@@ -53,6 +61,8 @@ public class MainScreen implements Initializable {
     @FXML
     private Pane optimalSchedule;
 
+    @FXML
+    private Label optimalScheduleCost;
     @FXML
     private Label loaded_graph_label;
     @FXML
@@ -76,6 +86,8 @@ public class MainScreen implements Initializable {
     @FXML
     private Label schedules_in_array;
 
+    @FXML
+    private BarChart<String,Long> performanceGraph;
 
     public MainScreen(Config config) {
         this.config = config;
@@ -89,8 +101,11 @@ public class MainScreen implements Initializable {
         input_graph = new SingleGraph("IG");
         schedule_graph = new SingleGraph("SG");
         parentMap = new HashMap<>();
+        int mb = 1024 * 1024;
+        Runtime instance = Runtime.getRuntime();
+        long maxMemory = instance.maxMemory() ;
 
-        setup_labels(String.valueOf(config.getNumberOfCores()), String.valueOf(config.getNumberOfProcessors()), "24 gb");
+        setup_labels(String.valueOf(config.getNumberOfCores()), String.valueOf(config.getNumberOfProcessors()),Long.toString(maxMemory));
         loadInputGraph(this.config.getInputDotFile());
         this.loaded_graph_label.setText(this.config.getInputDotFile());
         initialiseScheduleGraph();
@@ -102,8 +117,10 @@ public class MainScreen implements Initializable {
 
     }
 
-    private void resetVisualisedGraphs(String inputDotFile) {
-
+    private void resetVisualisedGraphs() {
+        input_graph.clear();
+        schedule_graph.clear();
+        initialiseScheduleGraph();
     }
 
 
@@ -114,7 +131,7 @@ public class MainScreen implements Initializable {
     }
 
     public void setup_labels(String cores, String processors, String max_mem) {
-        runtime.setText("00:00:000 (s)");
+        runtime.setText("00:00:00.00");
 
         cores_for_execution.setText(cores);
         available_processors.setText(processors);
@@ -131,9 +148,9 @@ public class MainScreen implements Initializable {
     public void updateOptimalSchedule(Schedule schedule, Graph graph){
         final NumberAxis xAxis = new NumberAxis();
         final CategoryAxis yAxis = new CategoryAxis();
-
+        // setting up chart
         final ScheduleVisulisation<Number,String> chart = new ScheduleVisulisation<Number,String>(xAxis,yAxis);
-        xAxis.setLabel("");
+        xAxis.setLabel("Time");
         xAxis.setTickLabelFill(Color.CHOCOLATE);
         xAxis.setMinorTickCount(4);
 
@@ -151,11 +168,9 @@ public class MainScreen implements Initializable {
         yAxis.setTickLabelGap(10);
         yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(processors)));
 
-//        chart.setTitle("Process Visualisation");
         chart.setLegendVisible(false);
         chart.setBlockHeight( 20);
-        String machine;
-
+        // adding information to chart
         count = 0;
         for (Map.Entry<Integer, Processor> entry: processorMap.entrySet()){
             Integer processorNum = entry.getKey();
@@ -170,9 +185,6 @@ public class MainScreen implements Initializable {
                 int cost = graph.getTask(taskID).getCost();
                 XYChart.Data chartData = new XYChart.Data(startTime, proc, new ScheduleVisulisation.ExtraData(cost, "status-blue"));
                 series.getData().add(chartData);
-                System.out.println("cost:" + cost);
-                System.out.println("start Time:" + startTime);
-                System.out.println("Proc"+processors[count]);
             }
             count +=1;
             chart.getData().addAll(series);
@@ -180,7 +192,8 @@ public class MainScreen implements Initializable {
         chart.getStylesheets().add("internseason/scheduler/gui/stylesheets/ScheduleVisualisation.css");
 
         Platform.runLater(()->{
-            chart.setMaxSize(454,219);
+            optimalSchedule.getChildren().clear();
+            chart.setMaxSize(LARGE_PANE_WIDTH,LARGE_PANE_HEIGHT);
             optimalSchedule.getChildren().add(chart);
         });
     }
@@ -198,7 +211,7 @@ public class MainScreen implements Initializable {
             input_graph.setAttribute("ui.quality");
             v.enableAutoLayout();
             FxViewPanel panel = (FxViewPanel) v.addDefaultView(false, new FxGraphRenderer());
-            panel.setMaxSize(456, 219);
+            panel.setMaxSize(LARGE_PANE_WIDTH, LARGE_PANE_HEIGHT);
 
             input_graph_pane.getChildren().add(panel);
 
@@ -218,15 +231,16 @@ public class MainScreen implements Initializable {
         v.enableAutoLayout();
 
         FxViewPanel panel = (FxViewPanel) v.addDefaultView(false, new FxGraphRenderer());
-        panel.setMaxSize(456, 219);
+        panel.setMaxSize(LARGE_PANE_WIDTH, LARGE_PANE_HEIGHT);
         panel.setCenterShape(true);
         schedule_graph_pane.getChildren().add(panel);
     }
 
 
     private void buildScheduleGraph(Integer scheduleHashCode, Set<Integer> children) {
-
+        branchesChecked +=1;
         Platform.runLater(() -> {
+            branchesCheckedLabel.setText(branchesChecked.toString());
             String node = String.valueOf(scheduleHashCode);
             String parentNode = parentMap.get(node);
             System.out.println(parentNode + " : " + node + " :" + children);
@@ -238,7 +252,6 @@ public class MainScreen implements Initializable {
             } else {
                 schedule_graph.getNode(node).setAttribute("ui.class", "root");
             }
-
 
             for (Integer n : children) {
                 parentMap.put(String.valueOf(n), node);
@@ -257,7 +270,7 @@ public class MainScreen implements Initializable {
             @Override
             public void run() {
                 long durationInMillis = System.currentTimeMillis() - startTime;
-                long millis = durationInMillis % 1000;
+                long millis = (durationInMillis % 1000)/ 10;
                 long second = (durationInMillis / 1000) % 60;
                 long minute = (durationInMillis / (1000 * 60)) % 60;
                 long hour = (durationInMillis / (1000 * 60 * 60)) % 24;
@@ -274,6 +287,7 @@ public class MainScreen implements Initializable {
     public void playButtonPressed() {
 
         startTimer();
+        branchesChecked = 0;
         algorithmService = new Service<Pair<Schedule, Graph>>() {
 
             @Override
@@ -298,19 +312,18 @@ public class MainScreen implements Initializable {
             String optimalNodeParent = parentMap.get(optimalNode);
 
             schedule_graph.addNode(optimalNode).setAttribute("ui.class", "root");
-            schedule_graph
-                    .addEdge(optimalNodeParent + optimalNode, optimalNodeParent, optimalNode);
+            schedule_graph.addEdge(optimalNodeParent + optimalNode, optimalNodeParent, optimalNode);
             while (optimalNodeParent != null) {
                 schedule_graph
-                        .getEdge(optimalNodeParent + optimalNode)
+                        .getEdge(optimalNodeParent.toString() + optimalNode.toString())
                         .setAttribute("ui.class", "visited");
+                System.out.println(optimalNode.toString());
                 optimalNode = optimalNodeParent;
                 optimalNodeParent = parentMap.get(optimalNodeParent);
             }
 
+            optimalScheduleCost.setText(Integer.toString(optimal.getCost()));
             updateOptimalSchedule(optimal, graph);
-
-
             this.stopTimer();
         });
 
@@ -343,11 +356,10 @@ public class MainScreen implements Initializable {
         File file = fileChooser.showOpenDialog(input_graph_pane.getScene().getWindow());
         if (file != null) {
             graph_path = file;
+            System.out.println(graph_path.toString());
             loaded_graph_label.setText(file.toString());
             config.setInputDotFile(file.toString());
-            input_graph = new SingleGraph(graph_path.toString());
-            schedule_graph = new SingleGraph("SG");
-
+            resetVisualisedGraphs();
             loadInputGraph(graph_path.toString());
         }
     }
