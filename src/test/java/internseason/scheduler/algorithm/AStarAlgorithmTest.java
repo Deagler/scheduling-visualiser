@@ -120,4 +120,26 @@ public class AStarAlgorithmTest {
 
     }
 
+    @Test
+    public void testAStarScheduleBig() {
+        try {
+            Graph graph = this.parser.parse("src/test/resources/big_chungus_16p_30nodes.dot");
+            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.A_STAR_ALGORITHM, 0);
+            Schedule schedule = algorithm.execute(graph, 2);
+
+        } catch (InputException e) {
+            e.printStackTrace();
+        }
+    }
+    @Test
+    public void testAStarScheduleAlphabet() {
+        try {
+            Graph graph = this.parser.parse("src/test/resources/alphabet.dot");
+            AStarAlgorithm algorithm = new AStarAlgorithm();
+            Schedule schedule = algorithm.execute(graph,2);
+            assertEquals(schedule.getCost(), 8);
+        } catch (InputException e) {
+            e.printStackTrace();
+        }
+    }
 }
