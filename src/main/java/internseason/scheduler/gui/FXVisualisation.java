@@ -1,5 +1,6 @@
 package internseason.scheduler.gui;
 
+import internseason.scheduler.Main;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,18 +9,16 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class FrontEnd extends Application {
+public class FXVisualisation extends Application {
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+
 
     @Override
     public void start(Stage primaryStage) {
         Parent root = null;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("MainScreen.fxml"));
-            MainScreen ms = loader.getController();
+            loader.setController(new MainScreen(Main.config));
             root = loader.load();
 
 

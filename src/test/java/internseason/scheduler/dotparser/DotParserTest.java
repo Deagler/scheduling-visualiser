@@ -1,6 +1,6 @@
 package internseason.scheduler.dotparser;
 
-import internseason.scheduler.DOTParser;
+import internseason.scheduler.input.DOTParser;
 import internseason.scheduler.exceptions.InputException;
 import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Task;
@@ -53,7 +53,7 @@ public class DotParserTest {
             Map<String, Integer> parentCountMap = this.getNode8ParentCountMap();
 
             for (Task task : tasks.values()) {
-                List<Task> parents = task.getParentTasks();
+                List<Task> parents = graph.buildTaskListFromIds(task.getParentTasks());
                 assertEquals(Integer.valueOf(parentCountMap.get(task.getId())), Integer.valueOf(parents.size()));
             }
 

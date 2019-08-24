@@ -11,23 +11,12 @@ import java.util.List;
  * Base Interface for ALgorithms
  */
 public abstract class BaseAlgorithm {
-    protected int numberOfProcessors;
-    protected Graph graph;
+    public BaseAlgorithm() {
 
-    public BaseAlgorithm(Graph graphObj, int numberOfProcessors) {
-        this.numberOfProcessors = numberOfProcessors;
-        this.graph = graphObj;
     }
 
-    public abstract Schedule execute();
+    public abstract Schedule execute(Graph graphl, int numberOfProcessors, SystemInformation sysInfo);
 
-    public int getNumberOfProcessors() {
-        return numberOfProcessors;
-    }
-
-    public void setNumberOfProcessors(int numberOfProcessors) {
-        this.numberOfProcessors = numberOfProcessors;
-    }
-
+    public abstract String toString();
 
 }

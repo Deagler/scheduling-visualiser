@@ -1,16 +1,17 @@
 package internseason.scheduler.model;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Graph {
     Map<String, Task> tasks;
     List<Dependency> dependencies;
     Map<String, List<String>> adjacencyList;
-    List<List<String>> topologicalOrdering;
+    List<List<Task>> topologicalOrdering;
 
 
     public Graph() {
-        tasks = new HashMap<String, Task>();
+        tasks = new HashMap<>();
     }
 
     public void setTasks(Map<String,Task> tasks) {
@@ -33,7 +34,7 @@ public class Graph {
         return this.tasks;
     }
 
-    public List<List<String>> getTopologicalOrdering(){
+    public List<List<Task>> getTopologicalOrdering(){
         if (topologicalOrdering == null){
             createTopologicalOrdering();
         }
@@ -74,6 +75,7 @@ public class Graph {
                 zeroDegrees.add(i);
             }
         }
+
         List<List<String>> layers = new ArrayList<>();
         //while there are vertices remaining in the queue
         while (!zeroDegrees.isEmpty()){
@@ -100,7 +102,10 @@ public class Graph {
             }
         }
 
-        topologicalOrdering = layers;
+        // convert to task objects
+        for (List<String> layer : layers) {
+            topologicalOrdering.add(buildTaskListFromIds(layer));
+        }
     }
 
     private int[] getInDegrees(Map<String,List<String>> adj) {
@@ -111,6 +116,14 @@ public class Graph {
             }
         }
         return inDegrees;
+    }
+
+    public List<Task> buildTaskListFromIds(List<String> taskIds) {
+        List<Task> result = taskIds.stream()
+                .map(t -> tasks.get(t))
+                .collect(Collectors.toList());
+
+        return result;
     }
 
 }
