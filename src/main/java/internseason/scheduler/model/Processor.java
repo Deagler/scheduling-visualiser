@@ -24,6 +24,10 @@ public class Processor implements Serializable {
         this.taskScheduleList = new ArrayList<>();
     }
 
+    public ArrayList<Pair<String, Integer>> getTaskScheduleList() {
+        return taskScheduleList;
+    }
+
     public int getId() {
         return processorId;
     }

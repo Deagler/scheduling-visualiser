@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" stylesheets="@stylesheets/basic.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" >
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" stylesheets="@stylesheets/basic.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
     <top>
         <VBox prefHeight="68.0" prefWidth="1280.0" styleClass="title" BorderPane.alignment="CENTER">
             <children>
@@ -226,7 +226,7 @@
                                     </Label>
                                  </children>
                               </HBox>
-                              <Pane fx:id="input_graph_pane2" prefHeight="271.0" prefWidth="481.0">
+                              <Pane fx:id="optimalSchedule" prefHeight="271.0" prefWidth="481.0">
                                  <VBox.margin>
                                     <Insets top="5.0" />
                                  </VBox.margin>

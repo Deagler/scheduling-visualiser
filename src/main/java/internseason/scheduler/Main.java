@@ -13,6 +13,7 @@ import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Schedule;
 import internseason.scheduler.output.DOTOutputWriter;
 import javafx.application.Application;
+import javafx.util.Pair;
 
 public class Main {
     public static Config config;
@@ -36,7 +37,7 @@ public class Main {
 
     }
 
-    public static Schedule startAlgorithm(Config config, SystemInformation sysInfo) {
+    public static Pair<Schedule, Graph> startAlgorithm(Config config, SystemInformation sysInfo) {
         DOTParser dotparser = new DOTParser();
         Graph graph = null;
         try {
@@ -55,7 +56,8 @@ public class Main {
 
         outputWriter.write(config.getOutputFileName(), schedule, graph.getTasks());
 
-        return schedule;
+        Pair<Schedule, Graph> result = new Pair<>(schedule, graph);
+        return result;
 
 
     }

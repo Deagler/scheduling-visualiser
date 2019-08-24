@@ -5,16 +5,24 @@ import internseason.scheduler.algorithm.SystemInformation;
 import internseason.scheduler.input.Config;
 import internseason.scheduler.input.DOTParser;
 import internseason.scheduler.exceptions.InputException;
+import internseason.scheduler.model.Graph;
+import internseason.scheduler.model.Processor;
 import internseason.scheduler.model.Schedule;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
+import javafx.collections.FXCollections;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.util.Pair;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.fx_viewer.FxViewPanel;
 import org.graphstream.ui.fx_viewer.FxViewer;
@@ -35,13 +43,15 @@ public class MainScreen implements Initializable {
     private Timer timer;
     HashMap<String, String> parentMap;
     private Config config;
-    private Service<Schedule> algorithmService;
+    private Service<Pair<Schedule, Graph>> algorithmService;
 
 
     @FXML
     private Pane input_graph_pane;
     @FXML
     private Pane schedule_graph_pane;
+    @FXML
+    private Pane optimalSchedule;
 
     @FXML
     private Label loaded_graph_label;
@@ -116,6 +126,63 @@ public class MainScreen implements Initializable {
         schedules_explored.setText("0 K");
         schedules_in_queue.setText("0 K");
         schedules_in_array.setText("0 K");
+    }
+
+    public void updateOptimalSchedule(Schedule schedule, Graph graph){
+        final NumberAxis xAxis = new NumberAxis();
+        final CategoryAxis yAxis = new CategoryAxis();
+
+        final ScheduleVisulisation<Number,String> chart = new ScheduleVisulisation<Number,String>(xAxis,yAxis);
+        xAxis.setLabel("");
+        xAxis.setTickLabelFill(Color.CHOCOLATE);
+        xAxis.setMinorTickCount(4);
+
+        Map<Integer, Processor> processorMap = schedule.getProcessorIdMap();
+        String[] processors = new String[processorMap.size()];
+        int count = 0;
+        for (Map.Entry<Integer,Processor> entry: processorMap.entrySet()){
+            Integer proc = entry.getKey() +1;
+            processors[count] = "CPU " + (proc).toString();
+            count +=1;
+        }
+
+        yAxis.setLabel("");
+        yAxis.setTickLabelFill(Color.CHOCOLATE);
+        yAxis.setTickLabelGap(10);
+        yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(processors)));
+
+//        chart.setTitle("Process Visualisation");
+        chart.setLegendVisible(false);
+        chart.setBlockHeight( 20);
+        String machine;
+
+        count = 0;
+        for (Map.Entry<Integer, Processor> entry: processorMap.entrySet()){
+            Integer processorNum = entry.getKey();
+            Processor processor = entry.getValue();
+            ArrayList<Pair<String, Integer>> pairs = processor.getTaskScheduleList();
+            XYChart.Series series = new XYChart.Series();
+            String proc = processors[count];
+            for (Pair<String, Integer> pair : pairs){
+
+                String taskID = pair.getKey();
+                Integer startTime = pair.getValue();
+                int cost = graph.getTask(taskID).getCost();
+                XYChart.Data chartData = new XYChart.Data(startTime, proc, new ScheduleVisulisation.ExtraData(cost, "status-blue"));
+                series.getData().add(chartData);
+                System.out.println("cost:" + cost);
+                System.out.println("start Time:" + startTime);
+                System.out.println("Proc"+processors[count]);
+            }
+            count +=1;
+            chart.getData().addAll(series);
+        }
+        chart.getStylesheets().add("internseason/scheduler/gui/stylesheets/ScheduleVisualisation.css");
+
+        Platform.runLater(()->{
+            chart.setMaxSize(454,219);
+            optimalSchedule.getChildren().add(chart);
+        });
     }
 
     private void loadInputGraph(String path) {
@@ -207,13 +274,13 @@ public class MainScreen implements Initializable {
     public void playButtonPressed() {
 
         startTimer();
-        algorithmService = new Service<Schedule>() {
+        algorithmService = new Service<Pair<Schedule, Graph>>() {
 
             @Override
-            protected Task<Schedule> createTask() {
-                return new Task<Schedule>() {
+            protected Task<Pair<Schedule, Graph>> createTask() {
+                return new Task<Pair<Schedule, Graph>>() {
                     @Override
-                    protected Schedule call() throws IOException, InterruptedException {
+                    protected Pair<Schedule, Graph> call() throws IOException, InterruptedException {
                         return Main.startAlgorithm(config, sysInfo);
                     }
                 };
@@ -223,7 +290,9 @@ public class MainScreen implements Initializable {
 
         algorithmService.setOnSucceeded((e) -> {
             System.out.println("Algorithm Finished");
-            Schedule optimal = (Schedule) e.getSource().getValue();
+            Pair<Schedule, Graph> results = (Pair<Schedule, Graph>) e.getSource().getValue();
+            Schedule optimal = results.getKey();
+            Graph graph = results.getValue();
 
             String optimalNode = String.valueOf(optimal.hashCode());
             String optimalNodeParent = parentMap.get(optimalNode);
@@ -239,6 +308,7 @@ public class MainScreen implements Initializable {
                 optimalNodeParent = parentMap.get(optimalNodeParent);
             }
 
+            updateOptimalSchedule(optimal, graph);
 
 
             this.stopTimer();

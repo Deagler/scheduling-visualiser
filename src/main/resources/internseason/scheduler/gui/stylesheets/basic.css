@@ -17,7 +17,7 @@
 }
 
 .header-large {
-    -fx-background-color:linear-gradient(from 25% 25% to 100% 100%, #ff7f50, #6a5acd) ;
+    -fx-background-color:#4c97ff;;
             /*#4c97ff;*/
             /*linear-gradient(from 25% 25% to 100% 100%, #ff7f50, #6a5acd)*/
     -fx-background-insets: -1;

@@ -16,7 +16,7 @@ edge {
 }
 
 node#A {
-    fill-color: blue;
+    fill-color: #4c97ff;;
 }
 node.root{    size: 20px;
     fill-color: Green;
