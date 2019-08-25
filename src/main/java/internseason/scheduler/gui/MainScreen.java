@@ -61,8 +61,9 @@ public class MainScreen implements Initializable {
     private Integer branchesChecked;
     private BarChart<String,Integer> barChart;
     private Integer numberOfBars;
-
-    XYChart.Series series ;
+    private String selectedTheme = "Sky Blue";
+    private String cssPath = "internseason/scheduler/gui/stylesheets/SkyBlue.css";
+    private XYChart.Series series ;
 
     @FXML
     private Label branchesCheckedLabel;
@@ -113,13 +114,13 @@ public class MainScreen implements Initializable {
     @FXML
     private Button settingsButton;
 
-    private String cssPath = "internseason/scheduler/gui/stylesheets/SkyBlue.css";
+
 
     public MainScreen(Config config) {
         this.config = config;
     }
 
-    public void setCSS(String path){
+    public void setCSS(String selectedTheme, String path){
         Parent root = null;
         FXMLLoader loader = null;
         try {
@@ -131,7 +132,7 @@ public class MainScreen implements Initializable {
             e.printStackTrace();
         }
         MainScreen mainScreen = loader.getController();
-        mainScreen.setCssPath(path);
+        mainScreen.setCssPath(selectedTheme, path);
         root.getStylesheets().add(path);
 
         Scene currentScene = new Scene(root, 1280, 800);
@@ -141,7 +142,8 @@ public class MainScreen implements Initializable {
         window.show();
     }
 
-    public void setCssPath(String cssPath) {
+    public void setCssPath(String themeName, String cssPath) {
+        selectedTheme = themeName;
         this.cssPath = cssPath;
     }
 
@@ -153,7 +155,7 @@ public class MainScreen implements Initializable {
         parentMap = new HashMap<>();
         graph_path = new File(config.getInputDotFile());
 
-        String maxMem = Runtime.getRuntime().maxMemory() / 1024 * 1024 + " MB";
+        String maxMem = (Runtime.getRuntime().maxMemory() / (1024 * 1024)) + " MB";
         setup_labels(String.valueOf(config.getNumberOfCores()), String.valueOf(config.getNumberOfProcessors()), maxMem);
 
         createBarChart();
@@ -481,6 +483,7 @@ public class MainScreen implements Initializable {
 
         SettingsScreen settingsScreen = loader.getController();
 
+        Platform.runLater(()->settingsScreen.getGuiColor().setValue(selectedTheme));
         settingsScreen.setDefaultValues(config.getNumberOfCores(),config.getNumberOfProcessors());
         settingsScreen.setConfig(config);
 
@@ -489,7 +492,7 @@ public class MainScreen implements Initializable {
                 cores_for_execution.setText(Integer.toString(config.getNumberOfCores()));
                 available_processors.setText(Integer.toString(config.getNumberOfProcessors()));
                 ComboBox guiColor = settingsScreen.getGuiColor();
-                String selectedTheme = (String) guiColor.getSelectionModel().getSelectedItem();
+                selectedTheme = (String) guiColor.getSelectionModel().getSelectedItem();
                 if (selectedTheme != null) {
                     switch (selectedTheme) {
                         case "Apple Green":
@@ -509,7 +512,7 @@ public class MainScreen implements Initializable {
                             break;
 
                     }
-                    setCSS(cssPath);
+                    setCSS(selectedTheme, cssPath);
                 }
 
             });

@@ -57,6 +57,8 @@ public class SettingsScreen implements Initializable {
         );
         guiColor.getItems().addAll(themes);
 
+        guiColor.setValue("Apple Green");
+
     }
 
     public ComboBox getGuiColor() {
