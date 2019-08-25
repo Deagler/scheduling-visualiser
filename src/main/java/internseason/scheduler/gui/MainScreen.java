@@ -9,14 +9,11 @@ import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Processor;
 import internseason.scheduler.model.Schedule;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -27,13 +24,13 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
 import javafx.util.Pair;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.fx_viewer.FxViewPanel;
@@ -120,28 +117,48 @@ public class MainScreen implements Initializable {
     @FXML
     private Button settingsButton;
 
+    private String cssPath = "internseason/scheduler/gui/stylesheets/SkyBlue.css";
+
     public MainScreen(Config config) {
         this.config = config;
-
     }
 
+    public void setCSS(String path){
+        Parent root = null;
+        FXMLLoader loader = null;
+        try {
+            loader = new FXMLLoader(getClass().getResource("MainScreen.fxml"));
+            loader.setController(new MainScreen(Main.config));
+            root = loader.load();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        MainScreen mainScreen = loader.getController();
+        mainScreen.setCssPath(path);
+        root.getStylesheets().add(path);
+
+        Scene currentScene = new Scene(root, 1280, 800);
+
+        Stage window = (Stage) playButton.getScene().getWindow();
+        window.setScene(currentScene);
+        window.show();
+    }
+
+    public void setCssPath(String cssPath) {
+        this.cssPath = cssPath;
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        cores_for_execution.textProperty().addListener((observable, oldValue, newValue) -> {
-            cores_for_execution.setText(newValue);
-        });
-
-
         System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
         input_graph = new SingleGraph("IG");
         schedule_graph = new SingleGraph("SG");
         parentMap = new HashMap<>();
-        int mb = 1024 * 1024;
-        Runtime instance = Runtime.getRuntime();
-        long maxMemory = instance.maxMemory() ;
-        setup_labels(String.valueOf(config.getNumberOfCores()), String.valueOf(config.getNumberOfProcessors()),Long.toString(maxMemory));
+        graph_path = new File(config.getInputDotFile());
+
+        String maxMem = Runtime.getRuntime().maxMemory() / 1024 * 1024 + " MB";
+        setup_labels(String.valueOf(config.getNumberOfCores()), String.valueOf(config.getNumberOfProcessors()), maxMem);
 
         createBarChart();
 
@@ -204,15 +221,27 @@ public class MainScreen implements Initializable {
         });
     }
 
+    public void updateMemoryLabels(){
+        Runtime instance = Runtime.getRuntime();
+        long maxMem = instance.maxMemory();
+        long freeMem = instance.freeMemory();
+        long usedMem = maxMem - freeMem;
+
+        int toMb = 1024 * 1024;
+
+        freeMem = freeMem / toMb;
+        usedMem = usedMem / toMb;
+
+        used_memory.setText(usedMem + " MB");
+        free_memory.setText(freeMem + "MB");
+    }
+
     public void setup_labels(String cores, String processors, String max_mem) {
         runtime.setText("00:00:00.00");
 
         cores_for_execution.setText(cores);
         available_processors.setText(processors);
-
         max_memory.setText(max_mem);
-        used_memory.setText("0 MB");
-        free_memory.setText(max_mem);
 
         schedules_explored.setText("0 K");
         schedules_in_queue.setText("0 K");
@@ -360,7 +389,10 @@ public class MainScreen implements Initializable {
                 long second = (durationInMillis / 1000) % 60;
                 long minute = (durationInMillis / (1000 * 60)) % 60;
                 long hour = (durationInMillis / (1000 * 60 * 60)) % 24;
-                Platform.runLater(() -> runtime.setText(String.format("%02d:%02d:%02d.%d", hour, minute, second, millis)));
+                Platform.runLater(() -> {
+                    runtime.setText(String.format("%02d:%02d:%02d.%d", hour, minute, second, millis));
+                    updateMemoryLabels();
+                });
             }
         }, 0, 5);
     }
@@ -431,7 +463,6 @@ public class MainScreen implements Initializable {
     @FXML
     public void stopButtonPressed() {
 
-
     }
 
     @FXML
@@ -448,7 +479,15 @@ public class MainScreen implements Initializable {
         settingsStage.setResizable(false);
         settingsStage.setAlwaysOnTop(true);
         settingsStage.setTitle("Settings");
-        settingsStage.setScene(new Scene(root,600,400));
+
+        root.getStylesheets().clear();
+        System.out.println(cssPath);
+        root.getStylesheets().add(cssPath);
+
+        Scene scene = new Scene(root,600,400);
+
+        settingsStage.setScene(scene);
+
         settingsStage.initStyle(StageStyle.UNDECORATED);
         settingsStage.show();
 
@@ -461,6 +500,22 @@ public class MainScreen implements Initializable {
             Platform.runLater(()->{
                 cores_for_execution.setText(Integer.toString(config.getNumberOfCores()));
                 available_processors.setText(Integer.toString(config.getNumberOfProcessors()));
+                ComboBox guiColor = settingsScreen.getGuiColor();
+                String selectedTheme = (String) guiColor.getSelectionModel().getSelectedItem();
+
+                switch (selectedTheme){
+                    case "Apple Green":
+                        cssPath = "internseason/scheduler/gui/stylesheets/AppleGreen.css";
+                        break;
+                    case "Midnight Purple":
+                        cssPath = "internseason/scheduler/gui/stylesheets/MidnightPurple.css";
+                        break;
+                    case "Sky Blue":
+                        cssPath = "internseason/scheduler/gui/stylesheets/SkyBlue.css";
+                        break;
+
+                }
+                setCSS(cssPath);
             });
         });
 

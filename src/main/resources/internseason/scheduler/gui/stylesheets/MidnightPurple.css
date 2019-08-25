@@ -3,21 +3,21 @@
 }
 
 .title {
-    -fx-background-color: #4c97ff;
+    -fx-background-color: purple;
     -fx-background-insets: 0;
     -fx-background-radius: 2 2 0 0;
     -fx-effect: dropshadow(three-pass-box, lightgray, 3, 0, 0, 2);
 }
 
 .headers {
-    -fx-background-color: #4c97ff;
+    -fx-background-color: purple;
     -fx-background-insets: 5;
     -fx-background-radius: 2 2 0 0;
     -fx-effect: dropshadow(three-pass-box, lightgray, 3, 0, 0, 2);
 }
 
 .header-large {
-    -fx-background-color:#4c97ff;;
+    -fx-background-color:purple;
             /*#4c97ff;*/
             /*linear-gradient(from 25% 25% to 100% 100%, #ff7f50, #6a5acd)*/
     -fx-background-insets: -1;
@@ -38,7 +38,9 @@
     -fx-effect: dropshadow(three-pass-box, lightgray, 10, 0, 0, 0);
 }
 
-
+.Background{
+    -fx-background-color: #f3f3f3;
+}
 
 .button {
     -fx-background-color: white;
@@ -48,11 +50,9 @@
     -fx-background-color: #e5e5e5;
 }
 .button:pressed{
-    -fx-background-color: #4c97ff;
+    -fx-background-color: purple;
 }
 
-.borderPane-1{
-    /*image from: https://www.google.co.nz/search?q=cityscape+photography&rlz=1C1SQJL_enNZ789NZ789&tbs=isz:lt,islt:xga&tbm=isch&source=lnt&sa=X&ved=0ahUKEwiux5267vXdAhXTdd4KHS0XDugQpwUIHw&biw=1916&bih=918&dpr=1#imgrc=4-42xqpBapcU_M:*/
-    -fx-background-image: url("../background/Background2.jpg");
-    -fx-background-repeat: no-repeat;
+.label_colored{
+    -fx-text-fill: purple;
 }

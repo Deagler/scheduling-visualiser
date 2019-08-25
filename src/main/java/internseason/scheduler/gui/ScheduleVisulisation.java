@@ -7,6 +7,7 @@ import javafx.beans.NamedArg;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.CategoryAxis;
@@ -108,9 +109,14 @@ public class ScheduleVisulisation <X,Y> extends XYChart<X,Y> {
 
                         Text t = new Text("1");
 //                        t.setTextAlignment(TextAlignment.CENTER);
+//                        t.setX(ellipse.getWidth() / 2);
+//                        t.setLayoutX(50);
+//                        t.setX(100);
+//                        t.setTextAlignment(TextAlignment.CENTER);
+//                       System.out.println( t.getParent().getLayoutBounds());
                         region.getChildren().add(t);
 
-                        //((StackPane) region).setAlignment(t,Pos.CENTER);
+                        //((StackPane) region).setAlignmen;t(t,Pos.CENTER);
                         //StackPane.setAlignment(t,Pos.BOTTOM_RIGHT);
                         //region.setLayoutX(x/2);
                         //region.setLayoutX(y/2);

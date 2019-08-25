@@ -26,7 +26,11 @@ public class FXVisualisation extends Application {
             e.printStackTrace();
         }
         primaryStage.setTitle("Scheduler");
-        primaryStage.setScene(new Scene(root, 1280, 800));
+        Scene currentScene = new Scene(root, 1280, 800);
+        //currentScene.getStylesheets().clear();
+        currentScene.getStylesheets().add("internseason/scheduler/gui/stylesheets/SkyBlue.css");
+//        currentScene.getStylesheets().add("/main/resources/internseason/scheduler/gui/stylesheets/AppleGreen.css");
+        primaryStage.setScene(currentScene);
         primaryStage.show();
     }
 }
