@@ -6,9 +6,6 @@ import java.io.Serializable;
 import java.util.*;
 
 public class Task implements Serializable {
-
-
-
     private List<String> parentTasks;
     private Map<String, Integer> childCosts;
     private int cost;

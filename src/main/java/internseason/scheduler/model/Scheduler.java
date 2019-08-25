@@ -23,7 +23,9 @@ public class Scheduler {
     }
 
     /**
-     * Given a task t, schedule it on a processor p such that t's start time is minimised
+     * Given a task t, schedules t on processor p such that the start time of t is minimized
+     * @param schedule
+     * @param task
      */
     public void addWithLowestStartTime(Schedule schedule, Task task) {
         int earliest = Integer.MAX_VALUE;
@@ -39,6 +41,12 @@ public class Scheduler {
         this.addTask(schedule, task, targetProcessorId);
     }
 
+    /**
+     * Given a task, it returns the earliest time it can be scheduled
+     * @param schedule
+     * @param task
+     * @return time
+     */
     public int getEarliestStartTime(Schedule schedule, Task task){
         int earliest = Integer.MAX_VALUE;
         for (int processorId = 0; processorId < schedule.getNumOfProcessors(); processorId++) {
@@ -51,7 +59,13 @@ public class Scheduler {
     }
 
 
-
+    /**
+     * Given a task t and processor p, it returns the start time of when the task can be scheduled
+     * @param schedule
+     * @param task
+     * @param processorId
+     * @return start time of task
+     */
     private int findNextAvailableTimeInProcessor(Schedule schedule, Task task, int processorId) {
         List<String> parentTasks = task.getParentTasks();
 
@@ -83,6 +97,12 @@ public class Scheduler {
         return result;
     }
 
+    /**
+     * Given a partial schedule, it completes it by scheduling all unallocated tasks using the greedy heuristic
+     * @param scheduleInfo
+     * @param graph
+     * @return complete schedule
+     */
     public Schedule buildGreedySchedule(BBScheduleInfo scheduleInfo, Graph graph) {
         Schedule cloneSchedule = new Schedule(scheduleInfo.getSchedule());
 
@@ -109,7 +129,13 @@ public class Scheduler {
 
 
 
-    //finishing time of parent task + edge cost from parent to task
+
+    /**
+     * Given a task, it calculates the data ready time- max finish time of parent task + communication cost
+     * @param schedule
+     * @param task
+     * @return DRT
+     */
     public int calculateDRT(Schedule schedule, Task task) {
 
         int min = Integer.MAX_VALUE;
