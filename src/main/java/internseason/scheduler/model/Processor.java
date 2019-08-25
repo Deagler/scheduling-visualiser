@@ -32,16 +32,6 @@ public class Processor implements Serializable {
         return cost;
     }
 
-    public void setCost(int cost) {
-        this.cost = cost;
-    }
-
-    public void addTask(Task task) {
-        taskIdScheduleMap.put(task.getId(), this.cost);
-        taskScheduleList.add(new Pair(task.getId(), this.cost));
-        this.cost += task.getCost();
-    }
-
     public int getTaskStartTime(String taskId) {
         return this.taskIdScheduleMap.get(taskId);
     }
