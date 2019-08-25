@@ -21,8 +21,8 @@ public class Processor implements Serializable {
 
     }
 
-    public ArrayList<Pair<String, Integer>> getTaskScheduleList() {
-        return taskScheduleList;
+    public Map<String, Integer> getTaskScheduleMap() {
+        return taskIdScheduleMap;
     }
 
     public int getId() {

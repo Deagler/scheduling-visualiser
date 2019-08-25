@@ -289,13 +289,13 @@ public class MainScreen implements Initializable {
         for (Map.Entry<Integer, Processor> entry: processorMap.entrySet()){
             Integer processorNum = entry.getKey();
             Processor processor = entry.getValue();
-            ArrayList<Pair<String, Integer>> pairs = processor.getTaskScheduleList();
+            Map<String, Integer> tasksToScheduledTimes = processor.getTaskScheduleMap();
             XYChart.Series series = new XYChart.Series();
             String proc = processors[count];
-            for (Pair<String, Integer> pair : pairs){
+            for (Map.Entry<String, Integer> taskEntry : tasksToScheduledTimes.entrySet()){
 
-                String taskID = pair.getKey();
-                Integer startTime = pair.getValue();
+                String taskID = taskEntry.getKey();
+                Integer startTime = taskEntry.getValue();
                 int cost = graph.getTask(taskID).getCost();
                 XYChart.Data chartData = new XYChart.Data(startTime, proc, new ScheduleVisulisation.ExtraData(cost, "status-blue"));
                 series.getData().add(chartData);
