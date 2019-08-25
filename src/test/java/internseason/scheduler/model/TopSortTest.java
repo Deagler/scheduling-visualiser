@@ -6,7 +6,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -41,16 +43,24 @@ public class TopSortTest {
             Graph graph = this.dotparser.parse(path);
             //get top ordering
             List<List<Task>> topOrder =  graph.getTopologicalOrdering();
-            List<Task> visited = new ArrayList<>();
-            //check that each task's outgoing edge isnt already visited, if it is then top ordering is violated
-            for (List<Task> layer : topOrder){
-                for (Task task : layer){
-                    List<String> parentIds = task.getChildrenList();
-                    for (String parentId : parentIds){
-                        assertTrue(!layer.contains(graph.getTask(parentId)));
+            Set<String> visited = new HashSet<>();
+
+            // check that each task's outgoing edge isnt already visited, if it is then top ordering is violated
+
+            for (List<Task> topologicalLayer : topOrder) {
+                for (Task task : topologicalLayer){
+                    visited.add(task.getId());
+
+                    List<String> outgoingEdges = task.getChildrenList();
+                    for (String childNodeId : outgoingEdges){
+                        boolean childNodeSeen = visited.contains(childNodeId);
+                        assertFalse(childNodeSeen);
                     }
                 }
             }
+
+
+
         } catch (InputException e) {
             e.printStackTrace();
             fail();

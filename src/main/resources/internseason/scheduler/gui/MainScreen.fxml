@@ -183,7 +183,7 @@
                         </VBox>
                         <VBox prefHeight="200.0" prefWidth="100.0" styleClass="pane_large" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <HBox prefHeight="37.0" prefWidth="454.0" styleClass="header-large">
+                              <HBox prefHeight="32.0" prefWidth="454.0" styleClass="header-large">
                                  <children>
                                     <Label prefHeight="38.0" prefWidth="444.0" text="Performance" textFill="WHITE">
                                        <font>

@@ -61,8 +61,9 @@ public class MainScreen implements Initializable {
     private Integer branchesChecked;
     private BarChart<String,Integer> barChart;
     private Integer numberOfBars;
-
-    XYChart.Series series ;
+    private String selectedTheme = "Sky Blue";
+    private String cssPath = "internseason/scheduler/gui/stylesheets/SkyBlue.css";
+    private XYChart.Series series ;
 
     @FXML
     private Label branchesCheckedLabel;
@@ -113,13 +114,13 @@ public class MainScreen implements Initializable {
     @FXML
     private Button settingsButton;
 
-    private String cssPath = "internseason/scheduler/gui/stylesheets/SkyBlue.css";
+
 
     public MainScreen(Config config) {
         this.config = config;
     }
 
-    public void setCSS(String path){
+    public void setCSS(String selectedTheme, String path){
         Parent root = null;
         FXMLLoader loader = null;
         try {
@@ -131,7 +132,7 @@ public class MainScreen implements Initializable {
             e.printStackTrace();
         }
         MainScreen mainScreen = loader.getController();
-        mainScreen.setCssPath(path);
+        mainScreen.setCssPath(selectedTheme, path);
         root.getStylesheets().add(path);
 
         Scene currentScene = new Scene(root, 1280, 800);
@@ -141,7 +142,8 @@ public class MainScreen implements Initializable {
         window.show();
     }
 
-    public void setCssPath(String cssPath) {
+    public void setCssPath(String themeName, String cssPath) {
+        selectedTheme = themeName;
         this.cssPath = cssPath;
     }
 
@@ -152,8 +154,7 @@ public class MainScreen implements Initializable {
         schedule_graph = new SingleGraph("SG");
         parentMap = new HashMap<>();
         graph_path = new File(config.getInputDotFile());
-
-        String maxMem = Runtime.getRuntime().maxMemory() / 1024 * 1024 + " MB";
+        String maxMem = (Runtime.getRuntime().maxMemory() / (1024 * 1024)) + " MB";
         setup_labels(String.valueOf(config.getNumberOfCores()), String.valueOf(config.getNumberOfProcessors()), maxMem);
 
         createBarChart();
@@ -166,7 +167,7 @@ public class MainScreen implements Initializable {
         this.sysInfo = new SystemInformation();
         this.bindLabel(sysInfo.schedulesQueuedProperty(), schedules_in_queue);
         this.bindLabel(sysInfo.schedulesExploredProperty(), schedules_explored);
-        System.out.println("initialised");
+
         sysInfo.addListener(this::buildScheduleGraph);
     }
 
@@ -287,13 +288,13 @@ public class MainScreen implements Initializable {
         for (Map.Entry<Integer, Processor> entry: processorMap.entrySet()){
             Integer processorNum = entry.getKey();
             Processor processor = entry.getValue();
-            ArrayList<Pair<String, Integer>> pairs = processor.getTaskScheduleList();
+            Map<String, Integer> tasksToScheduledTimes = processor.getTaskScheduleMap();
             XYChart.Series series = new XYChart.Series();
             String proc = processors[count];
-            for (Pair<String, Integer> pair : pairs){
+            for (Map.Entry<String, Integer> taskEntry : tasksToScheduledTimes.entrySet()){
 
-                String taskID = pair.getKey();
-                Integer startTime = pair.getValue();
+                String taskID = taskEntry.getKey();
+                Integer startTime = taskEntry.getValue();
                 int cost = graph.getTask(taskID).getCost();
                 XYChart.Data chartData = new XYChart.Data(startTime, proc, new ScheduleVisulisation.ExtraData(cost, "status-blue"));
                 series.getData().add(chartData);
@@ -414,7 +415,7 @@ public class MainScreen implements Initializable {
             };
 
         algorithmService.setOnSucceeded((e) -> {
-            System.out.println("Algorithm Finished");
+
             Pair<Schedule, Graph> results = (Pair<Schedule, Graph>) e.getSource().getValue();
             Schedule optimal = results.getKey();
             Graph graph = results.getValue();
@@ -444,7 +445,7 @@ public class MainScreen implements Initializable {
         });
 
         algorithmService.setOnFailed((t) -> {
-            System.out.println("Algorithm Failed");
+
             t.getSource().getException().printStackTrace();
             this.stopTimer();
         });
@@ -469,7 +470,7 @@ public class MainScreen implements Initializable {
         settingsStage.setTitle("Settings");
 
         root.getStylesheets().clear();
-        System.out.println(cssPath);
+
         root.getStylesheets().add(cssPath);
 
         Scene scene = new Scene(root,600,400);
@@ -480,7 +481,8 @@ public class MainScreen implements Initializable {
         settingsStage.show();
 
         SettingsScreen settingsScreen = loader.getController();
-        System.out.println(settingsScreen);
+
+        Platform.runLater(()->settingsScreen.getGuiColor().setValue(selectedTheme));
         settingsScreen.setDefaultValues(config.getNumberOfCores(),config.getNumberOfProcessors());
         settingsScreen.setConfig(config);
 
@@ -489,7 +491,7 @@ public class MainScreen implements Initializable {
                 cores_for_execution.setText(Integer.toString(config.getNumberOfCores()));
                 available_processors.setText(Integer.toString(config.getNumberOfProcessors()));
                 ComboBox guiColor = settingsScreen.getGuiColor();
-                String selectedTheme = (String) guiColor.getSelectionModel().getSelectedItem();
+                selectedTheme = (String) guiColor.getSelectionModel().getSelectedItem();
                 if (selectedTheme != null) {
                     switch (selectedTheme) {
                         case "Apple Green":
@@ -509,7 +511,7 @@ public class MainScreen implements Initializable {
                             break;
 
                     }
-                    setCSS(cssPath);
+                    setCSS(selectedTheme, cssPath);
                 }
 
             });
@@ -529,7 +531,7 @@ public class MainScreen implements Initializable {
         File file = fileChooser.showOpenDialog(input_graph_pane.getScene().getWindow());
         if (file != null) {
             graph_path = file;
-            System.out.println(graph_path.toString());
+
             loaded_graph_label.setText(file.getName());
             config.setInputDotFile(file.toString());
             resetScheduleGraph();

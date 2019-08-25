@@ -166,7 +166,6 @@ public class Schedule implements Serializable {
         StringBuilder sb = new StringBuilder();
 
         for (int i=0; i<numOfProcessors; i++) {
-            //sb.append("p" + processorIdMap.get(i));
             sb.append("Processor " + i + "\n");
             sb.append(processorIdMap.get(i));
             sb.append("Cost of Processor " + i + ": " + processorIdMap.get(i).getCost() + "\n");
@@ -175,6 +174,14 @@ public class Schedule implements Serializable {
         sb.append("Total schedule cost is: " + this.cost);
 
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Schedule schedule = (Schedule) o;
+        return this.hashCode() == schedule.hashCode();
     }
 
     @Override

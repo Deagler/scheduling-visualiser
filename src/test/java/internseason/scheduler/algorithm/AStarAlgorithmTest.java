@@ -138,7 +138,7 @@ public class AStarAlgorithmTest {
     public void testBigTwoProcessor() {
         try {
             Graph graph = this.parser.parse("src/test/resources/big_chungus_16p_30nodes.dot");
-            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.A_STAR_ALGORITHM, 1);
+            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.A_STAR_ALGORITHM);
             Schedule schedule = algorithm.execute(graph, 2,1, sysInfo);
             assertEquals(273, schedule.getCost());
         } catch (InputException e) {

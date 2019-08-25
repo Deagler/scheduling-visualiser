@@ -26,7 +26,10 @@ public class Main {
              if (config.isVisualisationEnabled()) {
                 Application.launch(FXVisualisation.class);
             } else {
-                startAlgorithm(config, new SystemInformation());
+                 System.out.println("Starting Algorithm...");
+                Pair<Schedule, Graph> result = startAlgorithm(config, new SystemInformation());
+                System.out.println("Algorithm Complete - Outputted schedule with cost "+result.getKey().getCost());
+
             }
         } catch (CLIException e) {
             System.out.println("Error: "+e.getMessage());
@@ -45,9 +48,9 @@ public class Main {
         }
 
         BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(
-                AlgorithmType.A_STAR_ALGORITHM,
-                config.getNumberOfCores()
+                AlgorithmType.A_STAR_ALGORITHM
         );
+
 
         Schedule schedule = algorithm.execute(graph, config.getNumberOfProcessors(),config.getNumberOfCores(), sysInfo);
         DOTOutputWriter outputWriter = new DOTOutputWriter();

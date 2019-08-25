@@ -22,7 +22,7 @@ public class AStarAlgorithmParallelTest {
     public void testDiamondTwoCore() {
         try {
             Graph graph = this.parser.parse("src/test/resources/Test_Diamond.dot");
-            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.A_STAR_ALGORITHM, 2);
+            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.A_STAR_ALGORITHM);
             Schedule schedule = algorithm.execute(graph, 2,2, sysInfo);
             assertEquals(8,schedule.getCost());
         } catch (InputException e) {
@@ -229,7 +229,7 @@ public class AStarAlgorithmParallelTest {
     public void testAStarScheduleBigFourCore() {
         try {
             Graph graph = this.parser.parse("src/test/resources/big_chungus_16p_30nodes.dot");
-            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.A_STAR_ALGORITHM, 4);
+            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.A_STAR_ALGORITHM);
             Schedule schedule = algorithm.execute(graph, 2,4, sysInfo);
             assertEquals(273,schedule.getCost());
         } catch (InputException e) {
@@ -241,7 +241,7 @@ public class AStarAlgorithmParallelTest {
     public void testAStarScheduleBigEightCore() {
         try {
             Graph graph = this.parser.parse("src/test/resources/big_chungus_16p_30nodes.dot");
-            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.A_STAR_ALGORITHM, 4);
+            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.A_STAR_ALGORITHM);
             Schedule schedule = algorithm.execute(graph, 2,8, sysInfo);
             assertEquals(273,schedule.getCost());
         } catch (InputException e) {
