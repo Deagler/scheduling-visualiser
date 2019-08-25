@@ -1,11 +1,12 @@
 package internseason.scheduler.algorithm;
 
+import internseason.scheduler.heuristic.*;
 import internseason.scheduler.model.*;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
-
 
 
 /**
@@ -85,20 +86,18 @@ class ScheduleInfo {
     }
 }
 
-/**
- * PoC AStar Algorithm that uses Topological layering and
- * a heuristic that factors in the cost of the schedule and number of tasks.
- *
- * Possible Schedules are generated layer-by-layer as to avoid generating schedules that have dependency violations.
+/** Optimised Astar algorithm that uses Fixed Task ordering, duplicate detection, processor normalisation and
+ *  three part cost function to calculate an optimal schedule
  */
 public class AStarAlgorithm extends BaseAlgorithm {
     private Queue<ScheduleInfo> scheduleQueue;
     private int totalTaskTime;
     private Graph graph;
     private Scheduler scheduler;
+    private int numOfCores;
+    private ExecutorService executor;
 
-    /**
-     * Tepmorary constructor to test factory pattern
+    /** Factory pattern constructor
      * @return
      */
     public AStarAlgorithm() {
@@ -108,51 +107,44 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
 
     /**
-     * Basic Implementation of the AStar Algorithm with duplicate detection and process normalisation.
+     * Implementation of the AStar Algorithm with duplicate detection and process normalisation. Uses a cost function with three heuristics to order the priority queue
+     * Fixed Task Ordering (FTO) is also employed to optimise the algorithm.
      * Reference: https://researchspace.auckland.ac.nz/handle/2292/30213
      * @return An optimal schedule
      */
     @Override
-    public Schedule execute(Graph graph, int numberOfProcessors, SystemInformation sysInfo) {
+    public Schedule execute(Graph graph, int numberOfProcessors, int numOfCores, SystemInformation sysInfo) {
+        //initialise thread executor
+        this.executor = Executors.newFixedThreadPool(numOfCores);
         this.scheduler = new Scheduler(graph);
 
         int totalTasks = graph.getTasks().size();
-        totalTaskTime = 0;
+        this.totalTaskTime = 0;
         for (Task task: graph.getTasks().values()){
             totalTaskTime +=task.getCost();
         }
 
         this.graph = graph;
 
+        // get topological ordering of initial DAG
         List<List<Task>> topologicalTasks = graph.getTopologicalOrdering();
 
+        //create empty root schedule
         Schedule initialSchedule = new Schedule(numberOfProcessors);
 
-        scheduleQueue.add(new ScheduleInfo(initialSchedule, 0, new ArrayList<String>(), 0)); // Add the empty schedule to the queue.
+        scheduleQueue.add(new ScheduleInfo(initialSchedule, 0, new ArrayList<String>(), 0));
         // Calculates the Bottom Level for each task.
         List<Task> leafs = graph.getTasks().values() //find all the leaf nodes
                 .stream()
                 .filter((Task task) -> task.getNumberOfChildren() == 0)
                 .collect(Collectors.toList());
 
-
         for (Task leaf : leafs) { //Compute the bottom levels for the nodes
             leaf.setBottomLevel(leaf.getCost());
             getBottomLevels(graph.buildTaskListFromIds(leaf.getParentTasks()), leaf.getCost());
         }
 
-        Task maxTask = null;
-        for (Task task : graph.getTasks().values()) {
-           if (maxTask == null) {
-               maxTask = task;
-           }
-
-           if (task.getBottomLevel() > maxTask.getBottomLevel()) {
-               maxTask = task;
-           }
-        }
-
-
+        // Initialise empty visited states set used for duplicate detection
         Set<Integer> visited = new HashSet<>();
         visited.add(initialSchedule.hashCode());
         int counter = 0;
@@ -169,8 +161,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 System.out.println(counter);
                 return realSchedule;
             }
-
-
             List<Task> currentLayer = topologicalTasks.get(head.getLayer());
             Queue<Task> FTOList = null;
 
@@ -184,12 +174,26 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 //TODO generateFTOCombinations to use the queue?
                 combinations = generateFTOCombinations(head, FTOList, numberOfProcessors);
 
+//                //Queue<Task> ftoTasks =  sortFTOTasks(FTOList, schedule);
+//                boolean same = true;
+//                while (same) {
+//                    //Task head = ftoTasks.peek();
+//                    ftoTasks.remove();
+//                    List<ScheduleInfo> ftoCombinations = generateFTOCombinations(head, FTOList, numberOfProcessors);
+//
+//                    List<Task> originalFreeList = getMergedFreeList(scheduleinfo.getSchedule(), currentLayer, scheduleinfo.getFreeList());
+//                    //compare ftotasks with new free list
+//
+//                    //if same
+//                    scheduleQueue.remove();
+//                }
+//
+//                generateCombinations();
             } else {
                 // Extending the polled schedule to generate all possible "next" states.
+                // Parallelisation here
                 combinations = generateAllCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors);
             }
-
-
             if (combinations == null) { // Move to next topological layer if no possible schedules on current layer.
                 head.incrementLayer();
 
@@ -200,7 +204,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 } else {
                     combinations = generateAllCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors);
                 }
-                //combinations = generateCombinations(head, topologicalTasks.get(head.getLayer()), numberOfProcessors, realSchedule);
             }
 
             Set<Integer> childScheduleHashCodes = new HashSet<>();
@@ -235,37 +238,31 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 continue;
 
             }
-
             knownFTO = false;
-
-
-
-
             counter++;
         }
 
         return null;
     }
 
-    private int calculateIdleHeuristic(Schedule schedule) {
-
-        return (totalTaskTime + schedule.getIdleTime()-1) / schedule.getNumOfProcessors();
+    private BaseHeuristic getIdleHeuristic() {
+        return new IdleTimeHeuristic(this.totalTaskTime);
     }
 
 
-    private int calculateDRTHeuristic(Schedule schedule, List<Task> freeTasks){
-        int maxDRT = Integer.MIN_VALUE;
-        for (Task task : freeTasks){
-            int drt = this.scheduler.calculateDRT(schedule, task);
-            int bottomLevel = task.getBottomLevel();
-            maxDRT = Math.max(maxDRT, (drt+bottomLevel));
-        }
-        return maxDRT;
+    private BaseHeuristic getDRTHeuristic(List<Task> freeTasks){
+        return new DataReadyTimeHeuristic(freeTasks,this.scheduler);
     }
 
+    private BaseHeuristic getCriticalPathHeuristic(){
+        return new CriticalPathHeuristic();
+    }
     private Integer calculateCost(Schedule schedule, List<Task> freeTasks) {
-        return Math.max(schedule.getMaxBottomLevel(), calculateIdleHeuristic(schedule));
-
+        BaseHeuristic idleHeuristic = getIdleHeuristic();
+        BaseHeuristic drtHeuristic = getDRTHeuristic(freeTasks);
+        BaseHeuristic criticalPathHeuristic = getCriticalPathHeuristic();
+        CombinedHeuristic calculator = new CombinedHeuristic(Arrays.asList(idleHeuristic,drtHeuristic,criticalPathHeuristic));
+        return calculator.calculateCostFunction(schedule);
     }
 
 
@@ -279,7 +276,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 freeNodes.remove(i);
             }
         }
-
         return freeNodes;
     }
 
@@ -296,11 +292,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
         Integer commonParentProcessorId = null;
 
         List<Task> freeNodes = this.getMergedFreeList(info.getSchedule(), currentLayer, info.getFreeList());
-
-//        List<Task> freeNodes = new ArrayList<>(currentLayer);
-//        freeNodes.addAll(this.graph.buildTaskListFromIds(info.getFreeList()));
-
-
         // check how many parents and childrens task has
         for (Task task : freeNodes) {
             if (task.getNumberOfParents() > 1 || task.getNumberOfChildren() > 1){
@@ -334,15 +325,16 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 }
             }
         }
-
         return sortFTOTasks(freeNodes, info.getSchedule());
-        //return freeNodes;
     }
 
-//    private List<ScheduleInfo> generateFTOCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer) {
-//
-//    }
-
+    /** Section of this method runs in parallel, depending on number of threads available. Each combinatorial expansion of a node onto every processor is handled
+     *  concurrently as a separate callable task that is invoked by the executor. So the number of parallel tasks executed is equal to the size of the currentlayer
+     * @param scheduleinfo
+     * @param currentLayer
+     * @param numberOfProcessors
+     * @return
+     */
     private List<ScheduleInfo> generateAllCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer, int numberOfProcessors) {
         Schedule schedule = scheduleinfo.getSchedule();
 
@@ -358,37 +350,39 @@ public class AStarAlgorithm extends BaseAlgorithm {
         if (currentLayer.size() == 0) {
             return null;
         }
+        // create list of parallel tasks that will be called by the executor
+        List<Callable<List<ScheduleInfo>>> callables = new ArrayList<>();
+        for (int i=0;i<currentLayer.size();i++){
+            final Task currentTask = currentLayer.get(i);
 
-        List<ScheduleInfo> out = new ArrayList<>();
-        for (int i = 0; i < currentLayer.size(); i++) {
-            Task node = currentLayer.get(i);
-
-            for (int processId = 0; processId < numberOfProcessors; processId++) {
-                Schedule newSchedule = new Schedule(schedule);
-                this.scheduler.addTask(newSchedule, node, processId);
-
-                List<String> expandedFreeNodeIds = new ArrayList<>();
-                List<Task> expandedFreeNodes = new ArrayList<>();
-
-                for (String childId : node.getChildrenList()) {
-                    Task child = this.graph.getTask(childId);
-                    boolean isTaskFree = true;
-                    for (String parentId : child.getParentTasks()) {
-                        if (!schedule.isTaskAssigned(parentId)) {
-                            isTaskFree = false;
-                            break;
-                        }
-                    }
-                    if (isTaskFree) {
-                        expandedFreeNodeIds.add(childId);
-                        expandedFreeNodes.add(child);
-                    }
+            //define what occurs in the parallel task
+            Callable<List<ScheduleInfo>> parallelTask = () ->{
+                List<ScheduleInfo> newSchedules = new ArrayList<>();
+                for (int processId = 0; processId < numberOfProcessors; processId++) {
+                    Schedule newSchedule = new Schedule(schedule);
+                    this.scheduler.addTask(newSchedule, currentTask, processId);
+                    List<String> expandedFreeNodeIds = new ArrayList<>();
+                    List<Task> expandedFreeNodes = new ArrayList<>();
+                    this.addNewFreeTasks(currentTask,expandedFreeNodeIds,expandedFreeNodes,schedule);
+                    newSchedules.add(new ScheduleInfo(newSchedule, scheduleinfo.getLayer(), expandedFreeNodeIds, calculateCost(newSchedule, expandedFreeNodes)));
                 }
-
-                out.add(new ScheduleInfo(newSchedule, scheduleinfo.getLayer(), expandedFreeNodeIds, calculateCost(newSchedule, expandedFreeNodes)));
-            }
+                return newSchedules;
+            };
+            //Add the paralleltasks to callable list
+            callables.add(parallelTask);
         }
 
+        List<ScheduleInfo> out = new ArrayList<>();
+        try {
+            //run all the parallel tasks, executor handles assigning each job to an available thread defined by our threadpool size
+            List<Future<List<ScheduleInfo>>> futureTasks = executor.invokeAll(callables);
+            for (Future<List<ScheduleInfo>> futureTask : futureTasks){
+                List<ScheduleInfo> newStates = futureTask.get();
+                out.addAll(newStates);
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
         return out;
     }
 
@@ -408,29 +402,29 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
             List<String> expandedFreeNodeIds = new ArrayList<>();
             List<Task> expandedFreeNodes = new ArrayList<>();
-
-            for (String childId : head.getChildrenList()) {
-                Task child = this.graph.getTask(childId);
-                boolean isTaskFree = true;
-                for (String parentId : child.getParentTasks()) {
-                    if (!schedule.isTaskAssigned(parentId)) {
-                        isTaskFree = false;
-                        break;
-                    }
-                }
-                if (isTaskFree) {
-                    expandedFreeNodeIds.add(childId);
-                    expandedFreeNodes.add(child);
-                }
-            }
-
+            this.addNewFreeTasks(head,expandedFreeNodeIds,expandedFreeNodes,schedule);
             out.add(new ScheduleInfo(newSchedule, scheduleInfo.getLayer(), expandedFreeNodeIds, calculateCost(newSchedule, expandedFreeNodes)));
         }
         ftoList.remove(0);
         return out;
     }
 
-
+    private void addNewFreeTasks(Task node,List<String> expandedFreeNodeIds, List<Task> expandedFreeNodes, Schedule schedule){
+        for (String childId : node.getChildrenList()) {
+            Task child = this.graph.getTask(childId);
+            boolean isTaskFree = true;
+            for (String parentId : child.getParentTasks()) {
+                if (!schedule.isTaskAssigned(parentId)) {
+                    isTaskFree = false;
+                    break;
+                }
+            }
+            if (isTaskFree) {
+                expandedFreeNodeIds.add(childId);
+                expandedFreeNodes.add(child);
+            }
+        }
+    }
     private Queue<Task> sortFTOTasks(List<Task> tasks, Schedule schedule) {
         PriorityQueue<Task> result = new PriorityQueue<Task>(new FTOComparator(schedule, this.graph));
 
@@ -444,19 +438,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
     }
 
 
-
-
-    private void getBottomLevels(List<Task> tasks, int currentBottomLevel) {
-        for (Task node : tasks) {
-            if (node.getCost() < currentBottomLevel + node.getCost()) {
-                node.setBottomLevel(currentBottomLevel + node.getCost());
-            }
-            if (!node.getParentTasks().isEmpty()) {
-                getBottomLevels(graph.buildTaskListFromIds(node.getParentTasks()),
-                        node.getBottomLevel());
-            }
-        }
-    }
 
     private boolean verifySortedFTOList(PriorityQueue<Task> ftoList) {
 
@@ -483,6 +464,19 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
         return true;
     }
+
+    private void getBottomLevels(List<Task> tasks, int currentBottomLevel) {
+        for (Task node : tasks) {
+            if (node.getCost() < currentBottomLevel + node.getCost()) {
+                node.setBottomLevel(currentBottomLevel + node.getCost());
+            }
+            if (!node.getParentTasks().isEmpty()) {
+                getBottomLevels(graph.buildTaskListFromIds(node.getParentTasks()),
+                        node.getBottomLevel());
+            }
+        }
+    }
+
 
     /**
      * Heuristic that orders schedules in ascending order of cost. (Lowest cost first)

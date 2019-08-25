@@ -23,7 +23,7 @@ public class BasicSchedulerTest {
         try {
             Graph graph = this.parser.parse("src/test/resources/Nodes_8_Random.dot");
             BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BASIC_ALGORITHM, 0);
-            Schedule schedule = algorithm.execute(graph, 1, sysInfo);
+            Schedule schedule = algorithm.execute(graph, 1,1, sysInfo);
             assertEquals("Processor 0\n" +
                     "t0 scheduled at: 0\n" +
                     "t1 scheduled at: 35\n" +
@@ -45,7 +45,7 @@ public class BasicSchedulerTest {
         try {
             Graph graph = this.parser.parse("src/test/resources/Nodes_8_Random.dot");
             BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BASIC_ALGORITHM, 0);
-            Schedule schedule = algorithm.execute(graph, 2, sysInfo);
+            Schedule schedule = algorithm.execute(graph, 2,1,sysInfo);
             assertEquals("Processor 0\n" +
                     "t0 scheduled at: 0\n" +
                     "t1 scheduled at: 35\n" +
