@@ -19,7 +19,9 @@ public abstract class BaseAlgorithm {
      * @param numberOfCores
      * @return optimal schedule
      */
-    public abstract Schedule execute(Graph graph, int numberOfProcessors, int numberOfCores);
+    public abstract Schedule execute(Graph graph, int numberOfProcessors, int numberOfCores, SystemInformation sysInfo);
+
+   
 
     public abstract String toString();
 

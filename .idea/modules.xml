@@ -3,8 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/schedulingproblem.iml" filepath="$PROJECT_DIR$/.idea/modules/schedulingproblem.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/schedulingproblem.main.iml" filepath="$PROJECT_DIR$/.idea/modules/schedulingproblem.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/schedulingproblem.test.iml" filepath="$PROJECT_DIR$/.idea/modules/schedulingproblem.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/schedulingproblem.iml" filepath="$PROJECT_DIR$/.idea/modules/schedulingproblem.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/schedulingproblem_main.iml" filepath="$PROJECT_DIR$/.idea/modules/schedulingproblem_main.iml" group="schedulingproblem" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/schedulingproblem_test.iml" filepath="$PROJECT_DIR$/.idea/modules/schedulingproblem_test.iml" group="schedulingproblem" />
     </modules>
   </component>
 </project>

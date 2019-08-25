@@ -16,7 +16,7 @@ public class BranchAndBoundAlgorithm extends BaseAlgorithm {
     int counter = 0;
 
     @Override
-    public Schedule execute(Graph graph, int numberOfProcessors, int numberOfCores) {
+    public Schedule execute(Graph graph, int numberOfProcessors, int numberOfCores, SystemInformation systemInformation) {
         this.graph = graph;
         this.scheduler = new Scheduler(graph);
         bestUpperBound = Integer.MAX_VALUE;

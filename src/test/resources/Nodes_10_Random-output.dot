@@ -1,0 +1,31 @@
+digraph "Optimal-Schedule-For-src/test/resources/Nodes_10_Random-output" {
+	0	[Weight=6, Processor=0, Start_time=0];
+	1	[Weight=5, Processor=0, Start_time=6];
+	2	[Weight=5, Processor=0, Start_time=11];
+	4	[Weight=3, Processor=0, Start_time=16];
+	6	[Weight=8, Processor=0, Start_time=19];
+	7	[Weight=3, Processor=0, Start_time=27];
+	8	[Weight=8, Processor=0, Start_time=30];
+	9	[Weight=8, Processor=0, Start_time=38];
+	5	[Weight=7, Processor=1, Start_time=30];
+	3	[Weight=10, Processor=1, Start_time=40];
+	1 -> 2	[Weight=48];
+	0 -> 4	[Weight=24];
+	1 -> 6	[Weight=39];
+	4 -> 6	[Weight=10];
+	2 -> 7	[Weight=48];
+	4 -> 7	[Weight=48];
+	6 -> 7	[Weight=15];
+	2 -> 8	[Weight=48];
+	4 -> 8	[Weight=48];
+	6 -> 8	[Weight=39];
+	7 -> 8	[Weight=15];
+	0 -> 9	[Weight=44];
+	4 -> 9	[Weight=39];
+	6 -> 9	[Weight=29];
+	7 -> 9	[Weight=34];
+	8 -> 9	[Weight=39];
+	1 -> 5	[Weight=19];
+	0 -> 3	[Weight=34];
+	2 -> 3	[Weight=10];
+}
