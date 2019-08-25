@@ -19,6 +19,7 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -51,6 +52,11 @@ public class MainScreen implements Initializable {
     private Service<Pair<Schedule, Graph>> algorithmService;
 
     private Integer branchesChecked;
+    private BarChart<String,Integer> barChart;
+    private Integer numberOfBars;
+
+    XYChart.Series series ;
+
     @FXML
     private Label branchesCheckedLabel;
 
@@ -89,6 +95,21 @@ public class MainScreen implements Initializable {
     @FXML
     private BarChart<String,Long> performanceGraph;
 
+    @FXML
+    private Pane performancePane;
+
+    @FXML
+    private Button loadButton;
+
+    @FXML
+    private Button stopButton;
+
+    @FXML
+    private Button playButton;
+
+    @FXML
+    private Button settingsButton;
+
     public MainScreen(Config config) {
         this.config = config;
 
@@ -97,6 +118,7 @@ public class MainScreen implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
         input_graph = new SingleGraph("IG");
         schedule_graph = new SingleGraph("SG");
@@ -104,8 +126,12 @@ public class MainScreen implements Initializable {
         int mb = 1024 * 1024;
         Runtime instance = Runtime.getRuntime();
         long maxMemory = instance.maxMemory() ;
-
         setup_labels(String.valueOf(config.getNumberOfCores()), String.valueOf(config.getNumberOfProcessors()),Long.toString(maxMemory));
+
+        createBarChart();
+
+        enableRuntimeTimeButtons();
+
         loadInputGraph(this.config.getInputDotFile());
         this.loaded_graph_label.setText(this.config.getInputDotFile());
         initialiseScheduleGraph();
@@ -114,14 +140,48 @@ public class MainScreen implements Initializable {
         this.bindLabel(sysInfo.schedulesExploredProperty(), schedules_explored);
         System.out.println("initialised");
         sysInfo.addListener(this::buildScheduleGraph);
-
     }
 
     private void resetScheduleGraph() {
         schedule_graph.clear();
         initialiseScheduleGraph();
-    }
 
+    }
+    private void addPerformance(String graphName, Integer runtime){
+
+        if (numberOfBars >= 4){
+            series.getData().clear();
+        }
+        numberOfBars +=1;
+        series.getData().add(new XYChart.Data(graphName, runtime));
+
+    }
+    private void createBarChart(){
+        numberOfBars = 0;
+        performancePane.getChildren().clear();
+        CategoryAxis xAxis    = new CategoryAxis();
+        xAxis.setTickLabelFill(Color.CHOCOLATE);
+        xAxis.setTickLabelGap(0);
+
+        NumberAxis yAxis = new NumberAxis();
+        yAxis.setLabel("Runtime");
+        yAxis.setTickLabelFill(Color.CHOCOLATE);
+        yAxis.setTickLabelGap(0);
+
+        barChart = new BarChart(xAxis, yAxis);
+
+        barChart.setAnimated(false);
+        barChart.setLegendVisible(false);
+        barChart.setMaxSize(800,LARGE_PANE_HEIGHT);
+
+        barChart.setMinSize(799,LARGE_PANE_HEIGHT-1);
+
+        performancePane.getChildren().add(barChart);
+        barChart.getData().clear();
+        series = new XYChart.Series();
+        barChart.getData().add(series);
+
+    }
 
     private void bindLabel(IntegerProperty systemProperty, Label label) {
         systemProperty.addListener((obs, oldVal, newVal) -> {
@@ -144,6 +204,21 @@ public class MainScreen implements Initializable {
         schedules_in_array.setText("0 K");
     }
 
+    public void disableRuntimeButtons(){
+        loadButton.setDisable(true);
+        playButton.setDisable(true);
+        stopButton.setDisable(false);
+        settingsButton.setDisable(true);
+    }
+
+    public void enableRuntimeTimeButtons(){
+        loadButton.setDisable(false);
+        playButton.setDisable(false);
+        stopButton.setDisable(true);
+        settingsButton.setDisable(false);
+    }
+
+
     public void updateOptimalSchedule(Schedule schedule, Graph graph){
         final NumberAxis xAxis = new NumberAxis();
         final CategoryAxis yAxis = new CategoryAxis();
@@ -159,16 +234,19 @@ public class MainScreen implements Initializable {
         for (Map.Entry<Integer,Processor> entry: processorMap.entrySet()){
             Integer proc = entry.getKey() +1;
             processors[count] = "CPU " + (proc).toString();
+
+            System.out.println("CPU " + (proc).toString());
             count +=1;
         }
 
         yAxis.setLabel("");
         yAxis.setTickLabelFill(Color.CHOCOLATE);
-        yAxis.setTickLabelGap(10);
+        yAxis.setTickLabelGap(0);
         yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(processors)));
 
+
         chart.setLegendVisible(false);
-        chart.setBlockHeight( 20);
+        chart.setBlockHeight( 10);
         // adding information to chart
         count = 0;
         for (Map.Entry<Integer, Processor> entry: processorMap.entrySet()){
@@ -196,6 +274,8 @@ public class MainScreen implements Initializable {
             optimalSchedule.getChildren().add(chart);
         });
     }
+
+
 
     private void loadInputGraph(String path) {
         DOTParser parser = new DOTParser();
@@ -279,24 +359,24 @@ public class MainScreen implements Initializable {
     }
 
     @FXML
-    public void playButtonPressed() {
+    public void playButtonPressed()        {
 
-        startTimer();
-        resetScheduleGraph();
-        branchesChecked = 0;
-        algorithmService = new Service<Pair<Schedule, Graph>>() {
+            startTimer();
+            resetScheduleGraph();
+            disableRuntimeButtons();
+            branchesChecked = 0;
+            algorithmService = new Service<Pair<Schedule, Graph>>() {
 
-            @Override
-            protected Task<Pair<Schedule, Graph>> createTask() {
-                return new Task<Pair<Schedule, Graph>>() {
-                    @Override
-                    protected Pair<Schedule, Graph> call() throws IOException, InterruptedException {
-                        return Main.startAlgorithm(config, sysInfo);
-                    }
-                };
-            }
-        };
-
+                @Override
+                protected Task<Pair<Schedule, Graph>> createTask() {
+                    return new Task<Pair<Schedule, Graph>>() {
+                        @Override
+                        protected Pair<Schedule, Graph> call() throws IOException, InterruptedException {
+                            return Main.startAlgorithm(config, sysInfo);
+                        }
+                    };
+                }
+            };
 
         algorithmService.setOnSucceeded((e) -> {
             System.out.println("Algorithm Finished");
@@ -320,7 +400,13 @@ public class MainScreen implements Initializable {
 
             optimalScheduleCost.setText(Integer.toString(optimal.getCost()));
             updateOptimalSchedule(optimal, graph);
+            enableRuntimeTimeButtons();
+
+
+            int durationInMillis = (int)(System.currentTimeMillis() - startTime);
+
             this.stopTimer();
+            addPerformance(graph_path.getName(), durationInMillis);
         });
 
         algorithmService.setOnFailed((t) -> {
@@ -353,7 +439,7 @@ public class MainScreen implements Initializable {
         if (file != null) {
             graph_path = file;
             System.out.println(graph_path.toString());
-            loaded_graph_label.setText(file.toString());
+            loaded_graph_label.setText(file.getName());
             config.setInputDotFile(file.toString());
             resetScheduleGraph();
             input_graph.clear();
