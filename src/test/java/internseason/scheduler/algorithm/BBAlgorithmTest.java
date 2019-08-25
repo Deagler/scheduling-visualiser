@@ -27,32 +27,12 @@ public class BBAlgorithmTest {
     }
 
     @Test
-    public void testGreedyScheduler() throws InputException {
-        Graph graph = this.parser.parse("src/test/resources/Nodes_7_OutTree.dot");
-
-        Set<String> free = new HashSet<>();
-        for(Task task : graph.getTasks().values()) {
-            if (task.getId().equals("0")) {
-                free.add(task.getId());
-
-            }
-        }
-
-        Scheduler scheduler = new Scheduler(graph);
-        Schedule schedule = scheduler.buildGreedySchedule(new BBScheduleInfo(new Schedule(2), Integer.MIN_VALUE, Integer.MAX_VALUE, free),graph);
-
-
-
-
-    }
-
-    @Test
     public void testBBSchedule1() {
         try {
             Graph graph = this.parser.parse("src/test/resources/Test_Diamond.dot");
             BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM);
-            Schedule schedule = algorithm.execute(graph,2, 1,sysInfo);
-            assertEquals(schedule.getCost(), 8);
+            Schedule schedule = algorithm.execute(graph, 2, 1, sysInfo);
+            assertEquals(8, schedule.getCost());
         } catch (InputException e) {
             e.printStackTrace();
         }
@@ -63,8 +43,8 @@ public class BBAlgorithmTest {
         try {
             Graph graph = this.parser.parse("src/test/resources/Nodes_7_OutTree.dot");
             BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM);
-            Schedule schedule = algorithm.execute(graph,2, 1,sysInfo);
-            assertEquals(schedule.getCost(), 28);
+            Schedule schedule = algorithm.execute(graph, 2, 1, sysInfo);
+            assertEquals(28, schedule.getCost());
         } catch (InputException e) {
             e.printStackTrace();
         }
@@ -75,8 +55,8 @@ public class BBAlgorithmTest {
         try {
             Graph graph = this.parser.parse("src/test/resources/Nodes_9_SeriesParallel.dot");
             BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM);
-            Schedule schedule = algorithm.execute(graph,4, 1,sysInfo);
-            assertEquals(schedule.getCost(), 55);
+            Schedule schedule = algorithm.execute(graph, 4, 1, sysInfo);
+            assertEquals(55, schedule.getCost());
         } catch (InputException e) {
             e.printStackTrace();
         }
@@ -87,18 +67,16 @@ public class BBAlgorithmTest {
         try {
             Graph graph = this.parser.parse("src/test/resources/Nodes_8_Random.dot");
             BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM);
-            Schedule schedule = algorithm.execute(graph,4, 1,sysInfo);
-            assertEquals(schedule.getCost(), 581);
+            Schedule schedule = algorithm.execute(graph, 4, 1, sysInfo);
+            assertEquals(581, schedule.getCost());
         } catch (InputException e) {
             e.printStackTrace();
         }
     }
 
-    private void testGraph(String graphPath, int numberOfProcessors, int expectedCost) {
-        try {
-            Graph graph = this.parser.parse(graphPath);
-            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM);
-            Schedule schedule = algorithm.execute(graph,numberOfProcessors, 1,sysInfo);
+    @Test
+    public void testGreedyScheduler() throws InputException {
+        Graph graph = this.parser.parse("src/test/resources/Nodes_7_OutTree.dot");
 
         Set<String> free = new HashSet<>();
         for (Task task : graph.getTasks().values()) {
@@ -110,7 +88,7 @@ public class BBAlgorithmTest {
 
         Scheduler scheduler = new Scheduler(graph);
         Schedule schedule = scheduler.buildGreedySchedule(new BBScheduleInfo(new Schedule(2), Integer.MIN_VALUE, Integer.MAX_VALUE, free), graph);
-        System.out.println(schedule);
+        assertEquals(33, schedule.getCost());
 
     }
 
