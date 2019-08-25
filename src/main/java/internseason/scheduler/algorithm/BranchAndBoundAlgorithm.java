@@ -3,6 +3,7 @@ package internseason.scheduler.algorithm;
 import com.google.common.collect.MinMaxPriorityQueue;
 import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Schedule;
+import internseason.scheduler.model.Scheduler;
 import internseason.scheduler.model.Task;
 
 import java.util.*;
@@ -11,11 +12,13 @@ import java.util.stream.Collectors;
 public class BranchAndBoundAlgorithm extends BaseAlgorithm {
     Graph graph;
     private int bestUpperBound;
+    private Scheduler scheduler;
     int counter = 0;
 
     @Override
-    public Schedule execute(Graph graph, int numberOfProcessors) {
+    public Schedule execute(Graph graph, int numberOfProcessors, int numberOfCores) {
         this.graph = graph;
+        this.scheduler = new Scheduler(graph);
         bestUpperBound = Integer.MAX_VALUE;
 
         MinMaxPriorityQueue<BBScheduleInfo> queue = MinMaxPriorityQueue.orderedBy(new Comparator<BBScheduleInfo>() {
@@ -26,7 +29,7 @@ public class BranchAndBoundAlgorithm extends BaseAlgorithm {
         }).create();
 
 
-        Schedule rootSchedule = new Schedule(numberOfProcessors, graph.getTasks());
+        Schedule rootSchedule = new Schedule(numberOfProcessors);
         Set<String> freeList = new HashSet<>();
 
         // build free list in one pass
@@ -50,7 +53,6 @@ public class BranchAndBoundAlgorithm extends BaseAlgorithm {
         while(!queue.isEmpty()){
             BBScheduleInfo currentSchedule = queue.poll();
             if (currentSchedule.getLowerBound() == currentSchedule.getUpperBound() && currentSchedule.freeTasks.isEmpty()){
-                System.out.println(counter+ " ub and lb "+currentSchedule.getUpperBound()+" "+currentSchedule.getLowerBound());
                 return currentSchedule.getSchedule();
             }
 
@@ -58,22 +60,18 @@ public class BranchAndBoundAlgorithm extends BaseAlgorithm {
             List<BBScheduleInfo> finalSchedules = new ArrayList<>();
             //compute LB and UB
             for (BBScheduleInfo schedule : candSchedules){
-                int upperBound = Schedule.buildGreedySchedule(schedule,graph).getCost();
+                int upperBound = this.scheduler.buildGreedySchedule(schedule,graph).getCost();
                 int lowerBound = this.calculateLowerBound(schedule);
                 schedule.setUpperBound(upperBound);
                 schedule.setLowerBound(lowerBound);
                 if (upperBound < bestUpperBound){
-                    System.out.println("updated ub");
                     bestUpperBound = upperBound;
                     while (queue.peekLast() != null && queue.peekLast().getLowerBound() > bestUpperBound){
-                        System.out.println("prune exisiting ");
                         queue.pollLast();
                     }
                 }
                 if (lowerBound <= upperBound){
                     finalSchedules.add(schedule);
-                } else {
-                    System.out.println("prune new");
                 }
             }
             counter+=finalSchedules.size();
@@ -90,7 +88,7 @@ public class BranchAndBoundAlgorithm extends BaseAlgorithm {
         int maxPath = Integer.MIN_VALUE;
         for (String taskId : freelist){
             Task task = this.graph.getTask(taskId);
-            int cPath = schedule.getEarliestStartTime(task) + task.getBottomLevel();
+            int cPath = this.scheduler.getEarliestStartTime(schedule, task) + task.getBottomLevel();
             maxPath = Math.max(cPath, maxPath);
         }
         if (maxPath < schedule.getCost()){
@@ -115,8 +113,8 @@ public class BranchAndBoundAlgorithm extends BaseAlgorithm {
             Task task = this.graph.getTask(taskId);
 
             for (int processId = 0; processId < schedule.getNumOfProcessors(); processId++) {
-                Schedule newSchedule = new Schedule(schedule, this.graph.getTasks());
-                newSchedule.add(task, processId);
+                Schedule newSchedule = new Schedule(schedule);
+                this.scheduler.addTask(newSchedule, task, processId);
 
                 Set<String> expandedFreeList = new HashSet<>();
 
@@ -133,7 +131,6 @@ public class BranchAndBoundAlgorithm extends BaseAlgorithm {
                 for (String id : newFreeList) {
                     expandedFreeList.add(id);
                 }
-                System.out.println(expandedFreeList);
                 BBScheduleInfo info = new BBScheduleInfo(newSchedule, scheduleInfo.lowerBound, scheduleInfo.upperBound, expandedFreeList);
                 out.add(info);
 

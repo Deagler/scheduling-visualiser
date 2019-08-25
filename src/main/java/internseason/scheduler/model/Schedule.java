@@ -76,35 +76,6 @@ public class Schedule implements Serializable {
     }
 
 
-    /**
-     * Given a task t, schedule it on a processor p such that t's start time is minimised
-     */
-    public void addWithLowestStartTime(Task task) {
-        int earliest = Integer.MAX_VALUE;
-        int targetProcessorId = 0;
-        for (int processorId = 0; processorId < numOfProcessors; processorId++) {
-            int time = findNextAvailableTimeInProcessor(task, processorId);
-            if (time < earliest) {
-                earliest = time;
-                targetProcessorId = processorId;
-            }
-        }
-
-        this.add(task, targetProcessorId);
-    }
-
-
-    public int getEarliestStartTime(Task task){
-        int earliest = Integer.MAX_VALUE;
-        for (int processorId = 0; processorId < numOfProcessors; processorId++) {
-            int time = findNextAvailableTimeInProcessor(task, processorId);
-            if (time < earliest) {
-                earliest = time;
-            }
-        }
-        return earliest;
-    }
-
     public int getMaxBottomLevel() {
         return maxBottomLevel;
     }
@@ -193,31 +164,6 @@ public class Schedule implements Serializable {
         return sb.toString();
     }
 
-    public static Schedule buildGreedySchedule(BBScheduleInfo scheduleInfo, Graph graph) {
-        Schedule cloneSchedule = new Schedule(scheduleInfo.getSchedule(),graph.getTasks());
-
-        Set<String> freeList = scheduleInfo.getFreeTasks();
-        System.out.println("original free list"+freeList);
-        int counter = 0;
-        while (freeList.size() > 0) {
-
-            Set<String> temp = new HashSet<>();
-            for (String taskId : freeList) {
-                Task task = graph.getTask(taskId);
-                cloneSchedule.addWithLowestStartTime(graph.getTask(taskId));
-                for (String childId : task.getChildrenList()) {
-                    Task child = graph.getTask(childId);
-                    if (cloneSchedule.isTaskFree(child)) {
-                        temp.add(child.getId());
-                    }
-                }
-            }
-            freeList = temp;
-            System.out.println(" new free list "+ freeList+ " iteration: "+ counter);
-            counter++;
-        }
-        return cloneSchedule;
-    }
     @Override
     public int hashCode() {
         HashCodeBuilder builder = new HashCodeBuilder();

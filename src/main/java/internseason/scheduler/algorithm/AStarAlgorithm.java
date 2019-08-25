@@ -441,6 +441,19 @@ public class AStarAlgorithm extends BaseAlgorithm {
         return true;
     }
 
+    private void getBottomLevels(List<Task> tasks, int currentBottomLevel) {
+        for (Task node : tasks) {
+            if (node.getCost() < currentBottomLevel + node.getCost()) {
+                node.setBottomLevel(currentBottomLevel + node.getCost());
+            }
+            if (!node.getParentTasks().isEmpty()) {
+                getBottomLevels(graph.buildTaskListFromIds(node.getParentTasks()),
+                        node.getBottomLevel());
+            }
+        }
+    }
+
+
     /**
      * Heuristic that orders schedules in ascending order of cost. (Lowest cost first)
      * If costs are equal then the schedule with a higher number of tasks assigned comes first.

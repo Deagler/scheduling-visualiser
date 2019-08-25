@@ -5,6 +5,7 @@ import internseason.scheduler.exceptions.InputException;
 import internseason.scheduler.input.DOTParser;
 import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Schedule;
+import internseason.scheduler.model.Scheduler;
 import internseason.scheduler.model.Task;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +35,9 @@ public class BBAlgorithmTest {
 
             }
         }
-        Schedule schedule = Schedule.buildGreedySchedule(new BBScheduleInfo(new Schedule(2, graph.getTasks()), Integer.MIN_VALUE, Integer.MAX_VALUE, free),graph);
+
+        Scheduler scheduler = new Scheduler(graph);
+        Schedule schedule = scheduler.buildGreedySchedule(new BBScheduleInfo(new Schedule(2), Integer.MIN_VALUE, Integer.MAX_VALUE, free),graph);
         System.out.println(schedule);
 
 
@@ -46,7 +49,7 @@ public class BBAlgorithmTest {
         try {
             Graph graph = this.parser.parse("src/test/resources/Test_Diamond.dot");
             BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM, 0);
-            Schedule schedule = algorithm.execute(graph,2);
+            Schedule schedule = algorithm.execute(graph,2, 1);
             assertEquals(schedule.getCost(), 8);
         } catch (InputException e) {
             e.printStackTrace();
@@ -58,8 +61,7 @@ public class BBAlgorithmTest {
         try {
             Graph graph = this.parser.parse("src/test/resources/Nodes_7_OutTree.dot");
             BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM, 0);
-            Schedule schedule = algorithm.execute(graph,2);
-            System.out.println(schedule);
+            Schedule schedule = algorithm.execute(graph,2, 1);
             assertEquals(schedule.getCost(), 28);
         } catch (InputException e) {
             e.printStackTrace();
@@ -71,8 +73,7 @@ public class BBAlgorithmTest {
         try {
             Graph graph = this.parser.parse("src/test/resources/Nodes_9_SeriesParallel.dot");
             BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM, 0);
-            Schedule schedule = algorithm.execute(graph,4);
-            System.out.println(schedule);
+            Schedule schedule = algorithm.execute(graph,4, 1);
             assertEquals(schedule.getCost(), 55);
         } catch (InputException e) {
             e.printStackTrace();
@@ -84,32 +85,19 @@ public class BBAlgorithmTest {
         try {
             Graph graph = this.parser.parse("src/test/resources/Nodes_8_Random.dot");
             BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM, 0);
-            Schedule schedule = algorithm.execute(graph,4);
-            System.out.println(schedule);
+            Schedule schedule = algorithm.execute(graph,4, 1);
             assertEquals(schedule.getCost(), 581);
         } catch (InputException e) {
             e.printStackTrace();
         }
     }
-
-    @Test
-    public void testBBSchedule5() {
-        try {
-            Graph graph = this.parser.parse("src/test/resources/Nodes_11_OutTree.dot");
-            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM, 0);
-            Schedule schedule = algorithm.execute(graph,2);
-            System.out.println(schedule);
-            assertEquals(schedule.getCost(), 350);
-        } catch (InputException e) {
-            e.printStackTrace();
-        }
-    }
+    
 
     private void testGraph(String graphPath, int numberOfProcessors, int expectedCost) {
         try {
             Graph graph = this.parser.parse(graphPath);
             BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM, 0);
-            Schedule schedule = algorithm.execute(graph,numberOfProcessors);
+            Schedule schedule = algorithm.execute(graph,numberOfProcessors, 1);
 
             assertEquals(expectedCost, schedule.getCost());
         } catch (InputException e) {
