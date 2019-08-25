@@ -14,6 +14,10 @@ public enum AlgorithmType {
         public BaseAlgorithm getInstance() {
             return new BasicAlgorithm();
         }
+    },
+    BRANCH_AND_BOUND_ALGORITHM {
+        @Override
+        public BaseAlgorithm getInstance() { return new BranchAndBoundAlgorithm();}
     };
 
     public abstract BaseAlgorithm getInstance();

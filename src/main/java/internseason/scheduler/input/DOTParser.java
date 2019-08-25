@@ -37,7 +37,7 @@ public class DOTParser {
 
         graph.setTasks(tasks);
         graph.setDependencies(this.createDependencies(tasks));
-
+        graph.buildBottomLevels();
         return graph;
     }
 
