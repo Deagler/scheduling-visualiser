@@ -34,7 +34,7 @@ public class Schedule implements Serializable {
         this.idleTime = schedule.idleTime;
     }
 
-    public void initializeProcessMap(int numberOfProcesses) {
+    private void initializeProcessMap(int numberOfProcesses) {
         this.processorIdMap = new HashMap<>();
 
         for (int i = 0; i < numberOfProcesses; i++) {
@@ -52,10 +52,6 @@ public class Schedule implements Serializable {
 
     public Map<String, Integer> getTaskIdProcessorMap() {
         return this.taskIdProcessorMap;
-    }
-
-    public int numProcessors() {
-        return numOfProcessors;
     }
 
     public void add(Task task, int processorId, int time) {
@@ -105,16 +101,6 @@ public class Schedule implements Serializable {
         if (cost > this.cost) {
             this.cost = cost;
         }
-    }
-
-    private void recalculateCost() {
-        int max = 0;
-        for (Processor p: processorIdMap.values()) {
-            if (p.getCost() > max) {
-                max = p.getCost();
-            }
-        }
-        this.cost = max;
     }
 
     public int getCost() {
