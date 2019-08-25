@@ -27,6 +27,10 @@ usage: internseason.scheduler.algorithm-basic-T10 INPUT.dot <NumberOfProcessors>
 ```
 
 
+## Documentation
+
+All documentation and discussions are available on our Github Wiki.
+
 ## Team 
  - **Team Lead:** James Zhang | JamesUoA | 678381072
  - **Waterfall Master:** Andrew Hu | andrewh318 | 227662102
