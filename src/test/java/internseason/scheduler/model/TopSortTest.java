@@ -42,16 +42,15 @@ public class TopSortTest {
             //get top ordering
             List<List<Task>> topOrder =  graph.getTopologicalOrdering();
             List<Task> visited = new ArrayList<>();
-            System.out.println(topOrder);
             //check that each task's outgoing edge isnt already visited, if it is then top ordering is violated
-//            for (List<String> layer : topOrder){
-//                Task task = graph.getTask(s);
-//                visited.add(task);
-//                List<Dependency> outgoingEdges = task.getOutgoingEdges();
-//                for (Dependency dependency : outgoingEdges){
-//                    assertTrue(!visited.contains(dependency.getTargetTask()));
-//                }
-//            }
+            for (List<Task> layer : topOrder){
+                for (Task task : layer){
+                    List<String> parentIds = task.getChildrenList();
+                    for (String parentId : parentIds){
+                        assertTrue(!layer.contains(graph.getTask(parentId)));
+                    }
+                }
+            }
         } catch (InputException e) {
             e.printStackTrace();
             fail();
