@@ -7,10 +7,13 @@ import internseason.scheduler.model.Task;
 
 import java.util.List;
 
+
+/** Trivial algorithm that allocates every task on a single processor
+ */
 public class BasicAlgorithm extends BaseAlgorithm {
 
     @Override
-    public Schedule execute(Graph graph, int numberOfProcessors) {
+    public Schedule execute(Graph graph, int numberOfProcessors, int numOfCores) {
 
         Scheduler scheduler = new Scheduler(graph);
         Schedule schedule = new Schedule(numberOfProcessors);
