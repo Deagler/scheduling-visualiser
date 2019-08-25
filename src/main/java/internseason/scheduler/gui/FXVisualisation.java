@@ -19,6 +19,7 @@ public class FXVisualisation extends Application {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("MainScreen.fxml"));
             loader.setController(new MainScreen(Main.config));
+            MainScreen screen = loader.getController();
             root = loader.load();
 
 

@@ -44,10 +44,7 @@ public class Main {
             System.out.println("Error reading file: "+e.getMessage());
         }
 
-        BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(
-                AlgorithmType.A_STAR_ALGORITHM,
-                config.getNumberOfCores()
-        );
+        BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.A_STAR_ALGORITHM);
 
         Schedule schedule = algorithm.execute(graph, config.getNumberOfProcessors(),config.getNumberOfCores(), sysInfo);
         DOTOutputWriter outputWriter = new DOTOutputWriter();
