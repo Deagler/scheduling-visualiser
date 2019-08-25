@@ -3,45 +3,40 @@ package internseason.scheduler.model;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/** Graph abstraction of the input DAG, it is where we store the mapping of tasks to taskids
+ */
 public class Graph {
-    Map<String, Task> tasks;
+    Map<String, Task> tasks; //map of taskid to task objects
     List<Dependency> dependencies;
     Map<String, List<String>> adjacencyList;
     List<List<Task>> topologicalOrdering;
 
 
-    public Graph() {
-        tasks = new HashMap<>();
-    }
+    public Graph() { tasks = new HashMap<>(); }
 
-    public void setTasks(Map<String,Task> tasks) {
-        this.tasks = tasks;
-    }
+    public void setTasks(Map<String,Task> tasks) { this.tasks = tasks; }
 
-    public void setDependencies(List<Dependency> dependencies) {
-        this.dependencies = dependencies;
-    }
+    public void setDependencies(List<Dependency> dependencies) { this.dependencies = dependencies; }
 
-    public int size() {
-        return tasks.size();
-    }
+    public int size() { return tasks.size(); }
 
-    public Task getTask(String id) {
-        return tasks.get(id);
-    }
+    public Task getTask(String id) { return tasks.get(id); }
 
-    public Map<String, Task> getTasks() {
-        return this.tasks;
-    }
+    public Map<String, Task> getTasks() { return this.tasks; }
 
+    /** Retrieve topological ordering, which is used in Astar and Basic algorithm
+     * @return topological ordering of DAG
+     */
     public List<List<Task>> getTopologicalOrdering(){
         if (topologicalOrdering == null){
             createTopologicalOrdering();
         }
-
         return topologicalOrdering;
     }
 
+    /** Build adjacency list representation of the DAG on first call, subsequent calls return the built list
+     * @return Outdegree adjacency list representation
+     */
     private Map<String, List<String>> getAdjacencyList() {
         if (this.adjacencyList != null) {
             return this.adjacencyList;
@@ -64,6 +59,11 @@ public class Graph {
         return adjacencyList;
     }
 
+
+    /** Builds a topological ordering of the input DAG using the adjaceny list representation of the input graph
+     *  Psuedocode algorithm to build the ordering retrieved from:
+     *  https://courses.cs.washington.edu/courses/cse326/03wi/lectures/RaoLect20.pdf
+     */
     private void createTopologicalOrdering() {
         // Store the in degree of array
         adjacencyList = getAdjacencyList();
@@ -127,7 +127,7 @@ public class Graph {
     /** Loop through adjaceny list and increment indegree value of each task in the indegree map
      * @param adj adjaceny list of graph
      * @param inDegrees map of tasks to their current indegree
-     * @return
+     * @return updated indegree mapping
      */
     private Map<String,Integer> getInDegrees(Map<String,List<String>> adj, Map<String, Integer> inDegrees) {
 
@@ -148,6 +148,10 @@ public class Graph {
         return inDegrees;
     }
 
+    /** Builds a list of Task objects given the task's string id
+     * @param taskIds
+     * @return List of Task objects associated with the Ids
+     */
     public List<Task> buildTaskListFromIds(List<String> taskIds) {
         List<Task> result = taskIds.stream()
                 .map(t -> tasks.get(t))

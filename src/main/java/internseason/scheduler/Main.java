@@ -42,7 +42,7 @@ public class Main {
                 config.getNumberOfCores()
         );
 
-        Schedule schedule = algorithm.execute(graph, config.getNumberOfProcessors());
+        Schedule schedule = algorithm.execute(graph, config.getNumberOfProcessors(),config.getNumberOfCores());
         DOTOutputWriter outputWriter = new DOTOutputWriter();
 
         outputWriter.write(config.getOutputFileName(), schedule, graph.getTasks());
