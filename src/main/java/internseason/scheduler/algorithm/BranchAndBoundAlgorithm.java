@@ -21,6 +21,7 @@ public class BranchAndBoundAlgorithm extends BaseAlgorithm {
         this.scheduler = new Scheduler(graph);
         bestUpperBound = Integer.MAX_VALUE;
 
+        // initialize two ended priority queue- sorted by lower bound costs
         MinMaxPriorityQueue<BBScheduleInfo> queue = MinMaxPriorityQueue.orderedBy(new Comparator<BBScheduleInfo>() {
             @Override
             public int compare(BBScheduleInfo o1, BBScheduleInfo o2) {
@@ -39,6 +40,7 @@ public class BranchAndBoundAlgorithm extends BaseAlgorithm {
             }
         }
 
+        // root schedule
         BBScheduleInfo scheduleInfo = new BBScheduleInfo(
                 rootSchedule,
                 Integer.MIN_VALUE,
@@ -46,30 +48,33 @@ public class BranchAndBoundAlgorithm extends BaseAlgorithm {
                 freeList
         );
 
-
-
         queue.add(scheduleInfo);
 
         while(!queue.isEmpty()){
             BBScheduleInfo currentSchedule = queue.poll();
+
+            // exit condition when lower bound is equal to upper bound
             if (currentSchedule.getLowerBound() == currentSchedule.getUpperBound() && currentSchedule.freeTasks.isEmpty()){
                 return currentSchedule.getSchedule();
             }
 
             List<BBScheduleInfo> candSchedules = generateNewPartialSchedules(currentSchedule);
             List<BBScheduleInfo> finalSchedules = new ArrayList<>();
+
             //compute LB and UB
             for (BBScheduleInfo schedule : candSchedules){
                 int upperBound = this.scheduler.buildGreedySchedule(schedule,graph).getCost();
                 int lowerBound = this.calculateLowerBound(schedule);
                 schedule.setUpperBound(upperBound);
                 schedule.setLowerBound(lowerBound);
+
                 if (upperBound < bestUpperBound){
                     bestUpperBound = upperBound;
                     while (queue.peekLast() != null && queue.peekLast().getLowerBound() > bestUpperBound){
                         queue.pollLast();
                     }
                 }
+
                 if (lowerBound <= upperBound){
                     finalSchedules.add(schedule);
                 }
@@ -82,15 +87,24 @@ public class BranchAndBoundAlgorithm extends BaseAlgorithm {
         return null;
     }
 
+    /**
+     * Method that calculates the lower bound using the following algorithm:
+     * Source: https://pdfs.semanticscholar.org/1aa2/b187ee99abc19250d5dce73f390a7f65d9fe.pdf?fbclid=IwAR0TBmyseF_e5PxG5uCX90Js67bAu9oTDkgBNFllUxNGLwim7rCnrLCB0b8
+     * @param scheduleInfo
+     * @return lower bound for partial schedule
+     */
     private int calculateLowerBound(BBScheduleInfo scheduleInfo) {
         Set<String> freelist = scheduleInfo.freeTasks;
         Schedule schedule = scheduleInfo.getSchedule();
         int maxPath = Integer.MIN_VALUE;
+
+        // schedule each task on the earliest available processor
         for (String taskId : freelist){
             Task task = this.graph.getTask(taskId);
             int cPath = this.scheduler.getEarliestStartTime(schedule, task) + task.getBottomLevel();
             maxPath = Math.max(cPath, maxPath);
         }
+        
         if (maxPath < schedule.getCost()){
             List<Task> unscheduled = new ArrayList<>(this.graph.getTasks().values());
             // remove all scheduled tasks
@@ -104,6 +118,11 @@ public class BranchAndBoundAlgorithm extends BaseAlgorithm {
         return maxPath;
     }
 
+    /**
+     * Expands a partial schedule ('node') by generating all combinations of unscheduled tasks assigned to processors
+     * @param scheduleInfo
+     * @return a list of partial schedules 
+     */
     public List<BBScheduleInfo> generateNewPartialSchedules(BBScheduleInfo scheduleInfo) {
         Schedule schedule = scheduleInfo.getSchedule();
         Set<String> freeList = scheduleInfo.getFreeTasks();

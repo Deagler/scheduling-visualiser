@@ -58,6 +58,12 @@ public class Schedule implements Serializable {
         return numOfProcessors;
     }
 
+    /**
+     * Schedules a task on a particular process at some time
+     * @param task
+     * @param processorId
+     * @param time
+     */
     public void add(Task task, int processorId, int time) {
 
         if (!processorIdMap.containsKey(processorId)) {
@@ -89,6 +95,11 @@ public class Schedule implements Serializable {
         return this.taskIdProcessorMap.containsKey(taskId);
     }
 
+    /**
+     * Checks if a task is free- such that all its predecessors are scheduled already
+     * @param task
+     * @return boolean
+     */
     public boolean isTaskFree(Task task) {
         boolean isTaskFree = true;
         for (String parentId : task.getParentTasks()) {
@@ -101,6 +112,10 @@ public class Schedule implements Serializable {
         return isTaskFree;
     }
 
+    /**
+     * Updates the cost of the schedule if it has increased
+     * @param cost
+     */
     private void setCostIfIncreased(int cost) {
         if (cost > this.cost) {
             this.cost = cost;
@@ -121,7 +136,10 @@ public class Schedule implements Serializable {
         return cost;
     }
 
-    //get all tasks in all processors of this schedule
+    /**
+     * Get all tasks currently scheduled (on all processors)
+     * @return a list of task ids
+     */
     public List<String> getTasks() {
         List<String> result = new ArrayList<>();
 
@@ -136,6 +154,11 @@ public class Schedule implements Serializable {
         return this.getTasks().size();
     }
 
+    /**
+     * Gets the scheduled start time for a given task
+     * @param task
+     * @return start time of task
+     */
     public int getTaskStartTime(Task task) {
         int processId = taskIdProcessorMap.get(task.getId());
         Processor processor = processorIdMap.get(processId);
