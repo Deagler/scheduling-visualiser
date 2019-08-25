@@ -15,7 +15,7 @@ public abstract class BaseAlgorithm {
 
     }
 
-    public abstract Schedule execute(Graph graphl, int numberOfProcessors);
+    public abstract Schedule execute(Graph graphl, int numberOfProcessors, int numberOfCores);
 
     public abstract String toString();
 

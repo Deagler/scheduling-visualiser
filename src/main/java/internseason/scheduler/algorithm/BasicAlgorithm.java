@@ -10,7 +10,7 @@ import java.util.List;
 public class BasicAlgorithm extends BaseAlgorithm {
 
     @Override
-    public Schedule execute(Graph graph, int numberOfProcessors) {
+    public Schedule execute(Graph graph, int numberOfProcessors, int numOfCores) {
 
         Scheduler scheduler = new Scheduler(graph);
         Schedule schedule = new Schedule(numberOfProcessors);

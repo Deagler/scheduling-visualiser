@@ -1,4 +1,4 @@
-package internseason.scheduler.algorithm;
+package internseason.scheduler.heuristic;
 
 import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Schedule;

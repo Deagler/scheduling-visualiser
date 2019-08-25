@@ -117,8 +117,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
      * @return An optimal schedule
      */
     @Override
-    public Schedule execute(Graph graph, int numberOfProcessors) {
-        numOfCores = 16;
+    public Schedule execute(Graph graph, int numberOfProcessors, int numOfCores) {
         //initialise thread executor
         executor = Executors.newFixedThreadPool(numOfCores);
 
