@@ -21,7 +21,7 @@ public class AStarAlgorithmTest {
         try {
             Graph graph = this.parser.parse("src/test/resources/Test_Diamond.dot");
             BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.A_STAR_ALGORITHM, 0);
-            Schedule schedule = algorithm.execute(graph, 2);
+            Schedule schedule = algorithm.execute(graph, 2,1);
 
         } catch (InputException e) {
             e.printStackTrace();
@@ -33,7 +33,7 @@ public class AStarAlgorithmTest {
         try {
             Graph graph = this.parser.parse("src/test/resources/Test_Diamond.dot");
             AStarAlgorithm algorithm = new AStarAlgorithm();
-            Schedule schedule = algorithm.execute(graph,2);
+            Schedule schedule = algorithm.execute(graph,2,1);
             assertEquals(schedule.getCost(), 8);
         } catch (InputException e) {
             e.printStackTrace();
@@ -45,13 +45,54 @@ public class AStarAlgorithmTest {
         try {
             Graph graph = this.parser.parse("src/test/resources/Nodes_7_OutTree.dot");
             AStarAlgorithm algorithm = new AStarAlgorithm();
-            Schedule schedule = algorithm.execute(graph,2);
+            Schedule schedule = algorithm.execute(graph,2,1);
             System.out.println(schedule);
             assertEquals(schedule.getCost(), 28);
         } catch (InputException e) {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void test11NodeGraphOnTwoProcessorsParallel() {
+        try {
+            Graph graph = this.parser.parse("src/test/resources/Nodes_11_OutTree.dot");
+            AStarAlgorithm algorithm = new AStarAlgorithm();
+            Schedule schedule = algorithm.execute(graph,2,4);
+            System.out.println(schedule);
+            assertEquals(schedule.getCost(), 350);
+        } catch (InputException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void test11NodeGraphOnTwoProcessorsParallel2() {
+        try {
+            Graph graph = this.parser.parse("src/test/resources/Nodes_11_OutTree.dot");
+            AStarAlgorithm algorithm = new AStarAlgorithm();
+            Schedule schedule = algorithm.execute(graph,4,8);
+            System.out.println(schedule);
+            assertEquals(schedule.getCost(), 227);
+        } catch (InputException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void test25NodeGraphOnTwoProcessorsParallel() {
+        try {
+            Graph graph = this.parser.parse("src/test/resources/Nodes_21_floating.dot");
+            AStarAlgorithm algorithm = new AStarAlgorithm();
+            Schedule schedule = algorithm.execute(graph,2,16);
+            System.out.println(schedule);
+            assertEquals(schedule.getCost(), 92);
+        } catch (InputException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     @Test
     public void test11NodeGraphOnTwoProcessors() {
@@ -75,7 +116,7 @@ public class AStarAlgorithmTest {
         try {
             Graph graph = this.parser.parse("src/test/resources/Nodes_9_SeriesParallel.dot");
             AStarAlgorithm algorithm = new AStarAlgorithm();
-            Schedule schedule = algorithm.execute(graph,4);
+            Schedule schedule = algorithm.execute(graph,4,1);
             System.out.println(schedule);
             assertEquals(schedule.getCost(), 55);
         } catch (InputException e) {
@@ -88,7 +129,7 @@ public class AStarAlgorithmTest {
         try {
             Graph graph = this.parser.parse("src/test/resources/Nodes_10_Random.dot");
             AStarAlgorithm algorithm = new AStarAlgorithm();
-            Schedule schedule = algorithm.execute(graph,2);
+            Schedule schedule = algorithm.execute(graph,2,1);
 
             assertEquals(schedule.getCost(), 50);
         } catch (InputException e) {
@@ -107,7 +148,7 @@ public class AStarAlgorithmTest {
         try {
             Graph graph = this.parser.parse(graphPath);
             AStarAlgorithm algorithm = new AStarAlgorithm();
-            Schedule schedule = algorithm.execute(graph,numberOfProcessors);
+            Schedule schedule = algorithm.execute(graph,numberOfProcessors,1);
 
             assertEquals(expectedCost, schedule.getCost());
         } catch (InputException e) {
@@ -115,5 +156,31 @@ public class AStarAlgorithmTest {
         }
     }
 
+    @Test
+    public void testVerifySortedFTOList() {
 
+    }
+
+    @Test
+    public void testAStarScheduleBig() {
+        try {
+            Graph graph = this.parser.parse("src/test/resources/big_chungus_16p_30nodes.dot");
+            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.A_STAR_ALGORITHM, 0);
+            Schedule schedule = algorithm.execute(graph, 2,1);
+
+        } catch (InputException e) {
+            e.printStackTrace();
+        }
+    }
+    @Test
+    public void testAStarScheduleAlphabet() {
+        try {
+            Graph graph = this.parser.parse("src/test/resources/alphabet.dot");
+            AStarAlgorithm algorithm = new AStarAlgorithm();
+            Schedule schedule = algorithm.execute(graph,2,1);
+            assertEquals(schedule.getCost(), 8);
+        } catch (InputException e) {
+            e.printStackTrace();
+        }
+    }
 }
