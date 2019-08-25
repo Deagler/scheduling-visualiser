@@ -160,4 +160,30 @@ public class Graph {
         return result;
     }
 
+    public void buildBottomLevels(){
+        List<Task> leafs = this.getTasks().values() //find all the leaf nodes
+                .stream()
+                .filter((Task task) -> task.getNumberOfChildren() == 0)
+                .collect(Collectors.toList());
+
+
+        for (Task leaf : leafs) { //Compute the bottom levels for the nodes
+            leaf.setBottomLevel(leaf.getCost());
+            getBottomLevels(this.buildTaskListFromIds(leaf.getParentTasks()), leaf.getCost());
+        }
+
+    }
+
+
+    private void getBottomLevels(List<Task> tasks, int currentBottomLevel) {
+        for (Task node : tasks) {
+            if (node.getCost() < currentBottomLevel + node.getCost()) {
+                node.setBottomLevel(currentBottomLevel + node.getCost());
+            }
+            if (!node.getParentTasks().isEmpty()) {
+                getBottomLevels(this.buildTaskListFromIds(node.getParentTasks()),
+                        node.getBottomLevel());
+            }
+        }
+    }
 }
