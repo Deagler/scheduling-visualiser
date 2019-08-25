@@ -415,19 +415,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
 
 
-
-    private void getBottomLevels(List<Task> tasks, int currentBottomLevel) {
-        for (Task node : tasks) {
-            if (node.getCost() < currentBottomLevel + node.getCost()) {
-                node.setBottomLevel(currentBottomLevel + node.getCost());
-            }
-            if (!node.getParentTasks().isEmpty()) {
-                getBottomLevels(graph.buildTaskListFromIds(node.getParentTasks()),
-                        node.getBottomLevel());
-            }
-        }
-    }
-
     private boolean verifySortedFTOList(PriorityQueue<Task> ftoList) {
 
         Queue<Task> tempList = new PriorityQueue<Task>(ftoList.comparator());
@@ -453,6 +440,19 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
         return true;
     }
+
+    private void getBottomLevels(List<Task> tasks, int currentBottomLevel) {
+        for (Task node : tasks) {
+            if (node.getCost() < currentBottomLevel + node.getCost()) {
+                node.setBottomLevel(currentBottomLevel + node.getCost());
+            }
+            if (!node.getParentTasks().isEmpty()) {
+                getBottomLevels(graph.buildTaskListFromIds(node.getParentTasks()),
+                        node.getBottomLevel());
+            }
+        }
+    }
+
 
     /**
      * Heuristic that orders schedules in ascending order of cost. (Lowest cost first)
