@@ -154,7 +154,6 @@ public class MainScreen implements Initializable {
         schedule_graph = new SingleGraph("SG");
         parentMap = new HashMap<>();
         graph_path = new File(config.getInputDotFile());
-
         String maxMem = (Runtime.getRuntime().maxMemory() / (1024 * 1024)) + " MB";
         setup_labels(String.valueOf(config.getNumberOfCores()), String.valueOf(config.getNumberOfProcessors()), maxMem);
 
