@@ -1,4 +1,4 @@
-package internseason.scheduler.heuristic;
+package internseason.scheduler.algorithm;
 
 import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Schedule;
@@ -7,6 +7,8 @@ import internseason.scheduler.model.Task;
 
 import java.util.Comparator;
 
+/** Comparator used in the Astar algorithm to build the Fixed Task Ordering of tasks that qualify for FTO
+ */
 public class FTOComparator implements Comparator<Task> {
 
     private Schedule schedule;
@@ -41,10 +43,7 @@ public class FTOComparator implements Comparator<Task> {
         }
 
         int t1costToChildTask = t1.getCostToChild(this.scheduler.getTask(t1.getChildrenList().get(0)));
-        int t2costToChildTask = t2.getCostToChild(this.scheduler.getTask(t2.getChildrenList().get(0)));
-
-//        int t1costToChildTask = t1.getCostToChild(graph.getTask(t1.getChildrenList().get(0)));
-//        int t2costToChildTask = t2.getCostToChild(graph.getTask(t2.getChildrenList().get(0)));
+        int t2costToChildTask = t2.getCostToChild(this.scheduler.getTask(t2.getChildrenList().get(0)));;
 
         if (t1costToChildTask > t2costToChildTask) {
             return -1;

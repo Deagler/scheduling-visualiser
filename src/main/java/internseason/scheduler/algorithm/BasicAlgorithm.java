@@ -7,6 +7,9 @@ import internseason.scheduler.model.Task;
 
 import java.util.List;
 
+
+/** Trivial algorithm that allocates every task on a single processor
+ */
 public class BasicAlgorithm extends BaseAlgorithm {
 
     @Override

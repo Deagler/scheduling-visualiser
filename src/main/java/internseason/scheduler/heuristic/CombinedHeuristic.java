@@ -4,6 +4,9 @@ import internseason.scheduler.model.Schedule;
 
 import java.util.List;
 
+/** Takes in the three separate heuristic values and computes the overall cost
+ *  defined by the Cost function
+ */
 public class CombinedHeuristic implements BaseHeuristic {
 
     private List<BaseHeuristic> heuristics;

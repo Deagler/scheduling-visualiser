@@ -6,6 +6,9 @@ import internseason.scheduler.model.Task;
 
 import java.util.List;
 
+
+/** Calculates the DRT cost of a given partial schedule by looking at its max data ready time and bottom level
+ */
 public class DataReadyTimeHeuristic implements BaseHeuristic {
     private List<Task> freeTasks;
     private Scheduler scheduler;

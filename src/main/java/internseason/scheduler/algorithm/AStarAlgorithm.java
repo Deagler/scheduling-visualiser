@@ -86,11 +86,8 @@ class ScheduleInfo {
     }
 }
 
-/**
- * PoC AStar Algorithm that uses Topological layering and
- * a heuristic that factors in the cost of the schedule and number of tasks.
- *
- * Possible Schedules are generated layer-by-layer as to avoid generating schedules that have dependency violations.
+/** Optimised Astar algorithm that uses Fixed Task ordering, duplicate detection, processor normalisation and
+ *  three part cost function to calculate an optimal schedule
  */
 public class AStarAlgorithm extends BaseAlgorithm {
     private Queue<ScheduleInfo> scheduleQueue;
@@ -100,8 +97,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
     private int numOfCores;
     private ExecutorService executor;
 
-    /**
-     * Tepmorary constructor to test factory pattern
+    /** Factory pattern constructor
      * @return
      */
     public AStarAlgorithm() {
@@ -119,23 +115,24 @@ public class AStarAlgorithm extends BaseAlgorithm {
     @Override
     public Schedule execute(Graph graph, int numberOfProcessors, int numOfCores) {
         //initialise thread executor
-        executor = Executors.newFixedThreadPool(numOfCores);
-
+        this.executor = Executors.newFixedThreadPool(numOfCores);
         this.scheduler = new Scheduler(graph);
 
         int totalTasks = graph.getTasks().size();
-        totalTaskTime = 0;
+        this.totalTaskTime = 0;
         for (Task task: graph.getTasks().values()){
             totalTaskTime +=task.getCost();
         }
 
         this.graph = graph;
 
+        // get topological ordering of initial DAG
         List<List<Task>> topologicalTasks = graph.getTopologicalOrdering();
 
+        //create empty root schedule
         Schedule initialSchedule = new Schedule(numberOfProcessors);
 
-        scheduleQueue.add(new ScheduleInfo(initialSchedule, 0, new ArrayList<String>(), 0)); // Add the empty schedule to the queue.
+        scheduleQueue.add(new ScheduleInfo(initialSchedule, 0, new ArrayList<String>(), 0));
         // Calculates the Bottom Level for each task.
         List<Task> leafs = graph.getTasks().values() //find all the leaf nodes
                 .stream()
@@ -147,18 +144,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
             getBottomLevels(graph.buildTaskListFromIds(leaf.getParentTasks()), leaf.getCost());
         }
 
-        Task maxTask = null;
-        for (Task task : graph.getTasks().values()) {
-           if (maxTask == null) {
-               maxTask = task;
-           }
-
-           if (task.getBottomLevel() > maxTask.getBottomLevel()) {
-               maxTask = task;
-           }
-        }
-
-
+        // Initialise empty visited states set used for duplicate detection
         Set<Integer> visited = new HashSet<>();
         visited.add(initialSchedule.hashCode());
         int counter = 0;
