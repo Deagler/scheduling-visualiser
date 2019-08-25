@@ -21,8 +21,6 @@ public class Main {
 
         CLIParser parser = new CLIParser();
 
-
-
         try {
             config = parser.parse(args);
              if (config.isVisualisationEnabled()) {

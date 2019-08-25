@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.beans.NamedArg;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.CategoryAxis;
@@ -14,6 +15,8 @@ import javafx.scene.chart.ValueAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 
 public class ScheduleVisulisation <X,Y> extends XYChart<X,Y> {
@@ -102,9 +105,16 @@ public class ScheduleVisulisation <X,Y> extends XYChart<X,Y> {
                         ellipse.setHeight(getBlockHeight() * ((getYAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis) getYAxis()).getScale()) : 1));
                         y -= getBlockHeight() / 2.0;
 
-                        // Note: workaround for RT-7689 - saw this in ProgressControlSkin
-                        // The region doesn't update itself when the shape is mutated in place, so we
-                        // null out and then restore the shape in order to force invalidation.
+
+                        Text t = new Text("1");
+//                        t.setTextAlignment(TextAlignment.CENTER);
+                        region.getChildren().add(t);
+
+                        //((StackPane) region).setAlignment(t,Pos.CENTER);
+                        //StackPane.setAlignment(t,Pos.BOTTOM_RIGHT);
+                        //region.setLayoutX(x/2);
+                        //region.setLayoutX(y/2);
+
                         region.setShape(null);
                         region.setShape(ellipse);
                         region.setScaleShape(false);
@@ -113,6 +123,14 @@ public class ScheduleVisulisation <X,Y> extends XYChart<X,Y> {
 
                         block.setLayoutX(x);
                         block.setLayoutY(y);
+
+
+
+
+
+
+
+
                     }
                 }
             }

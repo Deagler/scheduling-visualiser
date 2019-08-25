@@ -198,9 +198,9 @@
                               </HBox>
                               <ScrollPane prefHeight="273.0" prefWidth="454.0">
                                  <content>
-                                    <Pane fx:id="performancePane" prefHeight="193.0" prefWidth="804.0">
+                                    <Pane fx:id="performancePane" prefHeight="203.0" prefWidth="800.0">
                                        <children>
-                                          <BarChart prefHeight="174.0" prefWidth="378.0">
+                                          <BarChart prefHeight="174.0" prefWidth="777.0">
                                              <xAxis>
                                                 <CategoryAxis side="BOTTOM" />
                                              </xAxis>
@@ -286,7 +286,7 @@
                                     <Label layoutX="13.0" layoutY="101.0" prefHeight="25.0" prefWidth="155.0" text="Available Processors:" />
                                     <Label fx:id="available_processors" alignment="CENTER_RIGHT" layoutX="206.0" layoutY="101.0" prefHeight="25.0" prefWidth="102.0" text="4" />
                                     <Label layoutX="13.0" layoutY="57.0" prefHeight="25.0" prefWidth="139.0" text="Cores for Execution:" />
-                                    <Label fx:id="cores_for_execution" alignment="CENTER_RIGHT" layoutX="206.0" layoutY="57.0" prefHeight="25.0" prefWidth="97.0" text="1" />
+                                    <Label fx:id="cores_for_execution" alignment="CENTER_RIGHT" layoutX="211.0" layoutY="57.0" prefHeight="25.0" prefWidth="97.0" text="1" />
                                     <Label layoutX="13.0" layoutY="118.0" prefHeight="25.0" prefWidth="155.0" text="Max Memory:" />
                                     <Label fx:id="max_memory" alignment="CENTER_RIGHT" layoutX="206.0" layoutY="118.0" prefHeight="25.0" prefWidth="102.0" text="1908 MB" />
                                     <Label layoutX="13.0" layoutY="135.0" prefHeight="25.0" prefWidth="155.0" text="Used Memory:" />

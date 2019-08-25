@@ -9,12 +9,19 @@ import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Processor;
 import internseason.scheduler.model.Schedule;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -24,6 +31,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import javafx.util.Pair;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.fx_viewer.FxViewPanel;
@@ -119,6 +129,11 @@ public class MainScreen implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        cores_for_execution.textProperty().addListener((observable, oldValue, newValue) -> {
+            cores_for_execution.setText(newValue);
+        });
+
+
         System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
         input_graph = new SingleGraph("IG");
         schedule_graph = new SingleGraph("SG");
@@ -164,7 +179,7 @@ public class MainScreen implements Initializable {
         xAxis.setTickLabelGap(0);
 
         NumberAxis yAxis = new NumberAxis();
-        yAxis.setLabel("Runtime");
+        yAxis.setLabel("Runtime (ms)");
         yAxis.setTickLabelFill(Color.CHOCOLATE);
         yAxis.setTickLabelGap(0);
 
@@ -235,18 +250,16 @@ public class MainScreen implements Initializable {
             Integer proc = entry.getKey() +1;
             processors[count] = "CPU " + (proc).toString();
 
-            System.out.println("CPU " + (proc).toString());
             count +=1;
         }
 
-        yAxis.setLabel("");
         yAxis.setTickLabelFill(Color.CHOCOLATE);
         yAxis.setTickLabelGap(0);
         yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(processors)));
 
 
         chart.setLegendVisible(false);
-        chart.setBlockHeight( 10);
+        chart.setBlockHeight(10);
         // adding information to chart
         count = 0;
         for (Map.Entry<Integer, Processor> entry: processorMap.entrySet()){
@@ -319,8 +332,6 @@ public class MainScreen implements Initializable {
             branchesCheckedLabel.setText(branchesChecked.toString());
             String node = String.valueOf(scheduleHashCode);
             String parentNode = parentMap.get(node);
-            System.out.println(parentNode + " : " + node + " :" + children);
-
             schedule_graph.addNode(node);
 
             if (parentNode != null) {
@@ -393,7 +404,6 @@ public class MainScreen implements Initializable {
                 schedule_graph
                         .getEdge(optimalNodeParent.toString() + optimalNode.toString())
                         .setAttribute("ui.class", "visited");
-                System.out.println(optimalNode.toString());
                 optimalNode = optimalNodeParent;
                 optimalNodeParent = parentMap.get(optimalNodeParent);
             }
@@ -426,7 +436,37 @@ public class MainScreen implements Initializable {
 
     @FXML
     public void settingsButtonPressed() {
+        Parent root = null;
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("SettingsScreen.fxml"));
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+        Stage settingsStage = new Stage();
+        settingsStage.setResizable(false);
+        settingsStage.setAlwaysOnTop(true);
+        settingsStage.setTitle("Settings");
+        settingsStage.setScene(new Scene(root,600,400));
+        settingsStage.initStyle(StageStyle.UNDECORATED);
+        settingsStage.show();
+
+        SettingsScreen settingsScreen = loader.getController();
+        System.out.println(settingsScreen);
+        settingsScreen.setDefaultValues(config.getNumberOfCores(),config.getNumberOfProcessors());
+        settingsScreen.setConfig(config);
+
+        settingsStage.setOnCloseRequest(event ->{
+            Platform.runLater(()->{
+                cores_for_execution.setText(Integer.toString(config.getNumberOfCores()));
+                available_processors.setText(Integer.toString(config.getNumberOfProcessors()));
+            });
+        });
+
+//        settingsScreen.getSaveButton().setOnAction(event ->{
+//
+//        });
 
     }
 
