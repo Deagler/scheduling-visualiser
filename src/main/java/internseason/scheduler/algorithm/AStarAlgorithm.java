@@ -1,12 +1,12 @@
 package internseason.scheduler.algorithm;
 
+import internseason.scheduler.heuristic.*;
 import internseason.scheduler.model.*;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 
 /**
@@ -236,25 +236,24 @@ public class AStarAlgorithm extends BaseAlgorithm {
         return null;
     }
 
-    private int calculateIdleHeuristic(Schedule schedule) {
-
-        return (totalTaskTime + schedule.getIdleTime()-1) / schedule.getNumOfProcessors();
+    private BaseHeuristic getIdleHeuristic() {
+        return new IdleTimeHeuristic(this.totalTaskTime);
     }
 
 
-    private int calculateDRTHeuristic(Schedule schedule, List<Task> freeTasks){
-        int maxDRT = Integer.MIN_VALUE;
-        for (Task task : freeTasks){
-            int drt = this.scheduler.calculateDRT(schedule, task);
-            int bottomLevel = task.getBottomLevel();
-            maxDRT = Math.max(maxDRT, (drt+bottomLevel));
-        }
-        return maxDRT;
+    private BaseHeuristic getDRTHeuristic(List<Task> freeTasks){
+        return new DataReadyTimeHeuristic(freeTasks,this.scheduler);
     }
 
+    private BaseHeuristic getCriticalPathHeuristic(){
+        return new CriticalPathHeuristic();
+    }
     private Integer calculateCost(Schedule schedule, List<Task> freeTasks) {
-        return Math.max(calculateDRTHeuristic(schedule,freeTasks),Math.max(schedule.getMaxBottomLevel(), calculateIdleHeuristic(schedule)));
-
+        BaseHeuristic idleHeuristic = getIdleHeuristic();
+        BaseHeuristic drtHeuristic = getDRTHeuristic(freeTasks);
+        BaseHeuristic criticalPathHeuristic = getCriticalPathHeuristic();
+        CombinedHeuristic calculator = new CombinedHeuristic(Arrays.asList(idleHeuristic,drtHeuristic,criticalPathHeuristic));
+        return calculator.calculateCostFunction(schedule);
     }
 
 
