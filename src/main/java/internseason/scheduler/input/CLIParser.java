@@ -17,6 +17,12 @@ public class CLIParser {
         setupCLIOptions();
     }
 
+    /**
+     * Parses the CLI Options and builds the config object
+     * @param args CLI args
+     * @return Configuration object
+     * @throws CLIException On invalid input arguments
+     */
     public Config parse(String[] args) throws CLIException {
 
         CommandLine cmd = null;
@@ -64,10 +70,17 @@ public class CLIParser {
         return builder.build();
     }
 
+    /**
+     * Prints the help information for the CLI
+     * @param subtitle name of artifact to show in help information
+     */
     public void printHelp(String subtitle) {
         helpFormatter.printHelp(subtitle, CLIOptions);
     }
 
+    /**
+     * Helper function that sets up the CLI Options for the help information.
+     */
     private void setupCLIOptions() {
         Option numOfCores = Option.builder("p").argName("N").desc("use N cores for execution in parallel (default is sequential)").hasArg().build();
         Option visualisationEnabled = new Option("v", "visualise the search");

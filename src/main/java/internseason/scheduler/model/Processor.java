@@ -36,16 +36,6 @@ public class Processor implements Serializable {
         return cost;
     }
 
-    public void setCost(int cost) {
-        this.cost = cost;
-    }
-
-    public void addTask(Task task) {
-        taskIdScheduleMap.put(task.getId(), this.cost);
-        taskScheduleList.add(new Pair(task.getId(), this.cost));
-        this.cost += task.getCost();
-    }
-
     public int getTaskStartTime(String taskId) {
         return this.taskIdScheduleMap.get(taskId);
     }
@@ -63,8 +53,12 @@ public class Processor implements Serializable {
 
     //ToDo: make exception class
     public void addTaskAt(Task task,int time) {
+        if (this.taskIdScheduleMap.containsKey(task.getId())) {
+            throw new IllegalArgumentException("Processor has already scheduled this task");
+        }
+
         if (time < this.cost){
-            throw new IllegalArgumentException("Illegal time");
+            throw new IllegalArgumentException("Illegal time to add Task");
         }
 
         this.taskIdScheduleMap.put(task.getId(), time);

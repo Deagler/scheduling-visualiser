@@ -1,4 +1,4 @@
-package internseason.scheduler.algorithm;
+package internseason.scheduler.model;
 
 import internseason.scheduler.input.DOTParser;
 import internseason.scheduler.exceptions.InputException;
@@ -9,7 +9,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-public class ScheduleTest {
+public class SchedulerTest {
 
     private Graph graph;
     private DOTParser parser;

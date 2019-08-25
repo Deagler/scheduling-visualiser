@@ -50,7 +50,7 @@ public class BBAlgorithmTest {
     public void testBBSchedule1() {
         try {
             Graph graph = this.parser.parse("src/test/resources/Test_Diamond.dot");
-            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM, 0);
+            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM);
             Schedule schedule = algorithm.execute(graph,2, 1,sysInfo);
             assertEquals(schedule.getCost(), 8);
         } catch (InputException e) {
@@ -62,7 +62,7 @@ public class BBAlgorithmTest {
     public void testBBSchedule2() {
         try {
             Graph graph = this.parser.parse("src/test/resources/Nodes_7_OutTree.dot");
-            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM, 0);
+            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM);
             Schedule schedule = algorithm.execute(graph,2, 1,sysInfo);
             assertEquals(schedule.getCost(), 28);
         } catch (InputException e) {
@@ -74,7 +74,7 @@ public class BBAlgorithmTest {
     public void testBBSchedule3() {
         try {
             Graph graph = this.parser.parse("src/test/resources/Nodes_9_SeriesParallel.dot");
-            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM, 0);
+            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM);
             Schedule schedule = algorithm.execute(graph,4, 1,sysInfo);
             assertEquals(schedule.getCost(), 55);
         } catch (InputException e) {
@@ -86,7 +86,7 @@ public class BBAlgorithmTest {
     public void testBBSchedule4() {
         try {
             Graph graph = this.parser.parse("src/test/resources/Nodes_8_Random.dot");
-            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM, 0);
+            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM);
             Schedule schedule = algorithm.execute(graph,4, 1,sysInfo);
             assertEquals(schedule.getCost(), 581);
         } catch (InputException e) {
@@ -98,7 +98,7 @@ public class BBAlgorithmTest {
     private void testGraph(String graphPath, int numberOfProcessors, int expectedCost) {
         try {
             Graph graph = this.parser.parse(graphPath);
-            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM, 0);
+            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM);
             Schedule schedule = algorithm.execute(graph,numberOfProcessors, 1,sysInfo);
 
             assertEquals(expectedCost, schedule.getCost());
