@@ -3,21 +3,21 @@
 }
 
 .title {
-    -fx-background-color: #4CAF50;
+    -fx-background-color:#f44336;
     -fx-background-insets: 0;
     -fx-background-radius: 2 2 0 0;
     -fx-effect: dropshadow(three-pass-box, lightgray, 3, 0, 0, 2);
 }
 
 .headers {
-    -fx-background-color: #4CAF50;
+    -fx-background-color: #f44336;
     -fx-background-insets: 5;
     -fx-background-radius: 2 2 0 0;
     -fx-effect: dropshadow(three-pass-box, lightgray, 3, 0, 0, 2);
 }
 
 .header-large {
-    -fx-background-color:#4CAF50;
+    -fx-background-color:#f44336;
             /*#4c97ff;*/
             /*linear-gradient(from 25% 25% to 100% 100%, #ff7f50, #6a5acd)*/
     -fx-background-insets: -1;
@@ -47,13 +47,13 @@
 }
 
 .label_colored{
-    -fx-text-fill: #4CAF50;
+    -fx-text-fill:#f44336;
 }
 
 .button:hover {
     -fx-background-color: #e5e5e5;
 }
 .button:pressed{
-    -fx-background-color: #4CAF50;
+    -fx-background-color: #f44336;
 }
 

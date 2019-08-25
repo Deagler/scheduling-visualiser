@@ -107,20 +107,6 @@ public class ScheduleVisulisation <X,Y> extends XYChart<X,Y> {
                         y -= getBlockHeight() / 2.0;
 
 
-                        Text t = new Text("1");
-//                        t.setTextAlignment(TextAlignment.CENTER);
-//                        t.setX(ellipse.getWidth() / 2);
-//                        t.setLayoutX(50);
-//                        t.setX(100);
-//                        t.setTextAlignment(TextAlignment.CENTER);
-//                       System.out.println( t.getParent().getLayoutBounds());
-                        region.getChildren().add(t);
-
-                        //((StackPane) region).setAlignmen;t(t,Pos.CENTER);
-                        //StackPane.setAlignment(t,Pos.BOTTOM_RIGHT);
-                        //region.setLayoutX(x/2);
-                        //region.setLayoutX(y/2);
-
                         region.setShape(null);
                         region.setShape(ellipse);
                         region.setScaleShape(false);

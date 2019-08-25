@@ -35,10 +35,6 @@ public class SettingsScreen implements Initializable {
     HBox topBar;
     @FXML
     ComboBox guiColor;
-    @FXML
-    ColorPicker ScheduleGraphColor;
-    @FXML
-    ColorPicker RuntimeGraphColor;
 
     @FXML
     TextField coreNumber;
@@ -56,12 +52,11 @@ public class SettingsScreen implements Initializable {
                 "Sky Blue",
                 "Apple Green",
                 "Midnight Purple",
-                "Big N"
+                "Ruby Red",
+                "Lemon Yellow"
         );
         guiColor.getItems().addAll(themes);
 
-        //this.coreNumber.setText("c.toString()");
-        //this.processorNumber.setText("3");
     }
 
     public ComboBox getGuiColor() {
@@ -127,12 +122,6 @@ public class SettingsScreen implements Initializable {
     public void onCancel(){
         Stage stage = (Stage) coreNumber.getScene().getWindow();
         stage.close();
-    }
-
-    @FXML
-    public void guiColorPressed(){
-
-
     }
 
     public Button getSaveButton() {

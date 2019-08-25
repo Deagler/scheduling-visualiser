@@ -3,21 +3,21 @@
 }
 
 .title {
-    -fx-background-color: purple;
+    -fx-background-color: #6200EE;
     -fx-background-insets: 0;
     -fx-background-radius: 2 2 0 0;
     -fx-effect: dropshadow(three-pass-box, lightgray, 3, 0, 0, 2);
 }
 
 .headers {
-    -fx-background-color: purple;
+    -fx-background-color: #6200EE;
     -fx-background-insets: 5;
     -fx-background-radius: 2 2 0 0;
     -fx-effect: dropshadow(three-pass-box, lightgray, 3, 0, 0, 2);
 }
 
 .header-large {
-    -fx-background-color:purple;
+    -fx-background-color:#6200EE;
             /*#4c97ff;*/
             /*linear-gradient(from 25% 25% to 100% 100%, #ff7f50, #6a5acd)*/
     -fx-background-insets: -1;
@@ -50,9 +50,9 @@
     -fx-background-color: #e5e5e5;
 }
 .button:pressed{
-    -fx-background-color: purple;
+    -fx-background-color: #6200EE;
 }
 
 .label_colored{
-    -fx-text-fill: purple;
+    -fx-text-fill: #6200EE;
 }

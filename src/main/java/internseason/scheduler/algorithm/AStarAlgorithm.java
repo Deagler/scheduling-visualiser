@@ -2,95 +2,16 @@ package internseason.scheduler.algorithm;
 
 import internseason.scheduler.heuristic.*;
 import internseason.scheduler.model.*;
-import org.apache.commons.lang3.SerializationUtils;
 
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
-
-/**
- * Temporary Data-structure to store a schedule and the given topological layer the internseason.scheduler.algorithm should attempt to generate
- * new schedules from.
- */
-class ScheduleInfo {
-    private byte[] serialisedSchedule;
-    private Integer maxBottomLevel;
-    private Integer totalCost;
-    private Integer totalNumberOfTasks;
-    private Integer hashCode;
-    private Integer layer;
-    private List<String> freeList;
-    private Schedule schedule;
-
-    public ScheduleInfo(Schedule schedule, Integer layer, List<String> freeList, int totalScheduleCost) {
-        this.serialisedSchedule = SerializationUtils.serialize(schedule);
-        this.maxBottomLevel = schedule.getMaxBottomLevel();
-        this.hashCode = schedule.hashCode();
-        this.totalCost = totalScheduleCost;
-        this.totalNumberOfTasks = schedule.getNumberOfTasks();
-        this.layer = layer;
-        this.freeList = freeList;
-        this.schedule = null;
-    }
-
-    public Integer getTotalNumberOfTasks() {
-        return totalNumberOfTasks;
-    }
-
-    public Schedule getSchedule() {
-        if (this.schedule == null) {
-            this.schedule = (Schedule)SerializationUtils.deserialize(serialisedSchedule);
-        }
-
-        return this.schedule;
-    }
-
-    public Integer getLayer() {
-        return layer;
-    }
-
-    public void incrementLayer() {
-        this.layer++;
-    }
-
-    public Integer getTotalCost() {
-        return totalCost;
-    }
-
-    public List<String> getFreeList() {
-        return freeList;
-    }
-
-
-    @Override
-    public String toString() {
-        return "ScheduleInfo{" +
-                ", layer=" + layer +
-                '}';
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ScheduleInfo that = (ScheduleInfo) o;
-        return Objects.equals(hashCode, that.hashCode);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return hashCode;
-    }
-}
-
 /** Optimised Astar algorithm that uses Fixed Task ordering, duplicate detection, processor normalisation and
  *  three part cost function to calculate an optimal schedule
  */
 public class AStarAlgorithm extends BaseAlgorithm {
-    private Queue<ScheduleInfo> scheduleQueue;
+    private Queue<AstarScheduleInfo> scheduleQueue;
     private int totalTaskTime;
     private Graph graph;
     private Scheduler scheduler;
@@ -115,7 +36,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
     @Override
     public Schedule execute(Graph graph, int numberOfProcessors, int numOfCores, SystemInformation sysInfo) {
         //initialise thread executor
-        this.executor = Executors.newFixedThreadPool(numOfCores);
+        this.executor = Executors.newWorkStealingPool(numOfCores);
         this.scheduler = new Scheduler(graph);
 
         int totalTasks = graph.getTasks().size();
@@ -132,7 +53,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
         //create empty root schedule
         Schedule initialSchedule = new Schedule(numberOfProcessors);
 
-        scheduleQueue.add(new ScheduleInfo(initialSchedule, 0, new ArrayList<String>(), 0));
+        scheduleQueue.add(new AstarScheduleInfo(initialSchedule, 0, new ArrayList<String>(), 0));
         // Calculates the Bottom Level for each task.
         List<Task> leafs = graph.getTasks().values() //find all the leaf nodes
                 .stream()
@@ -153,7 +74,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
 
         while (!scheduleQueue.isEmpty()) {
             //ScheduleInfo head = scheduleQueue.poll();
-            ScheduleInfo head = scheduleQueue.peek();
+            AstarScheduleInfo head = scheduleQueue.peek();
             Schedule realSchedule = head.getSchedule();
             scheduleQueue.remove();
             // Return the optimal schedule (First complete schedule, orchestrated by AStar Heuristic)
@@ -168,7 +89,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 FTOList = isFTO(head, currentLayer);
                 knownFTO = true;
             }
-            List<ScheduleInfo> combinations;
+            List<AstarScheduleInfo> combinations;
 
             if (FTOList != null) {
                 //TODO generateFTOCombinations to use the queue?
@@ -207,7 +128,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
             }
 
             Set<Integer> childScheduleHashCodes = new HashSet<>();
-            for (ScheduleInfo possibleCombination : combinations) {
+            for (AstarScheduleInfo possibleCombination : combinations) {
                 if (visited.contains(possibleCombination.hashCode())) {
                     continue;
                 }
@@ -287,7 +208,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
      *      the list of all freenodes if it is in FTO,
      *      else returns null
      */
-    private Queue<Task> isFTO(ScheduleInfo info, List<Task> currentLayer) {
+    private Queue<Task> isFTO(AstarScheduleInfo info, List<Task> currentLayer) {
         String commonChildId =  "";
         Integer commonParentProcessorId = null;
 
@@ -335,7 +256,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
      * @param numberOfProcessors
      * @return
      */
-    private List<ScheduleInfo> generateAllCombinations(ScheduleInfo scheduleinfo, List<Task> currentLayer, int numberOfProcessors) {
+    private List<AstarScheduleInfo> generateAllCombinations(AstarScheduleInfo scheduleinfo, List<Task> currentLayer, int numberOfProcessors) {
         Schedule schedule = scheduleinfo.getSchedule();
 
         currentLayer = new ArrayList<>(currentLayer);
@@ -351,20 +272,20 @@ public class AStarAlgorithm extends BaseAlgorithm {
             return null;
         }
         // create list of parallel tasks that will be called by the executor
-        List<Callable<List<ScheduleInfo>>> callables = new ArrayList<>();
+        List<Callable<List<AstarScheduleInfo>>> callables = new ArrayList<>();
         for (int i=0;i<currentLayer.size();i++){
             final Task currentTask = currentLayer.get(i);
 
             //define what occurs in the parallel task
-            Callable<List<ScheduleInfo>> parallelTask = () ->{
-                List<ScheduleInfo> newSchedules = new ArrayList<>();
+            Callable<List<AstarScheduleInfo>> parallelTask = () ->{
+                List<AstarScheduleInfo> newSchedules = new ArrayList<>();
                 for (int processId = 0; processId < numberOfProcessors; processId++) {
                     Schedule newSchedule = new Schedule(schedule);
                     this.scheduler.addTask(newSchedule, currentTask, processId);
                     List<String> expandedFreeNodeIds = new ArrayList<>();
                     List<Task> expandedFreeNodes = new ArrayList<>();
                     this.addNewFreeTasks(currentTask,expandedFreeNodeIds,expandedFreeNodes,schedule);
-                    newSchedules.add(new ScheduleInfo(newSchedule, scheduleinfo.getLayer(), expandedFreeNodeIds, calculateCost(newSchedule, expandedFreeNodes)));
+                    newSchedules.add(new AstarScheduleInfo(newSchedule, scheduleinfo.getLayer(), expandedFreeNodeIds, calculateCost(newSchedule, expandedFreeNodes)));
                 }
                 return newSchedules;
             };
@@ -372,12 +293,12 @@ public class AStarAlgorithm extends BaseAlgorithm {
             callables.add(parallelTask);
         }
 
-        List<ScheduleInfo> out = new ArrayList<>();
+        List<AstarScheduleInfo> out = new ArrayList<>();
         try {
             //run all the parallel tasks, executor handles assigning each job to an available thread defined by our threadpool size
-            List<Future<List<ScheduleInfo>>> futureTasks = executor.invokeAll(callables);
-            for (Future<List<ScheduleInfo>> futureTask : futureTasks){
-                List<ScheduleInfo> newStates = futureTask.get();
+            List<Future<List<AstarScheduleInfo>>> futureTasks = executor.invokeAll(callables);
+            for (Future<List<AstarScheduleInfo>> futureTask : futureTasks){
+                List<AstarScheduleInfo> newStates = futureTask.get();
                 out.addAll(newStates);
             }
         } catch (InterruptedException | ExecutionException e) {
@@ -386,14 +307,14 @@ public class AStarAlgorithm extends BaseAlgorithm {
         return out;
     }
 
-    private List<ScheduleInfo> generateFTOCombinations(ScheduleInfo scheduleInfo, Queue<Task> ftoList, int numberOfProcesses) {
+    private List<AstarScheduleInfo> generateFTOCombinations(AstarScheduleInfo astarScheduleInfo, Queue<Task> ftoList, int numberOfProcesses) {
         if (ftoList.isEmpty()) {
             return null;
         }
         //given a schedule, ftolist and processor schedule top fto task to all processors
-        Schedule schedule = scheduleInfo.getSchedule();
+        Schedule schedule = astarScheduleInfo.getSchedule();
 
-        List<ScheduleInfo> out = new ArrayList<>();
+        List<AstarScheduleInfo> out = new ArrayList<>();
         for (int processId=0;processId< numberOfProcesses;processId++){
             Task head = ftoList.peek();
             //Task head = ftoList.get(0);
@@ -403,7 +324,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
             List<String> expandedFreeNodeIds = new ArrayList<>();
             List<Task> expandedFreeNodes = new ArrayList<>();
             this.addNewFreeTasks(head,expandedFreeNodeIds,expandedFreeNodes,schedule);
-            out.add(new ScheduleInfo(newSchedule, scheduleInfo.getLayer(), expandedFreeNodeIds, calculateCost(newSchedule, expandedFreeNodes)));
+            out.add(new AstarScheduleInfo(newSchedule, astarScheduleInfo.getLayer(), expandedFreeNodeIds, calculateCost(newSchedule, expandedFreeNodes)));
         }
         ftoList.remove(0);
         return out;
@@ -482,10 +403,10 @@ public class AStarAlgorithm extends BaseAlgorithm {
      * Heuristic that orders schedules in ascending order of cost. (Lowest cost first)
      * If costs are equal then the schedule with a higher number of tasks assigned comes first.
      */
-    private class AStarHeuristic implements Comparator<ScheduleInfo> {
+    private class AStarHeuristic implements Comparator<AstarScheduleInfo> {
 
         @Override
-        public int compare(ScheduleInfo o1Info, ScheduleInfo o2Info) {
+        public int compare(AstarScheduleInfo o1Info, AstarScheduleInfo o2Info) {
             return o1Info.getTotalCost().compareTo(o2Info.getTotalCost());
         }
 

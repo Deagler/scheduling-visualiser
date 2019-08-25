@@ -96,8 +96,6 @@ public class MainScreen implements Initializable {
     private Label schedules_explored;
     @FXML
     private Label schedules_in_queue;
-    @FXML
-    private Label schedules_in_array;
 
     @FXML
     private BarChart<String,Long> performanceGraph;
@@ -108,8 +106,6 @@ public class MainScreen implements Initializable {
     @FXML
     private Button loadButton;
 
-    @FXML
-    private Button stopButton;
 
     @FXML
     private Button playButton;
@@ -165,7 +161,7 @@ public class MainScreen implements Initializable {
         enableRuntimeTimeButtons();
 
         loadInputGraph(this.config.getInputDotFile());
-        this.loaded_graph_label.setText(this.config.getInputDotFile());
+        this.loaded_graph_label.setText(new File(this.config.getInputDotFile()).getName());
         initialiseScheduleGraph();
         this.sysInfo = new SystemInformation();
         this.bindLabel(sysInfo.schedulesQueuedProperty(), schedules_in_queue);
@@ -181,12 +177,12 @@ public class MainScreen implements Initializable {
     }
     private void addPerformance(String graphName, Integer runtime){
 
-        if (numberOfBars >= 4){
+        if (numberOfBars >= 2){
             series.getData().clear();
+            numberOfBars = 0;
         }
         numberOfBars +=1;
         series.getData().add(new XYChart.Data(graphName, runtime));
-
     }
     private void createBarChart(){
         numberOfBars = 0;
@@ -204,9 +200,9 @@ public class MainScreen implements Initializable {
 
         barChart.setAnimated(false);
         barChart.setLegendVisible(false);
-        barChart.setMaxSize(800,LARGE_PANE_HEIGHT);
+        barChart.setMaxSize(LARGE_PANE_WIDTH,LARGE_PANE_HEIGHT);
 
-        barChart.setMinSize(799,LARGE_PANE_HEIGHT-1);
+        barChart.setMinSize(LARGE_PANE_HEIGHT,LARGE_PANE_HEIGHT);
 
         performancePane.getChildren().add(barChart);
         barChart.getData().clear();
@@ -245,20 +241,17 @@ public class MainScreen implements Initializable {
 
         schedules_explored.setText("0 K");
         schedules_in_queue.setText("0 K");
-        schedules_in_array.setText("0 K");
     }
 
     public void disableRuntimeButtons(){
         loadButton.setDisable(true);
         playButton.setDisable(true);
-        stopButton.setDisable(false);
         settingsButton.setDisable(true);
     }
 
     public void enableRuntimeTimeButtons(){
         loadButton.setDisable(false);
         playButton.setDisable(false);
-        stopButton.setDisable(true);
         settingsButton.setDisable(false);
     }
 
@@ -326,7 +319,6 @@ public class MainScreen implements Initializable {
             internseason.scheduler.model.Graph graph = parser.parse(path);
             GraphAdapter graphAdapter = new GraphAdapter(graph, input_graph, "test");
             input_graph = graphAdapter.getFrontEndGraph();
-            //sample_generator_2(input_graph);
 
             input_graph.setAttribute("ui.antialias");
             input_graph.setAttribute("ui.quality");
@@ -460,10 +452,6 @@ public class MainScreen implements Initializable {
         algorithmService.start();
     }
 
-    @FXML
-    public void stopButtonPressed() {
-
-    }
 
     @FXML
     public void settingsButtonPressed() {
@@ -502,20 +490,28 @@ public class MainScreen implements Initializable {
                 available_processors.setText(Integer.toString(config.getNumberOfProcessors()));
                 ComboBox guiColor = settingsScreen.getGuiColor();
                 String selectedTheme = (String) guiColor.getSelectionModel().getSelectedItem();
+                if (selectedTheme != null) {
+                    switch (selectedTheme) {
+                        case "Apple Green":
+                            cssPath = "internseason/scheduler/gui/stylesheets/AppleGreen.css";
+                            break;
+                        case "Midnight Purple":
+                            cssPath = "internseason/scheduler/gui/stylesheets/MidnightPurple.css";
+                            break;
+                        case "Sky Blue":
+                            cssPath = "internseason/scheduler/gui/stylesheets/SkyBlue.css";
+                            break;
+                        case "Ruby Red":
+                            cssPath = "internseason/scheduler/gui/stylesheets/RubyRed.css";
+                            break;
+                        case "Lemon Yellow":
+                            cssPath = "internseason/scheduler/gui/stylesheets/LemonYellow.css";
+                            break;
 
-                switch (selectedTheme){
-                    case "Apple Green":
-                        cssPath = "internseason/scheduler/gui/stylesheets/AppleGreen.css";
-                        break;
-                    case "Midnight Purple":
-                        cssPath = "internseason/scheduler/gui/stylesheets/MidnightPurple.css";
-                        break;
-                    case "Sky Blue":
-                        cssPath = "internseason/scheduler/gui/stylesheets/SkyBlue.css";
-                        break;
-
+                    }
+                    setCSS(cssPath);
                 }
-                setCSS(cssPath);
+
             });
         });
 

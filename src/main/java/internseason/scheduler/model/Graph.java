@@ -37,7 +37,7 @@ public class Graph {
     /** Build adjacency list representation of the DAG on first call, subsequent calls return the built list
      * @return Outdegree adjacency list representation
      */
-    private Map<String, List<String>> getAdjacencyList() {
+    public Map<String, List<String>> getAdjacencyList() {
         if (this.adjacencyList != null) {
             return this.adjacencyList;
         }

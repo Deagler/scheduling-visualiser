@@ -45,20 +45,6 @@ public class CLIParserTest {
     }
 
     @Test
-    public void testInvalidInputFile() {
-
-        String[] args = {"input", "1"};
-
-        try {
-            parser.parse(args);
-            fail();
-        } catch (CLIException e) {
-            assertEquals("Invalid Input File, Must be a .dot file", e.getMessage());
-        }
-
-    }
-
-    @Test
     public void testNonIntegerProcessorValue() {
 
         String[] args = {"input.dot", "a"};
