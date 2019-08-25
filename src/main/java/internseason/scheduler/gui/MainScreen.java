@@ -422,7 +422,7 @@ public class MainScreen implements Initializable {
             String optimalNode = String.valueOf(optimal.hashCode());
             String optimalNodeParent = parentMap.get(optimalNode);
 
-            schedule_graph.addNode(optimalNode).setAttribute("ui.class", "root");
+            schedule_graph.addNode(optimalNode).setAttribute("ui.class", "optimal");
             schedule_graph.addEdge(optimalNodeParent + optimalNode, optimalNodeParent, optimalNode);
             while (optimalNodeParent != null) {
                 schedule_graph
