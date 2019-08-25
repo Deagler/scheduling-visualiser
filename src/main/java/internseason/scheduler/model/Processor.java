@@ -46,6 +46,10 @@ public class Processor implements Serializable {
         return this.taskIdScheduleMap.get(taskId);
     }
 
+    /**
+     * Returns a list of ids for all the tasks scheduled on this processor
+     * @return list of task ids
+     */
     public List<String> getTaskIds() {
         ArrayList<String> result = new ArrayList<>();
 
@@ -56,7 +60,13 @@ public class Processor implements Serializable {
 
     }
 
+   
 
+    /**
+     * Schedules a task at some determined time 
+     * @param task
+     * @param time
+     */
     public void addTaskAt(Task task,int time) {
         if (this.taskIdScheduleMap.containsKey(task.getId())) {
             throw new IllegalArgumentException("Processor has already scheduled this task");

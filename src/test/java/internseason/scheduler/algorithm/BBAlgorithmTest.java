@@ -19,12 +19,12 @@ public class BBAlgorithmTest {
     private Graph graph;
     private DOTParser parser;
     private SystemInformation sysInfo;
+
     @Before
     public void setup() {
         this.sysInfo = new SystemInformation();
         this.parser = new DOTParser();
     }
-
 
     @Test
     public void testGreedyScheduler() throws InputException {
@@ -93,7 +93,6 @@ public class BBAlgorithmTest {
             e.printStackTrace();
         }
     }
-    
 
     private void testGraph(String graphPath, int numberOfProcessors, int expectedCost) {
         try {
@@ -101,10 +100,18 @@ public class BBAlgorithmTest {
             BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.BRANCH_AND_BOUND_ALGORITHM);
             Schedule schedule = algorithm.execute(graph,numberOfProcessors, 1,sysInfo);
 
-            assertEquals(expectedCost, schedule.getCost());
-        } catch (InputException e) {
-            e.printStackTrace();
+        Set<String> free = new HashSet<>();
+        for (Task task : graph.getTasks().values()) {
+            if (task.getId().equals("0")) {
+                free.add(task.getId());
+
+            }
         }
+
+        Scheduler scheduler = new Scheduler(graph);
+        Schedule schedule = scheduler.buildGreedySchedule(new BBScheduleInfo(new Schedule(2), Integer.MIN_VALUE, Integer.MAX_VALUE, free), graph);
+        System.out.println(schedule);
+
     }
 
 
