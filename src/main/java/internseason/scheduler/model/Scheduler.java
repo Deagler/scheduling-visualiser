@@ -147,7 +147,7 @@ public class Scheduler {
 
 
 
-    //TODO throw exception
+
     //finishing time of parent task + edge cost from parent to task
     //input task should have a maximum of 1 parent
     public int calculateDRTSingle(Schedule schedule, Task task) {

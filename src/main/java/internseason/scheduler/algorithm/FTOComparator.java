@@ -12,12 +12,10 @@ import java.util.Comparator;
 public class FTOComparator implements Comparator<Task> {
 
     private Schedule schedule;
-    //private Graph graph;
     private Scheduler scheduler;
 
     public FTOComparator(Schedule schedule, Graph graph) {
         this.schedule = schedule;
-        //this.graph = graph;
         this.scheduler = new Scheduler(graph);
     }
 
