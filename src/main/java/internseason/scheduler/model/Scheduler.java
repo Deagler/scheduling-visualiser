@@ -1,7 +1,11 @@
 package internseason.scheduler.model;
 
+import internseason.scheduler.algorithm.BBScheduleInfo;
+
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Scheduler {
 
@@ -17,6 +21,35 @@ public class Scheduler {
         schedule.add(task, processorId, startTime);
 
     }
+
+    /**
+     * Given a task t, schedule it on a processor p such that t's start time is minimised
+     */
+    public void addWithLowestStartTime(Schedule schedule, Task task) {
+        int earliest = Integer.MAX_VALUE;
+        int targetProcessorId = 0;
+        for (int processorId = 0; processorId < schedule.getNumOfProcessors(); processorId++) {
+            int time = findNextAvailableTimeInProcessor(schedule,task, processorId);
+            if (time < earliest) {
+                earliest = time;
+                targetProcessorId = processorId;
+            }
+        }
+
+        this.addTask(schedule, task, targetProcessorId);
+    }
+
+    public int getEarliestStartTime(Schedule schedule, Task task){
+        int earliest = Integer.MAX_VALUE;
+        for (int processorId = 0; processorId < schedule.getNumOfProcessors(); processorId++) {
+            int time = findNextAvailableTimeInProcessor(schedule, task, processorId);
+            if (time < earliest) {
+                earliest = time;
+            }
+        }
+        return earliest;
+    }
+
 
 
     private int findNextAvailableTimeInProcessor(Schedule schedule, Task task, int processorId) {
@@ -48,6 +81,30 @@ public class Scheduler {
         }
 
         return result;
+    }
+
+    public Schedule buildGreedySchedule(BBScheduleInfo scheduleInfo, Graph graph) {
+        Schedule cloneSchedule = new Schedule(scheduleInfo.getSchedule());
+
+        Set<String> freeList = scheduleInfo.getFreeTasks();
+        int counter = 0;
+        while (freeList.size() > 0) {
+
+            Set<String> temp = new HashSet<>();
+            for (String taskId : freeList) {
+                Task task = graph.getTask(taskId);
+                this.addWithLowestStartTime(cloneSchedule, graph.getTask(taskId));
+                for (String childId : task.getChildrenList()) {
+                    Task child = graph.getTask(childId);
+                    if (cloneSchedule.isTaskFree(child)) {
+                        temp.add(child.getId());
+                    }
+                }
+            }
+            freeList = temp;
+            counter++;
+        }
+        return cloneSchedule;
     }
 
 

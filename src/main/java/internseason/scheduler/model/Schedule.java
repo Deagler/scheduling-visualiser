@@ -1,5 +1,6 @@
 package internseason.scheduler.model;
 
+import internseason.scheduler.algorithm.BBScheduleInfo;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -67,12 +68,13 @@ public class Schedule implements Serializable {
         Integer processorCost = processor.getCost();
         processor.addTaskAt(task, time);
         this.taskIdProcessorMap.put(task.getId(), processorId);
-        checkIncreasedCost(processor.getCost());
+        setCostIfIncreased(processor.getCost());
 
         Integer slack = time - processorCost;
         this.idleTime += slack;
         this.maxBottomLevel = Math.max(this.maxBottomLevel, time + task.getBottomLevel());
     }
+
 
     public int getMaxBottomLevel() {
         return maxBottomLevel;
@@ -87,7 +89,19 @@ public class Schedule implements Serializable {
         return this.taskIdProcessorMap.containsKey(taskId);
     }
 
-    private void checkIncreasedCost(int cost) {
+    public boolean isTaskFree(Task task) {
+        boolean isTaskFree = true;
+        for (String parentId : task.getParentTasks()) {
+            if (!isTaskAssigned(parentId)) {
+                isTaskFree = false;
+                break;
+            }
+
+        }
+        return isTaskFree;
+    }
+
+    private void setCostIfIncreased(int cost) {
         if (cost > this.cost) {
             this.cost = cost;
         }
