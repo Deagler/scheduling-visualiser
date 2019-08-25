@@ -9,11 +9,11 @@ import static org.junit.Assert.*;
 
 public class ProcessorTest {
 
-    Processor p0;
-    Processor p1;
-    Task t0;
-    Task t1;
-    Task t2;
+    private Processor p0;
+    private Processor p1;
+    private Task t0;
+    private Task t1;
+    private Task t2;
 
     @Before
     public void setup() {
