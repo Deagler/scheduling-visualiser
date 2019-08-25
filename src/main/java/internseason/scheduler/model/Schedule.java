@@ -59,7 +59,8 @@ public class Schedule implements Serializable {
     }
 
     /**
-     * Schedules a task on a particular process at some time
+     * Schedules a task on a particular process at some time.
+     * Updates the total cost of the schedule if it increases.
      * @param task
      * @param processorId
      * @param time
@@ -155,9 +156,8 @@ public class Schedule implements Serializable {
     }
 
     /**
-     * Gets the scheduled start time for a given task
      * @param task
-     * @return start time of task
+     * @return The scheduled start time for a given task
      */
     public int getTaskStartTime(Task task) {
         int processId = taskIdProcessorMap.get(task.getId());

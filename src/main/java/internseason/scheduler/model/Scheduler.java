@@ -64,7 +64,7 @@ public class Scheduler {
      * @param schedule
      * @param task
      * @param processorId
-     * @return time
+     * @return start time of task
      */
     private int findNextAvailableTimeInProcessor(Schedule schedule, Task task, int processorId) {
         List<String> parentTasks = task.getParentTasks();
