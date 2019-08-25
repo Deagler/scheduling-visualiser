@@ -23,7 +23,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
      */
     public AStarAlgorithm() {
         super();
-        scheduleQueue = new PriorityQueue<>(new AStarHeuristic());
     }
 
 
@@ -38,11 +37,14 @@ public class AStarAlgorithm extends BaseAlgorithm {
         //initialise thread executor
         this.executor = Executors.newWorkStealingPool(numOfCores);
         this.scheduler = new Scheduler(graph);
+        scheduleQueue = new PriorityQueue<>(new AStarHeuristic());
+        this.taskIndegreeCount = new HashMap<>();
 
         int totalTasks = graph.getTasks().size();
         this.totalTaskTime = 0;
         for (Task task: graph.getTasks().values()){
             totalTaskTime +=task.getCost();
+            taskIndegreeCount.put(task.getId(), task.getNumberOfParents());
         }
 
         this.graph = graph;
@@ -73,10 +75,10 @@ public class AStarAlgorithm extends BaseAlgorithm {
         boolean knownFTO = false; //variable that tells us if we need to call isFTO()
 
         while (!scheduleQueue.isEmpty()) {
-            //ScheduleInfo head = scheduleQueue.poll();
-            AstarScheduleInfo head = scheduleQueue.peek();
+     
+            AstarScheduleInfo head = scheduleQueue.poll();
             Schedule realSchedule = head.getSchedule();
-            scheduleQueue.remove();
+         
 
             // Return the optimal schedule (First complete schedule, orchestrated by AStar Heuristic)
             if (realSchedule.getNumberOfTasks() == totalTasks) {
@@ -122,8 +124,6 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 childScheduleHashCodes.add(possibleCombination.hashCode());
             }
 
-
-
             sysInfo.fireSchedulesGenerated(head.hashCode(), childScheduleHashCodes);
 
             sysInfo.setSchedulesQueued(scheduleQueue.size());
@@ -135,7 +135,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 List<Task> nextFreeList = getMergedFreeList(scheduleQueue.peek().getSchedule(), currentLayer, nextFreeIdList);
                 FTOList.remove();
 
-                if (!(nextFreeList.containsAll(FTOList) && FTOList.containsAll(nextFreeList))) {
+                if (!nextFreeList.equals(FTOList)) {
                     knownFTO = false;
                     continue;
                 }

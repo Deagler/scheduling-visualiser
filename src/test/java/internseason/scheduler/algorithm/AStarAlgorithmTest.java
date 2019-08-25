@@ -102,6 +102,11 @@ public class AStarAlgorithmTest {
     }
 
     @Test
+    public void test10NodeGraphOnTwoProcessors() {
+        testGraph("src/test/resources/Nodes_10_Random.dot", 2, 50);
+    }
+
+    @Test
     public void test21NodeGraphOnTwoProcessors() {
         testGraph("src/test/resources/Nodes_21_floating.dot", 2, 92);
     }
