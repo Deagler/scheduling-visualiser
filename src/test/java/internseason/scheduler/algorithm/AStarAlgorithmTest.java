@@ -86,9 +86,9 @@ public class AStarAlgorithmTest {
         try {
             Graph graph = this.parser.parse("src/test/resources/Nodes_11_OutTree.dot");
             AStarAlgorithm algorithm = new AStarAlgorithm();
-            Schedule schedule = algorithm.execute(graph,640,1,sysInfo);
+            Schedule schedule = algorithm.execute(graph,1,1,sysInfo);
             System.out.println(schedule);
-            assertEquals(227,schedule.getCost());
+            assertEquals(640,schedule.getCost());
         } catch (InputException e) {
             e.printStackTrace();
         }
@@ -127,19 +127,6 @@ public class AStarAlgorithmTest {
             Graph graph = this.parser.parse("src/test/resources/Nodes_21_floating.dot");
             AStarAlgorithm algorithm = new AStarAlgorithm();
             Schedule schedule = algorithm.execute(graph,2,1,sysInfo);
-            System.out.println(schedule);
-            assertEquals(92,schedule.getCost());
-        } catch (InputException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void testTwentyFiveFourProcessor() {
-        try {
-            Graph graph = this.parser.parse("src/test/resources/Nodes_21_floating.dot");
-            AStarAlgorithm algorithm = new AStarAlgorithm();
-            Schedule schedule = algorithm.execute(graph,4,1,sysInfo);
             System.out.println(schedule);
             assertEquals(92,schedule.getCost());
         } catch (InputException e) {
