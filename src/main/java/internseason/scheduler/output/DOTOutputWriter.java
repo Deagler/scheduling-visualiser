@@ -16,6 +16,14 @@ public class DOTOutputWriter {
     private Schedule schedule;
     private Map<String, Task> taskMap;
 
+    /**
+     * Generates the dot output file
+     * The file preserves all the nodes and edges of the original input graph
+     * Additionally, it adds properties for scheduled start time and processor id on each node
+     * @param fileName
+     * @param finalSchedule
+     * @param taskMap
+     */
     public void write(String fileName, Schedule finalSchedule, Map<String, Task> taskMap) {
         try {
             FileWriter fw = new FileWriter(fileName);
@@ -55,16 +63,36 @@ public class DOTOutputWriter {
         }
     }
 
+    /**
+     * Writes a single node to the dot output file- includes props weight, start time and processor id
+     * @param task
+     * @param startTime
+     * @param processorId
+     * @throws IOException
+     */
     private void writeNode(Task task, int startTime, int processorId) throws IOException {
         this.writer.write("\t" + task.getId() + "\t" + "[" + "Weight=" + task.getCost() + ", Processor=" + processorId + ", Start_time=" + startTime + "];");
         this.writer.newLine();
     }
 
+    /**
+     * Writes a single edge to the dot output file- identical format to edge in input graph
+     * @param parent
+     * @param child
+     * @param cost
+     * @throws IOException
+     */
     private void writeEdge(Task parent, Task child, int cost) throws IOException {
         this.writer.write("\t"+parent.getId()+" -> "+child.getId()+"\t"+"["+"Weight="+cost+"];");
         this.writer.newLine();
     }
 
+    /**
+     * Removes the extension for a given file
+     * E.g node11.dot -> node11
+     * @param fileName
+     * @return
+     */
     private String stripExtension(String fileName) {
         int lastIndexDot = fileName.lastIndexOf('.');
         return fileName.substring(0, lastIndexDot);

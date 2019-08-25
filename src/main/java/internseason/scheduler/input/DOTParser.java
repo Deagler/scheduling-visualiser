@@ -17,6 +17,12 @@ public class DOTParser {
     private Map<String, GraphNode> nodes;
     private Map<String, GraphEdge> edges;
 
+    /**
+     * Takes in the path for a dot file and returns an object encapsulating the input graph information
+     * @param path
+     * @return Graph object
+     * @throws InputException
+     */
     public Graph parse(String path) throws InputException {
         try {
             GraphParser parser = new GraphParser(new FileInputStream(path));
@@ -41,6 +47,10 @@ public class DOTParser {
         return graph;
     }
 
+    /**
+     * Adapter method to convert the PayPal digraph parser Node objects to Task objects
+     * @return HashMap containing (TaskId: Task) KV pairs
+     */
     private HashMap<String, Task> createTasks() {
         HashMap<String, Task> tasks = new HashMap<>();
         for(GraphNode node : this.nodes.values()) {
@@ -51,6 +61,11 @@ public class DOTParser {
         return tasks;
     }
 
+    /**
+     * Adapter method to convert the PayPal diagraph parser Edge objects to Dependency objects
+     * @param tasks
+     * @return a list of Dependency objects
+     */
     private List<Dependency> createDependencies(Map<String, Task> tasks) {
         List<Dependency> dependencies = new ArrayList<>();
         for (GraphEdge edge : this.edges.values()) {
@@ -62,7 +77,6 @@ public class DOTParser {
                     targetTask,
                     getCostOfGraphElement(edge)
             );
-
 
             sourceTask.addChildTask(targetTask, getCostOfGraphElement(edge));
             targetTask.addParentTask(sourceTask);

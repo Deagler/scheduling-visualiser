@@ -124,7 +124,7 @@ public class Graph {
         return inDegrees;
     }
 
-    /** Loop through adjaceny list and increment indegree value of each task in the indegree map
+    /** Loop through adjacency list and increment in=degree value of each task in the in=degree map
      * @param adj adjaceny list of graph
      * @param inDegrees map of tasks to their current indegree
      * @return updated indegree mapping
@@ -160,6 +160,10 @@ public class Graph {
         return result;
     }
 
+    /**
+     * Initializes building process for the bottom levels in the graph
+     * Starts from the leaf nodes and recursively works upwards
+     */
     public void buildBottomLevels(){
         List<Task> leafs = this.getTasks().values() //find all the leaf nodes
                 .stream()
@@ -175,6 +179,12 @@ public class Graph {
     }
 
 
+    /**
+     * Recursive function that builds the bottom level values for a given layer and all layers above it
+     * Assigns the bottom level value as a property to the respective task object
+     * @param tasks
+     * @param currentBottomLevel
+     */
     private void getBottomLevels(List<Task> tasks, int currentBottomLevel) {
         for (Task node : tasks) {
             if (node.getCost() < currentBottomLevel + node.getCost()) {
