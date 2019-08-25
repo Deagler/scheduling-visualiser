@@ -33,7 +33,7 @@ public class Main {
             }
         } catch (CLIException e) {
             System.out.println("Error: "+e.getMessage());
-            parser.printHelp("internseason.scheduler.algorithm-basic-T10 INPUT.dot <NumberOfProcessors>");
+            parser.printHelp("scheduler-final-T10.jar INPUT.dot <NumberOfProcessors>");
         }
 
     }
