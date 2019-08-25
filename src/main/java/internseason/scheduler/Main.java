@@ -45,8 +45,7 @@ public class Main {
         }
 
         BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(
-                AlgorithmType.A_STAR_ALGORITHM,
-                config.getNumberOfCores()
+                AlgorithmType.A_STAR_ALGORITHM
         );
 
         Schedule schedule = algorithm.execute(graph, config.getNumberOfProcessors(),config.getNumberOfCores(), sysInfo);

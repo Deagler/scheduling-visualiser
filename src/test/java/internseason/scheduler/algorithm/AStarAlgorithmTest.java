@@ -22,7 +22,7 @@ public class AStarAlgorithmTest {
     public void testAStarSchedule() {
         try {
             Graph graph = this.parser.parse("src/test/resources/Test_Diamond.dot");
-            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.A_STAR_ALGORITHM, 0);
+            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.A_STAR_ALGORITHM);
             Schedule schedule = algorithm.execute(graph, 2,1, sysInfo);
 
         } catch (InputException e) {
@@ -167,7 +167,7 @@ public class AStarAlgorithmTest {
     public void testAStarScheduleBig() {
         try {
             Graph graph = this.parser.parse("src/test/resources/big_chungus_16p_30nodes.dot");
-            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.A_STAR_ALGORITHM, 0);
+            BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(AlgorithmType.A_STAR_ALGORITHM);
             Schedule schedule = algorithm.execute(graph, 2,1, sysInfo);
 
         } catch (InputException e) {
