@@ -52,7 +52,7 @@ public class SchedulerTest {
                 "t1 scheduled at: 2\n" +
                 "Cost of Processor 0: 4\n" +
                 "Total schedule cost is: 4", schedule.toString());
-        //System.out.println(schedule.toString());
+
     }
 
     @Test
@@ -75,7 +75,7 @@ public class SchedulerTest {
                 "t1 scheduled at: 4\n" +
                 "Cost of Processor 1: 6\n" +
                 "Total schedule cost is: 6", schedule.toString());
-        //System.out.println(schedule.toString());
+
     }
 
     @Test
@@ -99,7 +99,7 @@ public class SchedulerTest {
                 "t2 scheduled at: 3\n" +
                 "Cost of Processor 1: 6\n" +
                 "Total schedule cost is: 9", schedule.toString());
-        //System.out.println(schedule.toString());
+
     }
 
     @Test
@@ -124,7 +124,7 @@ public class SchedulerTest {
                 "t3 scheduled at: 6\n" +
                 "Cost of Processor 1: 8\n" +
                 "Total schedule cost is: 8", schedule.toString());
-        //System.out.println(schedule.toString());
+
     }
 
     @Test
@@ -152,7 +152,7 @@ public class SchedulerTest {
                 "t3 scheduled at: 7\n" +
                 "Cost of Processor 2: 9\n" +
                 "Total schedule cost is: 9", schedule.toString());
-        //System.out.println(schedule.toString());
+
     }
 
     @Test

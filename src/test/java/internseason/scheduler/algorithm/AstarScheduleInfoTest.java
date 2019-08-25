@@ -29,7 +29,6 @@ public class AstarScheduleInfoTest {
 
         try {
             graph = this.parser.parse("src/test/resources/Test_Diamond.dot");
-            //Map<String, Task> map = graph.getTaskIds();
             t0 = graph.getTask("0");
             t1 = graph.getTask("1");
             t2 = graph.getTask("2");

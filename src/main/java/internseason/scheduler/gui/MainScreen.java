@@ -168,7 +168,7 @@ public class MainScreen implements Initializable {
         this.sysInfo = new SystemInformation();
         this.bindLabel(sysInfo.schedulesQueuedProperty(), schedules_in_queue);
         this.bindLabel(sysInfo.schedulesExploredProperty(), schedules_explored);
-        System.out.println("initialised");
+
         sysInfo.addListener(this::buildScheduleGraph);
     }
 
@@ -416,7 +416,7 @@ public class MainScreen implements Initializable {
             };
 
         algorithmService.setOnSucceeded((e) -> {
-            System.out.println("Algorithm Finished");
+
             Pair<Schedule, Graph> results = (Pair<Schedule, Graph>) e.getSource().getValue();
             Schedule optimal = results.getKey();
             Graph graph = results.getValue();
@@ -446,7 +446,7 @@ public class MainScreen implements Initializable {
         });
 
         algorithmService.setOnFailed((t) -> {
-            System.out.println("Algorithm Failed");
+
             t.getSource().getException().printStackTrace();
             this.stopTimer();
         });
@@ -471,6 +471,7 @@ public class MainScreen implements Initializable {
         settingsStage.setTitle("Settings");
 
         root.getStylesheets().clear();
+
         root.getStylesheets().add(cssPath);
 
         Scene scene = new Scene(root,600,400);
@@ -481,6 +482,7 @@ public class MainScreen implements Initializable {
         settingsStage.show();
 
         SettingsScreen settingsScreen = loader.getController();
+
         Platform.runLater(()->settingsScreen.getGuiColor().setValue(selectedTheme));
         settingsScreen.setDefaultValues(config.getNumberOfCores(),config.getNumberOfProcessors());
         settingsScreen.setConfig(config);
@@ -530,6 +532,7 @@ public class MainScreen implements Initializable {
         File file = fileChooser.showOpenDialog(input_graph_pane.getScene().getWindow());
         if (file != null) {
             graph_path = file;
+
             loaded_graph_label.setText(file.getName());
             config.setInputDotFile(file.toString());
             resetScheduleGraph();

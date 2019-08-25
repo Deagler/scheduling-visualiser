@@ -40,7 +40,7 @@ public class BBAlgorithmTest {
 
         Scheduler scheduler = new Scheduler(graph);
         Schedule schedule = scheduler.buildGreedySchedule(new BBScheduleInfo(new Schedule(2), Integer.MIN_VALUE, Integer.MAX_VALUE, free),graph);
-        System.out.println(schedule);
+
 
 
 

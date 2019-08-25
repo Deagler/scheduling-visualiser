@@ -139,7 +139,6 @@ public class Schedule implements Serializable {
         StringBuilder sb = new StringBuilder();
 
         for (int i=0; i<numOfProcessors; i++) {
-            //sb.append("p" + processorIdMap.get(i));
             sb.append("Processor " + i + "\n");
             sb.append(processorIdMap.get(i));
             sb.append("Cost of Processor " + i + ": " + processorIdMap.get(i).getCost() + "\n");
