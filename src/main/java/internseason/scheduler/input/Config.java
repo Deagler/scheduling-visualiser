@@ -32,10 +32,8 @@ public class Config {
         return outputFileName;
     }
 
-    public void setInputDotFile(String inputDotFile) throws CLIException {
-        if (!Config.isValidInputFile(inputDotFile)) {
-            throw new CLIException("Invalid Input File, Must be a .dot file");
-        }
+    public void setInputDotFile(String inputDotFile)  {
+
 
         this.inputDotFile = inputDotFile;
     }

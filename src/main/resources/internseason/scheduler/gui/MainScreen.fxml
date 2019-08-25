@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" stylesheets="@stylesheets/SkyBlue.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+    <top>
+        <VBox prefHeight="68.0" prefWidth="1280.0" styleClass="title" BorderPane.alignment="CENTER">
+            <children>
+                <Label prefHeight="41.0" prefWidth="689.0" text="Scheduling Algorithm" textFill="WHITE">
+                    <VBox.margin>
+                        <Insets left="20.0" top="20.0" />
+                    </VBox.margin>
+                    <font>
+                        <Font name="Roboto" size="35.0" />
+                    </font>
+                </Label>
+            </children></VBox>
+    </top>
+    <center>
+        <VBox prefHeight="729.0" prefWidth="1280.0" styleClass="Background" BorderPane.alignment="CENTER">
+            <children>
+            <HBox alignment="CENTER_LEFT" prefHeight="55.0" prefWidth="1260.0">
+               <padding>
+                  <Insets left="20.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </VBox.margin>
+            </HBox>
+                <GridPane alignment="TOP_CENTER" maxHeight="371.0" prefHeight="194.0" prefWidth="1280.0" styleClass="Background">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="320.0" minWidth="10.0" prefWidth="320.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="320.0" minWidth="10.0" prefWidth="320.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                  <VBox prefHeight="200.0" prefWidth="100.0" styleClass="pane" GridPane.columnIndex="1">
+                     <children>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                           <children>
+                              <Label fx:id="branchesCheckedLabel" alignment="CENTER" layoutX="5.0" layoutY="29.0" prefHeight="83.0" prefWidth="310.0" text="0">
+                                 <font>
+                                    <Font size="56.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" layoutX="80.0" layoutY="92.0" prefHeight="36.0" prefWidth="153.0" styleClass="label_colored" text="Branches Checked" textFill="#4c97ff">
+                                 <font>
+                                    <Font size="17.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets bottom="5.0" left="10.0" right="5.0" top="5.0" />
+                                 </padding>
+                              </Label>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="200.0" prefWidth="100.0" styleClass="pane" />
+                  <VBox prefHeight="200.0" prefWidth="100.0" styleClass="pane" GridPane.columnIndex="2">
+                     <children>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                           <children>
+                              <Label fx:id="optimalScheduleCost" alignment="CENTER" layoutX="6.0" layoutY="25.0" prefHeight="83.0" prefWidth="310.0" text="-">
+                                 <font>
+                                    <Font size="56.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" layoutX="3.0" layoutY="91.0" prefHeight="36.0" prefWidth="312.0" styleClass="label_colored" text="Optimal Schedule Cost" textFill="#4c97ff">
+                                 <font>
+                                    <Font size="17.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets bottom="5.0" left="10.0" right="5.0" top="5.0" />
+                                 </padding>
+                              </Label>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="200.0" prefWidth="100.0" styleClass="pane" GridPane.columnIndex="3">
+                     <children>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                           <children>
+                              <Label alignment="CENTER" layoutX="115.0" layoutY="33.0" prefHeight="25.0" prefWidth="74.0" text="A*">
+                                 <font>
+                                    <Font name="Monotxt_IV50" size="56.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" layoutX="4.0" layoutY="94.0" prefHeight="36.0" prefWidth="301.0" styleClass="label_colored" text="Algorithm" textAlignment="CENTER" textFill="#4c97ff">
+                                 <font>
+                                    <Font size="17.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets bottom="5.0" left="10.0" right="5.0" top="5.0" />
+                                 </padding>
+                              </Label>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </VBox>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <Label fx:id="runtime" alignment="CENTER" layoutX="4.0" layoutY="32.0" prefHeight="83.0" prefWidth="302.0" text="00:00:00">
+                           <font>
+                              <Font size="43.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" layoutX="79.0" layoutY="97.0" prefHeight="36.0" prefWidth="153.0" styleClass="label_colored" text="Runtime" textFill="#4c97ff">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="5.0" left="10.0" right="5.0" top="5.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+                    </children>
+                    <padding>
+                        <Insets left="10.0" right="10.0" />
+                    </padding>
+                </GridPane>
+            <HBox prefHeight="60.0" prefWidth="1260.0" styleClass="Background">
+               <VBox.margin>
+                  <Insets left="20.0" />
+               </VBox.margin>
+            </HBox>
+                <HBox prefHeight="562.0" prefWidth="1280.0">
+                    <children>
+                        <GridPane hgap="10.0" prefHeight="534.0" prefWidth="1280.0" vgap="10.0">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                            <children>
+                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="pane_large">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                           <children>
+                              <HBox prefHeight="83.0" prefWidth="449.0" styleClass="header-large">
+                                 <children>
+                                    <Label prefHeight="104.0" prefWidth="492.0" text="Input Graph" textFill="WHITE">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <Pane fx:id="input_graph_pane" prefHeight="271.0" prefWidth="481.0">
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin></Pane>
+                           </children>
+                        </VBox>
+                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="pane_large" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <HBox prefHeight="37.0" prefWidth="454.0" styleClass="header-large">
+                                 <children>
+                                    <Label prefHeight="38.0" prefWidth="444.0" text="Performance" textFill="WHITE">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <Pane fx:id="performancePane" prefHeight="203.0" prefWidth="800.0">
+                                 <children>
+                                    <BarChart prefHeight="214.0" prefWidth="454.0">
+                                       <xAxis>
+                                          <CategoryAxis side="BOTTOM" />
+                                       </xAxis>
+                                       <yAxis>
+                                          <NumberAxis side="LEFT" />
+                                       </yAxis>
+                                    </BarChart>
+                                 </children>
+                              </Pane>
+                           </children>
+                        </VBox>
+                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="pane_large" GridPane.columnIndex="1">
+                           <children>
+                              <HBox prefHeight="83.0" prefWidth="449.0" styleClass="header-large">
+                                 <children>
+                                    <Label prefHeight="104.0" prefWidth="492.0" text="Optimal Schedule" textFill="WHITE">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <Pane fx:id="optimalSchedule" prefHeight="271.0" prefWidth="481.0">
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </Pane>
+                           </children>
+                        </VBox>
+                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="pane_large" GridPane.rowIndex="1">
+                           <children>
+                              <HBox prefHeight="83.0" prefWidth="449.0" styleClass="header-large">
+                                 <children>
+                                    <Label prefHeight="104.0" prefWidth="492.0" text="Search Path Tree" textFill="WHITE">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <Pane fx:id="schedule_graph_pane" prefHeight="271.0" prefWidth="481.0">
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </Pane>
+                           </children>
+                        </VBox>
+                            </children>
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" />
+                            </padding>
+                        </GridPane>
+                  <VBox prefHeight="200.0" prefWidth="100.0" />
+                  <VBox spacing="10.0">
+                     <HBox.margin>
+                        <Insets bottom="10.0" right="10.0" />
+                     </HBox.margin>
+                     <children>
+                        <VBox prefHeight="575.0" prefWidth="328.0" styleClass="pane_large">
+                           <children>
+                              <HBox prefHeight="32.0" prefWidth="328.0" styleClass="header-large">
+                                 <children>
+                                    <Label prefHeight="37.0" prefWidth="318.0" text="Runtime Information" textFill="WHITE">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <AnchorPane prefHeight="247.0" prefWidth="328.0">
+                                 <children>
+                                    <Label layoutX="13.0" layoutY="101.0" prefHeight="25.0" prefWidth="155.0" text="Available Processors:" />
+                                    <Label fx:id="available_processors" alignment="CENTER_RIGHT" layoutX="206.0" layoutY="101.0" prefHeight="25.0" prefWidth="102.0" text="4" />
+                                    <Label layoutX="13.0" layoutY="57.0" prefHeight="25.0" prefWidth="139.0" text="Cores for Execution:" />
+                                    <Label fx:id="cores_for_execution" alignment="CENTER_RIGHT" layoutX="211.0" layoutY="57.0" prefHeight="25.0" prefWidth="97.0" text="1" />
+                                    <Label layoutX="13.0" layoutY="118.0" prefHeight="25.0" prefWidth="155.0" text="Max Memory:" />
+                                    <Label fx:id="max_memory" alignment="CENTER_RIGHT" layoutX="112.0" layoutY="118.0" prefHeight="25.0" prefWidth="196.0" text="1908 MB" />
+                                    <Label layoutX="13.0" layoutY="135.0" prefHeight="25.0" prefWidth="155.0" text="Used Memory:" />
+                                    <Label fx:id="used_memory" alignment="CENTER_RIGHT" layoutX="111.0" layoutY="135.0" prefHeight="25.0" prefWidth="197.0" text="666 MB" />
+                                    <Label layoutX="13.0" layoutY="151.0" prefHeight="25.0" prefWidth="155.0" text="Free Memory:" />
+                                    <Label fx:id="free_memory" alignment="CENTER_RIGHT" layoutX="118.0" layoutY="151.0" prefHeight="25.0" prefWidth="190.0" text="1242 MB" />
+                                    <Label layoutX="13.0" layoutY="191.0" prefHeight="25.0" prefWidth="155.0" text="Schedules Explored" />
+                                    <Label fx:id="schedules_explored" alignment="CENTER_RIGHT" layoutX="206.0" layoutY="191.0" prefHeight="25.0" prefWidth="102.0" text="33 M" />
+                                    <Label layoutX="13.0" layoutY="206.0" prefHeight="25.0" prefWidth="155.0" text="Schedules in Queue" />
+                                    <Label fx:id="schedules_in_queue" alignment="CENTER_RIGHT" layoutX="206.0" layoutY="206.0" prefHeight="25.0" prefWidth="102.0" text="330 K" />
+                                    <Label layoutX="13.0" layoutY="18.0" prefHeight="25.0" prefWidth="102.0" text="Loaded File:" />
+                                    <Label fx:id="loaded_graph_label" alignment="CENTER_RIGHT" layoutX="116.0" layoutY="18.0" prefHeight="25.0" prefWidth="187.0" text="Sample_graph.dot" />
+                                    <Separator layoutX="8.0" layoutY="45.0" prefHeight="10.0" prefWidth="304.0" />
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" />
+                                 </padding>
+                              </AnchorPane>
+                           </children>
+                        </VBox>
+                        <VBox prefHeight="186.0" prefWidth="328.0" styleClass="pane_large">
+                           <children>
+                              <HBox prefHeight="83.0" prefWidth="449.0" styleClass="header-large">
+                                 <children>
+                                    <Label prefHeight="50.0" prefWidth="318.0" text="Controls" textFill="WHITE">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Button fx:id="loadButton" mnemonicParsing="false" onAction="#loadButtonPressed" prefHeight="34.0" prefWidth="0.0">
+                                       <graphic>
+                                          <ImageView fitHeight="38.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@icons/new_graph_icon.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                    <Button fx:id="playButton" mnemonicParsing="false" onAction="#playButtonPressed" prefHeight="79.0" prefWidth="41.0">
+                                       <graphic>
+                                          <ImageView fitHeight="25.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@icons/play_button.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                    <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#settingsButtonPressed" prefHeight="38.0" prefWidth="28.0">
+                                       <graphic>
+                                          <ImageView fitHeight="30.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@icons/settings-icon.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="3.0" left="5.0" right="5.0" top="3.0" />
+                                 </padding>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

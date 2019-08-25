@@ -6,18 +6,15 @@ import internseason.scheduler.model.Graph;
 import internseason.scheduler.model.Schedule;
 import internseason.scheduler.model.Scheduler;
 import internseason.scheduler.model.Task;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class ScheduleInfoTest {
+public class AstarScheduleInfoTest {
     private Graph graph;
     private DOTParser parser;
     private Task t0;
@@ -60,7 +57,7 @@ public class ScheduleInfoTest {
                 freeList.add(String.valueOf(i));
             }
 
-            ScheduleInfo si = new ScheduleInfo(schedule, 1, freeList, schedule.getCost());
+            AstarScheduleInfo si = new AstarScheduleInfo(schedule, 1, freeList, schedule.getCost());
 
             assertEquals(si.getSchedule().toString(), schedule.toString());
 

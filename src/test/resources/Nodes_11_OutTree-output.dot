@@ -1,0 +1,23 @@
+digraph "Optimal-Schedule-For-src/test/resources/Nodes_11_OutTree-output" {
+	0	[Weight=50, Processor=0, Start_time=0];
+	1	[Weight=70, Processor=0, Start_time=50];
+	4	[Weight=40, Processor=0, Start_time=120];
+	8	[Weight=50, Processor=0, Start_time=160];
+	3	[Weight=100, Processor=1, Start_time=54];
+	5	[Weight=20, Processor=1, Start_time=154];
+	9	[Weight=20, Processor=1, Start_time=174];
+	10	[Weight=20, Processor=1, Start_time=194];
+	2	[Weight=90, Processor=2, Start_time=57];
+	7	[Weight=80, Processor=2, Start_time=147];
+	6	[Weight=100, Processor=3, Start_time=125];
+	0 -> 1	[Weight=9];
+	1 -> 4	[Weight=10];
+	2 -> 8	[Weight=3];
+	0 -> 3	[Weight=4];
+	1 -> 5	[Weight=7];
+	2 -> 9	[Weight=10];
+	3 -> 10	[Weight=4];
+	0 -> 2	[Weight=7];
+	2 -> 7	[Weight=5];
+	1 -> 6	[Weight=5];
+}

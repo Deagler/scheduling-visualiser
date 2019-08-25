@@ -1,0 +1,59 @@
+.VBox{
+    -fx-background-color:  #3d6090;
+}
+
+.title {
+    -fx-background-color: #ffca28;
+    -fx-background-insets: 0;
+    -fx-background-radius: 2 2 0 0;
+    -fx-effect: dropshadow(three-pass-box, lightgray, 3, 0, 0, 2);
+}
+
+.headers {
+    -fx-background-color: #ffca28;
+    -fx-background-insets: 5;
+    -fx-background-radius: 2 2 0 0;
+    -fx-effect: dropshadow(three-pass-box, lightgray, 3, 0, 0, 2);
+}
+
+.header-large {
+    -fx-background-color:#ffca28;
+            /*#4c97ff;*/
+            /*linear-gradient(from 25% 25% to 100% 100%, #ff7f50, #6a5acd)*/
+    -fx-background-insets: -1;
+    -fx-background-radius: 2 2 0 0;
+    -fx-effect: dropshadow(three-pass-box, lightgray, 3, 0, 0, 2);
+}
+
+.pane {
+    -fx-background-color: #ffffff;
+    -fx-background-insets: 5;
+    -fx-background-radius: 2;
+    -fx-effect: dropshadow(three-pass-box, lightgray, 10, 0, 0, 0);
+}
+
+.pane_large {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 2;
+    -fx-effect: dropshadow(three-pass-box, lightgray, 10, 0, 0, 0);
+}
+
+.Background{
+    -fx-background-color: #f3f3f3;
+}
+
+.button {
+    -fx-background-color: white;
+}
+
+.label_colored{
+    -fx-text-fill: #ffca28;
+}
+
+.button:hover {
+    -fx-background-color: #e5e5e5;
+}
+.button:pressed{
+    -fx-background-color: #ffca28;
+}
+

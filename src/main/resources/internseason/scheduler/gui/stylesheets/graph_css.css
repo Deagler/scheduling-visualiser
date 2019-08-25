@@ -1,0 +1,31 @@
+/*graph {*/
+/*    fill-color: #FFFF;*/
+/*}*/
+
+node {
+    size: 5px;
+    fill-color: #777;
+    text-mode: hidden;
+    z-index: 0;
+}
+
+edge {
+    shape: line;
+    fill-color: #222;
+    arrow-size: 3px, 2px;
+}
+
+node.optimal{    size: 15px;
+    fill-color:  #f44336;
+    text-mode: hidden;
+    z-index: 0;}
+node.root{    size: 15px;
+    fill-color: #4CAF50;
+    text-mode: hidden;
+    z-index: 0;}
+
+edge.visited { size: 2px; fill-color: #4CAF50; stroke-width: 0.5px; stroke-mode: plain; }
+
+node:clicked {
+    fill-color: red;
+}
