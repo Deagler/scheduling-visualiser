@@ -7,6 +7,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.io.Serializable;
 import java.util.*;
 
+/** abstraction represents a partial and complete schedule, contains a mapping of task ids to process ids
+ *  and map from process ids to process objects, task objects not stored to conserve memory
+ */
 public class Schedule implements Serializable {
 
     private HashMap<Integer, Processor> processorIdMap; //map from processId to processor

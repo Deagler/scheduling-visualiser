@@ -2,6 +2,10 @@ package internseason.scheduler.model;
 
 import java.io.Serializable;
 
+
+/** Represents a dependency within the input DAG, this class is used to compute the
+ * topological ordering within the graph object.
+ */
 public class Dependency implements Serializable {
 
     private Task sourceTask;

@@ -17,6 +17,11 @@ import javafx.util.Pair;
 
 public class Main {
     public static Config config;
+
+    /** Launches the GUI if visualisation flag set, otherwise calls startAlgorithm to run the
+     *  algorithm
+     * @param args
+     */
     public static void main(String[] args) {
 
         CLIParser parser = new CLIParser();
@@ -38,6 +43,11 @@ public class Main {
 
     }
 
+    /** Begin execution of the algorithm and get the output and write it to a DOT file
+     * @param config
+     * @param sysInfo
+     * @return
+     */
     public static Pair<Schedule, Graph> startAlgorithm(Config config, SystemInformation sysInfo) {
         DOTParser dotparser = new DOTParser();
         Graph graph = null;

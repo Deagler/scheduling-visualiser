@@ -6,6 +6,10 @@ import org.apache.commons.lang3.SerializationUtils;
 import java.util.List;
 import java.util.Objects;
 
+/** Class stores information about a partial schedule that currently exists in the A star algorithm,
+ *  contains a serialised version of a full schedule object, scheduleInfo objeccts are stored in the priority queue
+ *  in our A star algorithm.
+ */
 public class AstarScheduleInfo {
         private byte[] serialisedSchedule;
         private Integer maxBottomLevel;

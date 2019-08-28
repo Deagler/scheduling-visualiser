@@ -15,6 +15,14 @@ public class BranchAndBoundAlgorithm extends BaseAlgorithm {
     private Scheduler scheduler;
     int counter = 0;
 
+
+    /** Execute methods runs the BNB algorithm from a root node to a complete schedule
+     * @param graph
+     * @param numberOfProcessors
+     * @param numberOfCores
+     * @param systemInformation
+     * @return optimal schedule
+     */
     @Override
     public Schedule execute(Graph graph, int numberOfProcessors, int numberOfCores, SystemInformation systemInformation) {
         this.graph = graph;

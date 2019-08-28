@@ -1,23 +1,23 @@
 digraph "Optimal-Schedule-For-src/test/resources/Nodes_11_OutTree-output" {
 	0	[Weight=50, Processor=0, Start_time=0];
-	3	[Weight=100, Processor=0, Start_time=50];
 	1	[Weight=70, Processor=0, Start_time=150];
-	5	[Weight=20, Processor=0, Start_time=220];
-	8	[Weight=50, Processor=0, Start_time=240];
-	9	[Weight=20, Processor=0, Start_time=290];
-	4	[Weight=40, Processor=0, Start_time=310];
+	3	[Weight=100, Processor=0, Start_time=50];
+	4	[Weight=40, Processor=0, Start_time=220];
+	5	[Weight=20, Processor=0, Start_time=330];
+	8	[Weight=50, Processor=0, Start_time=260];
+	10	[Weight=20, Processor=0, Start_time=310];
 	2	[Weight=90, Processor=1, Start_time=57];
-	7	[Weight=80, Processor=1, Start_time=147];
-	6	[Weight=100, Processor=1, Start_time=227];
-	10	[Weight=20, Processor=1, Start_time=327];
-	0 -> 3	[Weight=4];
+	6	[Weight=100, Processor=1, Start_time=247];
+	7	[Weight=80, Processor=1, Start_time=167];
+	9	[Weight=20, Processor=1, Start_time=147];
 	0 -> 1	[Weight=9];
+	0 -> 3	[Weight=4];
+	1 -> 4	[Weight=10];
 	1 -> 5	[Weight=7];
 	2 -> 8	[Weight=3];
-	2 -> 9	[Weight=10];
-	1 -> 4	[Weight=10];
-	0 -> 2	[Weight=7];
-	2 -> 7	[Weight=5];
-	1 -> 6	[Weight=5];
 	3 -> 10	[Weight=4];
+	0 -> 2	[Weight=7];
+	1 -> 6	[Weight=5];
+	2 -> 7	[Weight=5];
+	2 -> 9	[Weight=10];
 }

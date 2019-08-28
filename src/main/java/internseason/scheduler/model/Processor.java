@@ -7,6 +7,9 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/** Abstraction represents a processor on the optimal schedule,
+ *  stores information about what tasks it stores and what time they are scheduled
+ */
 public class Processor implements Serializable {
     private int cost;
     private int processorId;

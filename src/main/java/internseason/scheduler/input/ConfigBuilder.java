@@ -1,5 +1,6 @@
 package internseason.scheduler.input;
 
+
 public class ConfigBuilder {
     private Config config;
 

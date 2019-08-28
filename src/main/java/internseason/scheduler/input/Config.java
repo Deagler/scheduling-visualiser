@@ -1,5 +1,8 @@
 package internseason.scheduler.input;
 
+
+/** Stores information from the input in terminal or from the GUI
+ */
 public class Config {
     private String inputDotFile;
     private int numberOfProcessors;
