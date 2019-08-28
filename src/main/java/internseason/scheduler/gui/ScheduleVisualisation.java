@@ -6,8 +6,6 @@ import java.util.List;
 import javafx.beans.NamedArg;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.CategoryAxis;
@@ -16,11 +14,9 @@ import javafx.scene.chart.ValueAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 
 
-public class ScheduleVisulisation <X,Y> extends XYChart<X,Y> {
+public class ScheduleVisualisation<X,Y> extends XYChart<X,Y> {
 
     public static class ExtraData {
 
@@ -55,11 +51,11 @@ public class ScheduleVisulisation <X,Y> extends XYChart<X,Y> {
 
     private double blockHeight = 10;
 
-    public ScheduleVisulisation(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis) {
+    public ScheduleVisualisation(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis) {
         this(xAxis, yAxis, FXCollections.<Series<X, Y>>observableArrayList());
     }
 
-    public ScheduleVisulisation(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis, @NamedArg("data") ObservableList<Series<X, Y>> data) {
+    public ScheduleVisualisation(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis, @NamedArg("data") ObservableList<Series<X, Y>> data) {
         super(xAxis, yAxis);
         if (!(xAxis instanceof ValueAxis && yAxis instanceof CategoryAxis)) {
             throw new IllegalArgumentException("Axis type incorrect, X and Y should both be NumberAxis");
