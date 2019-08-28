@@ -41,15 +41,24 @@ public class Main {
     public static Pair<Schedule, Graph> startAlgorithm(Config config, SystemInformation sysInfo) {
         DOTParser dotparser = new DOTParser();
         Graph graph = null;
+        BaseAlgorithm algorithm;
+
         try {
             graph = dotparser.parse(config.getInputDotFile());
         } catch (InputException e) {
             System.out.println("Error reading file: "+e.getMessage());
         }
 
-        BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(
-                AlgorithmType.A_STAR_ALGORITHM
-        );
+        if (config.getNumberOfProcessors() == 1) {
+            algorithm = AlgorithmFactory.getAlgorithm(
+                    AlgorithmType.BASIC_ALGORITHM
+            );
+        } else {
+            algorithm = AlgorithmFactory.getAlgorithm(
+                    AlgorithmType.A_STAR_ALGORITHM
+            );
+        }
+
 
 
         Schedule schedule = algorithm.execute(graph, config.getNumberOfProcessors(),config.getNumberOfCores(), sysInfo);

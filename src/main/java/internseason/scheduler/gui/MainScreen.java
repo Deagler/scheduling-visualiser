@@ -11,7 +11,6 @@ import internseason.scheduler.model.Schedule;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -261,7 +260,7 @@ public class MainScreen implements Initializable {
         final NumberAxis xAxis = new NumberAxis();
         final CategoryAxis yAxis = new CategoryAxis();
         // setting up chart
-        final ScheduleVisulisation<Number,String> chart = new ScheduleVisulisation<Number,String>(xAxis,yAxis);
+        final ScheduleVisualisation<Number,String> chart = new ScheduleVisualisation<Number,String>(xAxis,yAxis);
         xAxis.setLabel("Time");
         xAxis.setTickLabelFill(Color.CHOCOLATE);
         xAxis.setMinorTickCount(4);
@@ -296,7 +295,7 @@ public class MainScreen implements Initializable {
                 String taskID = taskEntry.getKey();
                 Integer startTime = taskEntry.getValue();
                 int cost = graph.getTask(taskID).getCost();
-                XYChart.Data chartData = new XYChart.Data(startTime, proc, new ScheduleVisulisation.ExtraData(cost, "status-blue"));
+                XYChart.Data chartData = new XYChart.Data(startTime, proc, new ScheduleVisualisation.ExtraData(cost, "status-blue"));
                 series.getData().add(chartData);
             }
             count +=1;
