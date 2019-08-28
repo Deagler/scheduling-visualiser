@@ -5,6 +5,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.io.Serializable;
 import java.util.*;
 
+/** Task class represents abstraction of a task on the input DAG, which has a cost and edges associated with it
+ *  contains getters and setters to change properties of the task object
+ */
 public class Task implements Serializable {
     private List<String> parentTasks;
     private Map<String, Integer> childCosts;
@@ -50,8 +53,6 @@ public class Task implements Serializable {
     public void setBottomLevel(int bottomLevel) {
         this.bottomLevel = Math.max(bottomLevel, this.bottomLevel);
     }
-
-
 
     public int getNumberOfParents() {
         return this.parentTasks.size();

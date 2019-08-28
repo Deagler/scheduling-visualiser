@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/** Class handles allocating tasks to specific processors within a schedule
+ */
 public class Scheduler {
 
     private Map<String, Task> allTasks;
@@ -145,24 +147,19 @@ public class Scheduler {
 
         for (int processorId : processorIdMap.keySet()) {
             int max = 0;
-
             for (String parentId : task.getParentTasks()) {
                 Task parent = allTasks.get(parentId);
-
                 //finish time of parent
                 Processor parentProcessor = processorIdMap.get(taskIdProcessorMap.get(parent.getId()));
                 int finTime = parentProcessor.getTaskStartTime(parentId) + parent.getCost();
                 int communicationCost = 0;
-
                 if (parentProcessor.getId() != processorId) {
                     communicationCost = parent.getCostToChild(task);
                 }
-
                 if (finTime + communicationCost > max) {
                     max = finTime + communicationCost;
                 }
             }
-
             if (max < min ) {
                 min = max;
             }
@@ -172,16 +169,17 @@ public class Scheduler {
     }
 
 
-
-
-    //finishing time of parent task + edge cost from parent to task
-    //input task should have a maximum of 1 parent
+    /** Calculate the DRT of a single task on a schedule for use in FTO sorting, this definition of DRT is slightly different to the
+     *  DRT used in the cost function, as these tasks will only have 1 parent
+     * @param schedule
+     * @param task
+     * @return drt cost of a task in FTO
+     */
     public int calculateDRTSingle(Schedule schedule, Task task) {
         //if no parent return 0
         if (task.getNumberOfParents() == 0) {
             return 0;
         }
-
         //should only have 1 parent
         if (task.getNumberOfParents() == 1) {
             String parentTaskId = task.getParentTasks().get(0);
@@ -194,7 +192,6 @@ public class Scheduler {
             return finTime + cost;
 
         }
-
         return -1;
     }
 

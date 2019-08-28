@@ -4,6 +4,8 @@ import internseason.scheduler.model.Schedule;
 
 import java.util.Set;
 
+/** Stores information about partial schedules of a BNB algorithm
+ */
 public class BBScheduleInfo {
     Schedule partialSchedule;
     int lowerBound;

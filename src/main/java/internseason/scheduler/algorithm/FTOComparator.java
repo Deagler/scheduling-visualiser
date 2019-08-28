@@ -19,6 +19,11 @@ public class FTOComparator implements Comparator<Task> {
         this.scheduler = new Scheduler(graph);
     }
 
+    /** Compare method that the queue for FTO uses to sort by data ready time of each free task
+     * @param t1
+     * @param t2
+     * @return
+     */
     @Override
     public int compare(Task t1, Task t2) {
 

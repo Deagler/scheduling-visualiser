@@ -17,6 +17,11 @@ import javafx.util.Pair;
 
 public class Main {
     public static Config config;
+
+    /** Launches the GUI if visualisation flag set, otherwise calls startAlgorithm to run the
+     *  algorithm
+     * @param args
+     */
     public static void main(String[] args) {
 
         CLIParser parser = new CLIParser();
@@ -38,10 +43,14 @@ public class Main {
 
     }
 
+    /** Begin execution of the algorithm and get the output and write it to a DOT file
+     * @param config
+     * @param sysInfo
+     * @return
+     */
     public static Pair<Schedule, Graph> startAlgorithm(Config config, SystemInformation sysInfo) {
         DOTParser dotparser = new DOTParser();
         Graph graph = null;
-        BaseAlgorithm algorithm;
 
         try {
             graph = dotparser.parse(config.getInputDotFile());
@@ -49,15 +58,9 @@ public class Main {
             System.out.println("Error reading file: "+e.getMessage());
         }
 
-        if (config.getNumberOfProcessors() == 1) {
-            algorithm = AlgorithmFactory.getAlgorithm(
-                    AlgorithmType.BASIC_ALGORITHM
-            );
-        } else {
-            algorithm = AlgorithmFactory.getAlgorithm(
-                    AlgorithmType.A_STAR_ALGORITHM
-            );
-        }
+        BaseAlgorithm algorithm = AlgorithmFactory.getAlgorithm(
+                AlgorithmType.A_STAR_ALGORITHM
+        );
 
 
 

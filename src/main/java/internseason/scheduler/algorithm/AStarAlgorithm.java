@@ -123,8 +123,8 @@ public class AStarAlgorithm extends BaseAlgorithm {
                 childScheduleHashCodes.add(possibleCombination.hashCode());
             }
 
+            // fire events to update the GUI
             sysInfo.fireSchedulesGenerated(head.hashCode(), childScheduleHashCodes);
-
             sysInfo.setSchedulesQueued(scheduleQueue.size());
             sysInfo.setSchedulesExplored(counter);
             //if was in FTO
@@ -138,9 +138,7 @@ public class AStarAlgorithm extends BaseAlgorithm {
                     knownFTO = false;
                     continue;
                 }
-
                 continue;
-
             }
             knownFTO = false;
             counter++;
@@ -149,18 +147,32 @@ public class AStarAlgorithm extends BaseAlgorithm {
         return null;
     }
 
+    /** Make new idle time heuristic
+     * @return Idle time heuristic object
+     */
     private BaseHeuristic getIdleHeuristic() {
         return new IdleTimeHeuristic(this.totalTaskTime);
     }
 
-
+    /** Make new Data ready time heuristic
+     * @return DRT heuristic object
+     */
     private BaseHeuristic getDRTHeuristic(List<Task> freeTasks){
         return new DataReadyTimeHeuristic(freeTasks,this.scheduler);
     }
 
+    /** Make new critical path heuristic
+     * @return critical heuristic object
+     */
     private BaseHeuristic getCriticalPathHeuristic(){
         return new CriticalPathHeuristic();
     }
+
+    /** Find the overall cost of a given partial schedule by creating all three heuristic calculators
+     * @param schedule
+     * @param freeTasks
+     * @return final cost of partial schedule
+     */
     private Integer calculateCost(Schedule schedule, List<Task> freeTasks) {
         BaseHeuristic idleHeuristic = getIdleHeuristic();
         BaseHeuristic drtHeuristic = getDRTHeuristic(freeTasks);
@@ -170,6 +182,12 @@ public class AStarAlgorithm extends BaseAlgorithm {
     }
 
 
+    /** Merges current free tasks in topological layer as well as any new free nodes that have been freed
+     * @param schedule
+     * @param layer
+     * @param extraNodes
+     * @return new free list
+     */
     private List<Task> getMergedFreeList(Schedule schedule, List<Task> layer, List<String> extraNodes) {
         List<Task> freeNodes = new ArrayList<>(layer);
         freeNodes.addAll(this.graph.buildTaskListFromIds(extraNodes));
@@ -183,13 +201,10 @@ public class AStarAlgorithm extends BaseAlgorithm {
         return freeNodes;
     }
 
-    /**
-     *
+    /** check if partial schedule's free tasks qualifies for Fixed Task Ordering
      * @param info
      * @param currentLayer
-     * @return
-     *      the list of all freenodes if it is in FTO,
-     *      else returns null
+     * @return Fixed task ordering of the list of free tasks
      */
     private Queue<Task> isFTO(AstarScheduleInfo info, List<Task> currentLayer) {
         String commonChildId =  "";
@@ -290,10 +305,18 @@ public class AStarAlgorithm extends BaseAlgorithm {
         return out;
     }
 
+
+    /** Given a fixed task order, expand the new states from the head of the FTO
+     * @param astarScheduleInfo
+     * @param ftoList
+     * @param numberOfProcesses
+     * @return list of new partial schedules from the expansion
+     */
     private List<AstarScheduleInfo> generateFTOCombinations(AstarScheduleInfo astarScheduleInfo, Queue<Task> ftoList, int numberOfProcesses) {
         if (ftoList.isEmpty()) {
             return null;
         }
+
         //given a schedule, ftolist and processor schedule top fto task to all processors
         Schedule schedule = astarScheduleInfo.getSchedule();
 
@@ -313,6 +336,12 @@ public class AStarAlgorithm extends BaseAlgorithm {
         return out;
     }
 
+    /** Adds the new free tasks that have been freed up as a result of all its parents being scheduled to a list
+     * @param node
+     * @param expandedFreeNodeIds
+     * @param expandedFreeNodes
+     * @param schedule
+     */
     private void addNewFreeTasks(Task node,List<String> expandedFreeNodeIds, List<Task> expandedFreeNodes, Schedule schedule){
         for (String childId : node.getChildrenList()) {
             Task child = this.graph.getTask(childId);
@@ -329,6 +358,12 @@ public class AStarAlgorithm extends BaseAlgorithm {
             }
         }
     }
+
+    /** Given a list of free tasks that is in FTO, it sorts them by its Data ready time into an ordering
+     * @param tasks
+     * @param schedule
+     * @return Fixed Task ordering of a list of task
+     */
     private Queue<Task> sortFTOTasks(List<Task> tasks, Schedule schedule) {
         PriorityQueue<Task> result = new PriorityQueue<Task>(new FTOComparator(schedule, this.graph));
 
@@ -342,7 +377,10 @@ public class AStarAlgorithm extends BaseAlgorithm {
     }
 
 
-
+    /** Checks that the FTO of free tasks qualifies as an valid Fixed task ordering
+     * @param ftoList
+     * @return true if fto list is valid
+     */
     private boolean verifySortedFTOList(PriorityQueue<Task> ftoList) {
 
         Queue<Task> tempList = new PriorityQueue<Task>(ftoList.comparator());
@@ -369,6 +407,10 @@ public class AStarAlgorithm extends BaseAlgorithm {
         return true;
     }
 
+    /** Recursive function that sets the critical path of each node in the graph
+     * @param tasks
+     * @param currentBottomLevel
+     */
     private void getBottomLevels(List<Task> tasks, int currentBottomLevel) {
         for (Task node : tasks) {
             if (node.getCost() < currentBottomLevel + node.getCost()) {
