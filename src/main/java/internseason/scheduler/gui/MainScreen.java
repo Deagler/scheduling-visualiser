@@ -40,7 +40,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-
+/**
+ * Controller for the MainScreen FXML
+ */
 public class MainScreen implements Initializable {
 
     private Integer LARGE_PANE_WIDTH = 454;
@@ -114,11 +116,19 @@ public class MainScreen implements Initializable {
     private Button settingsButton;
 
 
-
+    /**
+     * Constructor
+     * @param config
+     */
     public MainScreen(Config config) {
         this.config = config;
     }
-
+    /**
+     * Sets the style sheet of the MainScreen
+     *
+     * @param selectedTheme: Name of the selected theme
+     * @param path:  A path to the selected theme stylesheet
+     */
     public void setCSS(String selectedTheme, String path){
         Parent root = null;
         FXMLLoader loader = null;
@@ -140,12 +150,20 @@ public class MainScreen implements Initializable {
         window.setScene(currentScene);
         window.show();
     }
-
+    /**
+     * Sets the stylesheet path of the main screen
+     * @param themeName
+     * @param cssPath
+     */
     public void setCssPath(String themeName, String cssPath) {
         selectedTheme = themeName;
         this.cssPath = cssPath;
     }
-
+    /**
+     * Initialises the controller,
+     * @param location
+     * @param resources
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
@@ -169,12 +187,20 @@ public class MainScreen implements Initializable {
 
         sysInfo.addListener(this::buildScheduleGraph);
     }
-
+    /**
+     * Clears the schedule graph and reinitialise it
+     */
     private void resetScheduleGraph() {
         schedule_graph.clear();
         initialiseScheduleGraph();
 
     }
+
+    /**
+     * Adds additional runtime information to the performance barplot
+     * @param graphName
+     * @param runtime
+     */
     private void addPerformance(String graphName, Integer runtime){
 
         if (numberOfBars >= 2){
@@ -184,6 +210,11 @@ public class MainScreen implements Initializable {
         numberOfBars +=1;
         series.getData().add(new XYChart.Data(graphName, runtime));
     }
+
+
+    /**
+     * initialises barchart to compare performance
+     */
     private void createBarChart(){
         numberOfBars = 0;
         performancePane.getChildren().clear();
@@ -231,7 +262,12 @@ public class MainScreen implements Initializable {
         used_memory.setText(usedMem + " MB");
         free_memory.setText(freeMem + "MB");
     }
-
+    /**
+     * sets up the labels on application start up
+     * @param cores
+     * @param processors
+     * @param max_mem
+     */
     public void setup_labels(String cores, String processors, String max_mem) {
         runtime.setText("00:00:00.00");
 
@@ -242,19 +278,28 @@ public class MainScreen implements Initializable {
         schedules_explored.setText("0 K");
         schedules_in_queue.setText("0 K");
     }
-
+    /**
+     * disables control buttons, when program is running
+     */
     public void disableRuntimeButtons(){
         loadButton.setDisable(true);
         playButton.setDisable(true);
         settingsButton.setDisable(true);
     }
 
+    /**
+     * re enables the buttons when program has completed
+     */
     public void enableRuntimeTimeButtons(){
         loadButton.setDisable(false);
         playButton.setDisable(false);
         settingsButton.setDisable(false);
     }
-
+    /**
+     * Adapter - method for displaying the optimal schedule
+     * @param schedule
+     * @param graph
+     */
 
     public void updateOptimalSchedule(Schedule schedule, Graph graph){
         final NumberAxis xAxis = new NumberAxis();
@@ -311,7 +356,10 @@ public class MainScreen implements Initializable {
     }
 
 
-
+    /**
+     * loads a new input graph
+     * @param path
+     */
     private void loadInputGraph(String path) {
         DOTParser parser = new DOTParser();
         try {
@@ -346,7 +394,11 @@ public class MainScreen implements Initializable {
         schedule_graph_pane.getChildren().add(panel);
     }
 
-
+    /**
+     * builds the schedule graph given a hashcode of a schedule
+     * @param scheduleHashCode
+     * @param children
+     */
     private void buildScheduleGraph(Integer scheduleHashCode, Set<Integer> children) {
         branchesChecked +=1;
         Platform.runLater(() -> {
@@ -368,7 +420,9 @@ public class MainScreen implements Initializable {
 
 
     }
-
+    /**
+     * Starts the timer & updates labels
+     */
     private void startTimer() {
         startTime = System.currentTimeMillis();
         timer = new Timer();
@@ -392,7 +446,9 @@ public class MainScreen implements Initializable {
     private void stopTimer() {
         this.timer.cancel();
     }
-
+    /**
+     * actions for play button, starts algorithm
+     */
     @FXML
     public void playButtonPressed()        {
 
@@ -452,7 +508,9 @@ public class MainScreen implements Initializable {
         algorithmService.start();
     }
 
-
+    /**
+     * Action for settings button, opens up settings screen
+     */
     @FXML
     public void settingsButtonPressed() {
         Parent root = null;
