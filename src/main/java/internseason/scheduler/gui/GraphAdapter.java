@@ -7,6 +7,9 @@ import org.graphstream.graph.implementations.SingleGraph;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * adapter class to convert our representation of a graph into graphstream's representation
+ */
 public class GraphAdapter {
 
     private Graph backEndGraph;
@@ -15,7 +18,6 @@ public class GraphAdapter {
     public GraphAdapter(Graph backEndGraph, SingleGraph singleGraph, String frontEndID){
         this.backEndGraph = backEndGraph;
         this.frontEndGraph = convert(backEndGraph, singleGraph,frontEndID);
-        //frontEndGraph.display();
     }
 
     public Graph getBackEndGraph() {
@@ -26,6 +28,13 @@ public class GraphAdapter {
         return frontEndGraph;
     }
 
+    /**
+     * converts a backendgraph into fronend representation
+     * @param backEndGraph
+     * @param graph
+     * @param graphID
+     * @return
+     */
     private SingleGraph convert(Graph backEndGraph, SingleGraph graph, String graphID){
 
         Map<String, Task> tasks = backEndGraph.getTasks();

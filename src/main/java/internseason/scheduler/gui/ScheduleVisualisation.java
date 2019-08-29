@@ -15,7 +15,12 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 
-
+/**
+ * credit goes to to this stack overflow link
+ * https://stackoverflow.com/questions/27975898/gantt-chart-from-scratch
+ * @param <X>
+ * @param <Y>
+ */
 public class ScheduleVisualisation<X,Y> extends XYChart<X,Y> {
 
     public static class ExtraData {

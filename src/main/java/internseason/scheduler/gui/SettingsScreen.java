@@ -5,13 +5,11 @@ import internseason.scheduler.input.CLIException;
 import internseason.scheduler.input.Config;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -19,11 +17,12 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-import javax.swing.*;
 import java.net.URL;
-import java.util.Observable;
 import java.util.ResourceBundle;
 
+/**
+ * Controller for the settings screen
+ */
 public class SettingsScreen implements Initializable {
 
     Config config;
@@ -76,6 +75,9 @@ public class SettingsScreen implements Initializable {
         });
     }
 
+    /**
+     * fires an event called window close request which is listened to
+     */
     public void onSaved(){
         String numCores = coreNumber.getText();
         String numProcessors = processorNumber.getText();
@@ -100,6 +102,9 @@ public class SettingsScreen implements Initializable {
 
     }
 
+    /**
+     * sets up a draggable topbar
+     */
     public void topBarSetup(){
 
         topBar.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -121,6 +126,9 @@ public class SettingsScreen implements Initializable {
         });
     }
 
+    /**
+     * on cancel exit window
+     */
     public void onCancel(){
         Stage stage = (Stage) coreNumber.getScene().getWindow();
         stage.close();
